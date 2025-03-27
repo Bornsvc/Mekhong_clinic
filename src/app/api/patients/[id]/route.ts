@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { PatientModel } from '@/backend/modles/Patient';
+import { PatientModel } from '@/backend/models/Patient';
 
 export async function PUT(
   request: Request,
