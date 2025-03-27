@@ -60,14 +60,14 @@ const CustomerForm: React.FC = () => {
         first_name: formData.firstName,
         last_name: formData.lastName,
         birth_date: formData.birthDate,
-        age: 0,
+        age: (formData.age),
         registered: new Date().toISOString(),
         phone_number: formData.phoneNumber,
         gender: formData.gender,
         medication: formData.medication,
         balance: 0, // Initial balance
-        diagnosis: formData.diagnosis || '' ,
-        address: formData.address
+        diagnosis: formData.diagnosis || '',
+        address: formData.address,
       });
   
       if (response.data.data) { // Check for data instead of success

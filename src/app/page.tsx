@@ -9,6 +9,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import LoginFrom from './loginPage'
+import Link from 'next/link';
 
 interface Patient {
   id: string;
@@ -21,6 +22,9 @@ interface Patient {
   purpose: string;
   medication: string;
   created_at: string;
+  gender: string;
+  balance: number;
+  diagnosis: string
 }
 
 interface FormContextType {
@@ -244,43 +248,57 @@ export default function Home() {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th scope="col" className="px-6 py-4 text-left text-xs font-medium  text-gray-500 uppercase tracking-wider">
-                        Name
+                      <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        UHID
                       </th>
-                      <th scope="col" className="px-6 py-4 text-left text-xs font-medium  text-gray-500 uppercase tracking-wider">
+                      <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        FullName
+                      </th>
+                      <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         DOB
                       </th>
-                      <th scope="col" className="px-6 py-4 text-left text-xs font-medium  text-gray-500 uppercase tracking-wider">
+                      <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Age
                       </th>
-                      <th scope="col" className="px-6 py-4 text-left text-xs font-medium  text-gray-500 uppercase tracking-wider">
-                        Address
+                      <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Registered
                       </th>
-                      <th scope="col" className="px-6 py-4 text-left text-xs font-medium  text-gray-500 uppercase tracking-wider">
-                        Phone
+                      <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Gender
+                      </th>
+                      <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Mobile
                       </th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {filteredPatients.map((patient, index) => (
                       <tr key={index} className="hover:bg-blue-50 transition-colors duration-200">
-                        <td className="px-6 py-4 whitespace-nowrap ">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">{patient.id}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-medium text-blue-600 hover:text-blue-800">
-                            <a href="#">{`${patient.first_name} ${patient.last_name}`}</a>
+                            <Link href={`/patients/${patient.id}`}>{`${patient.first_name} ${patient.last_name}`}</Link>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap ">
+                        <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">
                             {new Date(patient.birth_date).toLocaleDateString()}
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap ">
-                          <div className="text-sm text-gray-900 pl-1">{patient.age}</div>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">{patient.age}</div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap ">
-                          <div className="text-sm text-gray-900">{patient.address}</div>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">
+                            {new Date(patient.created_at).toLocaleDateString()}
+                          </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap ">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900 capitalize">{patient.gender}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">{patient.phone_number}</div>
                         </td>
                       </tr>

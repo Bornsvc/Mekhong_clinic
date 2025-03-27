@@ -7,9 +7,12 @@ CREATE DATABASE mekong_clinic;
 -- Connect to the database
 \c mekong_clinic;
 
+-- Create sequence for patient ID
+CREATE SEQUENCE IF NOT EXISTS patient_id_seq START 1;
+
 -- Create patients table
 CREATE TABLE IF NOT EXISTS patients (
-    id SERIAL PRIMARY KEY,
+    id VARCHAR(10) PRIMARY KEY DEFAULT 'MK-' || LPAD(NEXTVAL('patient_id_seq')::TEXT, 7, '0'),
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     birth_date DATE NOT NULL,
