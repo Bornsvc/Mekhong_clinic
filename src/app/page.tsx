@@ -4,7 +4,7 @@ import PtientIcon from '@/icons/patient.png'
 import AddPtientIcon from '@/icons/Addpatient.png'
 import LogOutIcon from '@/icons/logout.png'
 import { createContext, useState, useEffect, Dispatch, SetStateAction } from 'react';
-import PatientForm from '@/components/patientForm'
+import PatientForm from './components/patientForm'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';

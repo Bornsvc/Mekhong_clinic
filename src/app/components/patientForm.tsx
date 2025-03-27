@@ -2,8 +2,8 @@ import React, { useState, useContext } from "react";
 import { FormContext } from "@/app/page"; // Import the context
 import Image from "next/image";
 import ClodeIcon from "@/icons/close.png";
-import ConfirmClose from "@/components/confirmClose";
 import axios from "axios";
+import ConfirmClose from './confirmClose'
 
 interface FormData {
   firstName: string;
