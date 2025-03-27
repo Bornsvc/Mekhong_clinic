@@ -43,6 +43,7 @@ next-env.d.ts
 # Environment variables
 .env
 .env.local
+DS_Store" > .gitignore
 
 # Auth credentials
 src/config/auth.ts

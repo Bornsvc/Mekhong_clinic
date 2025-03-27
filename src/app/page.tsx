@@ -21,10 +21,6 @@ interface Patient {
   purpose: string;
   medication: string;
   created_at: string;
-  gender: string; 
-  registered: string;   
-  diagnosis: string;     
-  balance: number; 
 }
 
 interface FormContextType {
@@ -81,25 +77,10 @@ export default function Home() {
 
   useEffect(() => {
     setActive(true);
-    fetchPatients()
-  }, [])
 
-  useEffect(() => {
-    if (toastMassage === true) {
-      toast.success("Successfully to add patient!");
-      setToastMassage(null);
-      fetchPatients(); 
-    } else if (toastMassage === false) {
-      toast.error("Fail to add patient!");
-      setToastMassage(null);
-    }
-  }, [toastMassage]);
-
-  useEffect(() => {
     const checkAuth = async () => {
       try {
         const token = localStorage.getItem('token');
-        console.log("token", token)
         if (!token) {
           setIsAuthenticated(true);
           return;
@@ -118,8 +99,19 @@ export default function Home() {
     };
 
     checkAuth();
-  }, []);
+    // fetchPatients()
+  }, [])
 
+  useEffect(() => {
+    if (toastMassage === true) {
+      toast.success("Successfully to add patient!");
+      setToastMassage(null);
+      fetchPatients(); 
+    } else if (toastMassage === false) {
+      toast.error("Fail to add patient!");
+      setToastMassage(null);
+    }
+  }, [toastMassage]);
   
   const scrollToTop = () => {
     window.scrollTo({
@@ -262,7 +254,7 @@ export default function Home() {
                         Age
                       </th>
                       <th scope="col" className="px-6 py-4 text-left text-xs font-medium  text-gray-500 uppercase tracking-wider">
-                        Gender
+                        Address
                       </th>
                       <th scope="col" className="px-6 py-4 text-left text-xs font-medium  text-gray-500 uppercase tracking-wider">
                         Phone
@@ -286,7 +278,7 @@ export default function Home() {
                           <div className="text-sm text-gray-900 pl-1">{patient.age}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap ">
-                          <div className="text-sm text-gray-900"> ... </div>
+                          <div className="text-sm text-gray-900">{patient.address}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap ">
                           <div className="text-sm text-gray-900">{patient.phone_number}</div>
