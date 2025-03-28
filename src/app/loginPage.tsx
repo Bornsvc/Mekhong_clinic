@@ -1,5 +1,4 @@
 import React, { useState, FormEvent, ChangeEvent } from 'react';
-// import { ADMIN_CREDENTIALS } from '@/config/auth';
 import { toast } from 'react-toastify';
 
 interface LoginFormProps {
@@ -27,11 +26,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ setIsAuthenticated }) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setIsLoading(true);
-
     try {
-      // if (formData.username === ADMIN_CREDENTIALS.username && 
-      //   formData.password === ADMIN_CREDENTIALS.password) {
-      //     await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
           localStorage.setItem('token', 'admin-token');
           setIsAuthenticated(true);
 

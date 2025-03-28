@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import axios from 'axios';
 import Link from 'next/link';
+import EditPatientForm from '@/app/components/editPatientForm';
 
 interface Patient {
   id: string;
@@ -26,6 +27,7 @@ export default function PatientDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const router = useRouter();
 
@@ -136,6 +138,7 @@ export default function PatientDetails() {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
         {isDeleteModalOpen && <DeleteConfirmationModal />}
+        {isEditModalOpen && <EditPatientForm patientId={params.id as string} onClose={() => setIsEditModalOpen(false)} />}
 
       <div className="max-w-4xl mx-auto">
         {/* Back Link */}
@@ -158,7 +161,9 @@ export default function PatientDetails() {
                 <p className="text-blue-100 mt-1">ID: {patient.id}</p>
               </div>
               <div className="flex gap-3">
-                <button className="px-4 py-2 bg-yellow-500 rounded-lg text-white hover:bg-yellow-600 transition-all duration-200 flex items-center space-x-2 shadow-sm hover:shadow-md">
+                <button 
+                  onClick={() => setIsEditModalOpen(true)}
+                  className="px-4 py-2 bg-yellow-500 rounded-lg text-white hover:bg-yellow-600 transition-all duration-200 flex items-center space-x-2 shadow-sm hover:shadow-md">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>

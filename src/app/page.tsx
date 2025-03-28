@@ -81,7 +81,6 @@ export default function Home() {
 
   useEffect(() => {
     setActive(true);
-
     const checkAuth = async () => {
       try {
         const token = localStorage.getItem('token');
