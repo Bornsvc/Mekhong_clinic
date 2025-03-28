@@ -65,7 +65,7 @@ const CustomerForm: React.FC = () => {
         phone_number: formData.phoneNumber,
         gender: formData.gender,
         medication: formData.medication,
-        balance: 0, // Initial balance
+        balance: formData.balance,
         diagnosis: formData.diagnosis || '',
         address: formData.address,
       });

@@ -23,6 +23,12 @@ export const PatientModel = {
     return rows;
   },
 
+  async getPatientById(id: string) {
+    const query = 'SELECT * FROM patients WHERE id = $1';
+    const { rows } = await pool.query(query, [id]);
+    return rows[0];
+  },
+
   async createPatient(patient: Patient) {
     try {
       const query = `
@@ -65,7 +71,7 @@ export const PatientModel = {
     }
 },
 
-  async updatePatient(id: number, patient: Partial<Patient>) {
+  async updatePatient(id: string, patient: Partial<Patient>) {
     const fields = Object.keys(patient).map((key, index) => `${key} = $${index + 1}`);
     const values = Object.values(patient);
     
@@ -80,7 +86,7 @@ export const PatientModel = {
     return rows[0];
   },
 
-  async deletePatient(id: number) {
+  async deletePatient(id: string) {
     const query = 'DELETE FROM patients WHERE id = $1 RETURNING *';
     const { rows } = await pool.query(query, [id]);
     return rows[0];
