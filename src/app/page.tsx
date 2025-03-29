@@ -10,6 +10,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import LoginFrom from './loginPage'
 import Link from 'next/link';
+import UploadIcon from '@/icons/import.png'
+import ImportFile from './components/importPatientForm'
 
 interface Patient {
   id: string;
@@ -34,6 +36,7 @@ interface FormContextType {
   toastMassage: null | boolean;
   setSearchQuery: React.Dispatch<SetStateAction<string>>;
   setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
+  setIsImportActive: Dispatch<SetStateAction<boolean>>;
 }
 
 const FormContext = createContext<FormContextType>({
@@ -42,7 +45,8 @@ const FormContext = createContext<FormContextType>({
   setFormactive: () => {},
   setToastMassage: () => {},
   setSearchQuery: () => {},
-  setIsAuthenticated: () => {}
+  setIsAuthenticated: () => {},
+  setIsImportActive: () => {}
 });
 
 export default function Home() {
@@ -54,6 +58,7 @@ export default function Home() {
   const [patients, setPatients] = useState<Patient[]>([])
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [isImportActive, setIsImportActive] = useState<boolean>(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -151,7 +156,7 @@ export default function Home() {
 
 
   return (
-    <FormContext.Provider value={{ formActive, setFormactive, toastMassage, setToastMassage, setSearchQuery, setIsAuthenticated}}>
+    <FormContext.Provider value={{ formActive, setFormactive, toastMassage, setToastMassage, setSearchQuery, setIsAuthenticated, setIsImportActive}}>
       <ToastContainer 
         position="top-right"
         autoClose={3000}
@@ -231,13 +236,24 @@ export default function Home() {
                     className="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
-                <button
-                  onClick={handleOpenForm}
-                  className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 w-full md:w-auto"
-                >
-                  <Image src={AddPtientIcon} alt="Add" width={20} height={20} />
-                  <span>Add Patient</span>
-                </button>
+                <div className="flex items-center gap-6 mr-10">
+                  <button
+                    onClick={handleOpenForm}
+                    className="flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-xl shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-300 w-full md:w-auto"
+                  >
+                    <Image src={AddPtientIcon} alt="Add" width={24} height={24} />
+                    <span>Add Patient</span>
+                  </button>
+
+                  <button 
+                    onClick={() => setIsImportActive(!isImportActive)}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl shadow-md hover:shadow-lg active:scale-95 transition-all duration-300 w-full md:w-auto"
+                  >
+                    <Image src={UploadIcon} alt="Import" width={24} height={24} />
+                    <span>Import File</span>
+                  </button>
+                  {isImportActive ?  <ImportFile /> : null}
+                </div>
               </div>
             </div>
 
