@@ -23,6 +23,30 @@ export const PatientModel = {
     return rows;
   },
 
+  async getPaginatedPatients(page: number = 1, limit: number = 10) {
+    const offset = (page - 1) * limit;
+    const countQuery = 'SELECT COUNT(*) FROM patients';
+    const dataQuery = 'SELECT * FROM patients ORDER BY created_at DESC LIMIT $1 OFFSET $2';
+    
+    const [countResult, dataResult] = await Promise.all([
+      pool.query(countQuery),
+      pool.query(dataQuery, [limit, offset])
+    ]);
+
+    const totalItems = parseInt(countResult.rows[0].count);
+    const totalPages = Math.ceil(totalItems / limit);
+
+    return {
+      data: dataResult.rows,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalItems,
+        itemsPerPage: limit
+      }
+    };
+  },
+
   async getPatientById(id: string) {
     const query = 'SELECT * FROM patients WHERE id = $1';
     const { rows } = await pool.query(query, [id]);

@@ -9,6 +9,7 @@ function ImportPatientForm() {
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [importResult, setImportResult] = useState<{ success: number; failed: number; errors: string[] } | null>(null);
 
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -53,8 +54,17 @@ function ImportPatientForm() {
       });
 
       if (response.data.success) {
-        alert('File uploaded successfully!');
-        setIsImportActive(false);
+        const result = {
+          success: response.data.successCount || 0,
+          failed: response.data.failedCount || 0,
+          errors: response.data.errors || []
+        };
+        console.log('Import result:', result);
+        setImportResult(result);
+        alert(`Import completed! Successfully imported ${result.success} records.${result.failed > 0 ? ` Failed to import ${result.failed} records.` : ''}`); 
+      } else {
+        console.error('Import failed:', response.data);
+        alert('Import failed. Please check the file format and try again.');
       }
     } catch (error) {
       console.error('Upload error:', error);
@@ -63,6 +73,12 @@ function ImportPatientForm() {
       setIsUploading(false);
     }
   };
+
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.length) {
+      setFile(e.target.files[0]);
+    }
+  }, []);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50">
@@ -98,7 +114,7 @@ function ImportPatientForm() {
             <input
               type="file"
               accept=".xlsx,.xls"
-              onChange={(e) => e.target.files && setFile(e.target.files[0])}
+              onChange={handleFileChange}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
             />
             
@@ -123,19 +139,67 @@ function ImportPatientForm() {
             </div>
           </div>
 
-          <button 
-            onClick={handleUpload}
-            disabled={!file || isUploading}
-            className={`
-              py-3 px-4 rounded-lg font-semibold shadow-lg transform transition-all duration-300
-              focus:outline-none focus:ring-2 focus:ring-offset-2
-              ${file && !isUploading
-                ? 'bg-blue-500 text-white hover:bg-blue-600 hover:-translate-y-0.5 hover:shadow-blue-500/50' 
-                : 'bg-gray-100 text-gray-400 cursor-not-allowed'}
-            `}
-          >
-            {isUploading ? 'Uploading...' : 'Upload File'}
-          </button>
+          {importResult ? (
+            <div className="space-y-4 w-full">
+              <div className="bg-gray-100 p-4 rounded-lg">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-gray-700 font-medium">Import Summary</span>
+                  <span className="text-sm text-gray-500">{importResult.success + importResult.failed} total</span>
+                </div>
+                <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-green-500" 
+                    style={{ 
+                      width: `${(importResult.success / (importResult.success + importResult.failed)) * 100}%`,
+                      transition: 'width 0.5s ease-in-out'
+                    }}
+                  />
+                </div>
+                <div className="flex justify-between items-center mt-2 z-40">
+                  <span className="text-green-600 font-medium">{importResult.success} successful</span>
+                  <span className="text-red-600 font-medium">{importResult.failed} failed</span>
+                </div>
+              </div>
+              {importResult.errors.length > 0 && (
+                <div className="bg-red-50 p-4 rounded-lg">
+                  <p className="text-red-800 font-medium mb-2">Errors:</p>
+                  <ul className="text-red-600 text-sm list-disc pl-4 max-h-40 overflow-y-auto">
+                    {importResult.errors.map((error, index) => (
+                      <li key={index}>{error}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <div className="flex gap-3">
+                <button
+                  onClick={() => window.location.reload()}
+                  className="flex-1 py-3 px-4 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors"
+                >
+                  Refresh Page
+                </button>
+                <button
+                  onClick={() => setIsImportActive(false)}
+                  className="flex-1 py-3 px-4 bg-gray-500 text-white rounded-lg font-semibold hover:bg-gray-600 transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button 
+              onClick={handleUpload}
+              disabled={!file || isUploading}
+              className={`
+                py-3 px-4 rounded-lg font-semibold shadow-lg transform transition-all duration-300
+                focus:outline-none focus:ring-2 focus:ring-offset-2
+                ${file && !isUploading
+                  ? 'bg-blue-500 text-white hover:bg-blue-600 hover:-translate-y-0.5 hover:shadow-blue-500/50' 
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'}
+              `}
+            >
+              {isUploading ? 'Uploading...' : 'Upload File'}
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -1,10 +1,14 @@
 import { NextResponse } from 'next/server';
 import { PatientModel } from '@/backend/models/Patient';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const patients = await PatientModel.getAllPatients();
-    return NextResponse.json({ data: patients });
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '10');
+
+    const result = await PatientModel.getPaginatedPatients(page, limit);
+    return NextResponse.json(result);
   } catch (error) {
     console.error('Error fetching patients:', error);
     return NextResponse.json(

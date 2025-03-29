@@ -12,6 +12,7 @@ import LoginFrom from './loginPage'
 import Link from 'next/link';
 import UploadIcon from '@/icons/import.png'
 import ImportFile from './components/importPatientForm'
+import Pagination from './components/Pagination'
 
 interface Patient {
   id: string;
@@ -54,35 +55,35 @@ export default function Home() {
   const [formActive, setFormactive] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [toastMassage, setToastMassage] = useState<boolean | null>(null);
-  const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
   const [patients, setPatients] = useState<Patient[]>([])
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isImportActive, setIsImportActive] = useState<boolean>(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowScrollTop(true);
-      } else {
-        setShowScrollTop(false);
-      }
-    };
-  
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [itemsPerPage] = useState<number>(11);
 
   const fetchPatients = async() => {
     try {
-      const response = await axios.get('/api/patients');
+      const response = await axios.get(`/api/patients?page=${currentPage}&limit=${itemsPerPage}`);
       setPatients(response.data.data);
-      console.log(response.data.data)
+      setTotalPages(response.data.pagination.totalPages);
+      console.log('Fetched patients:', response.data);
     } catch(error) {
       console.log("Error fetching API", error);
       toast.error("Failed to load patients");
     }
   };
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
+  // const handleItemsPerPageChange = (newLimit: number) => {
+  //   setItemsPerPage(newLimit);
+  //   setCurrentPage(1); // Reset to first page when changing items per page
+  // };
 
   useEffect(() => {
     setActive(true);
@@ -121,12 +122,6 @@ export default function Home() {
     }
   }, [toastMassage]);
   
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  };
 
   const handleActive = () => {
     setActive(true)
@@ -155,16 +150,37 @@ export default function Home() {
   }
 
 
+  useEffect(() => {
+    fetchPatients();
+  }, [currentPage, itemsPerPage]);
+
+  const renderPagination = () => {
+    return (
+      <div className="flex flex-col items-center gap-4 mt-4 mb-8">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      </div>
+    );
+  };
+
   return (
-    <FormContext.Provider value={{ formActive, setFormactive, toastMassage, setToastMassage, setSearchQuery, setIsAuthenticated, setIsImportActive}}>
+    <FormContext.Provider value={{ formActive, setFormactive, toastMassage, setToastMassage, setSearchQuery, setIsAuthenticated, setIsImportActive }}>
+      
       <ToastContainer 
         position="top-right"
         autoClose={3000}
         theme="colored"
       />
 
-    {!isAuthenticated ? (  <LoginFrom setIsAuthenticated={setIsAuthenticated} />) :
-      formActive ? ( <PatientForm /> ) : (
+    { !isAuthenticated ? (  <LoginFrom setIsAuthenticated={setIsAuthenticated} /> ) :
+      formActive ? ( <PatientForm /> ) : 
+      
+      (
+
+      <div>
         <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Navigation Bar */}
         <nav className="sticky top-0 z-20 bg-gradient-to-r from-blue-600 to-blue-400 shadow-lg">
@@ -259,7 +275,8 @@ export default function Home() {
 
            {/* Table Container */}
             <div className="flex-1 overflow-hidden bg-white rounded-lg shadow-md border border-gray-200">
-              <div className="overflow-x-auto">
+           
+                
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
@@ -320,37 +337,19 @@ export default function Home() {
                     ))}
                   </tbody>
                 </table>
+                {renderPagination()}
               </div>
             </div>
           </div>
-        </div>
-
-        <button
-              onClick={scrollToTop}
-              className={`fixed bottom-8 right-8 bg-blue-600 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 z-50
-                ${showScrollTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16 pointer-events-none'}`}
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 10l7-7m0 0l7 7m-7-7v18"
-                />
-              </svg>
-            </button>
+         </div>
       </div>
       
       )
     }
     </FormContext.Provider>
   );
+
 }
+
 
 export { FormContext };
