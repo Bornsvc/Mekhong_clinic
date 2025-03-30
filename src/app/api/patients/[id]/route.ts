@@ -3,22 +3,26 @@ import { PatientModel } from '@/backend/models/Patient';
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
-    const patient = await PatientModel.getPatientById(params.id);
-    if (!patient) {
-      return NextResponse.json(
-        { error: 'Patient not found' },
-        { status: 404 }
-      );
+    // Wait for the params to be fully resolved
+    const patientId = params?.id;  // Ensure params are available
+
+    if (!patientId) {
+      return NextResponse.json({ error: 'Patient ID is required' }, { status: 400 });
     }
-    return NextResponse.json({ data: patient });
+
+    const patient = await PatientModel.getPatientById(patientId);
+
+    if (!patient) {
+      return NextResponse.json({ error: 'Patient not found' }, { status: 404 });
+    }
+
+    return NextResponse.json(patient);
   } catch (error) {
     console.error('Error fetching patient:', error);
-    return NextResponse.json(
-      { error: 'Can not fetch patient' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {

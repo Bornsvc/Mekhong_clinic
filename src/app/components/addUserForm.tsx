@@ -43,6 +43,7 @@ export default function AddUserForm() {
       } else {
         setError('เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ');
       }
+      console.log(err)
     }
   };
 
@@ -56,11 +57,11 @@ export default function AddUserForm() {
 
   return (
     <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-lg">
-      <h2 className="text-2xl font-semibold mb-6 text-center">เพิ่มผู้ใช้ใหม่</h2>
+      <h2 className="text-2xl font-semibold mb-6 text-center">ADD NEW USER</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
-            ชื่อผู้ใช้
+            User name
           </label>
           <input
             type="text"
@@ -75,7 +76,7 @@ export default function AddUserForm() {
 
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-            รหัสผ่าน
+            Password
           </label>
           <input
             type="password"
@@ -90,7 +91,7 @@ export default function AddUserForm() {
 
         <div>
           <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
-            บทบาท
+            Role
           </label>
           <select
             id="role"
@@ -99,8 +100,8 @@ export default function AddUserForm() {
             onChange={handleChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="user">ผู้ใช้ทั่วไป</option>
-            <option value="admin">ผู้ดูแลระบบ</option>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
           </select>
         </div>
 
@@ -120,7 +121,7 @@ export default function AddUserForm() {
           type="submit"
           className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
-          เพิ่มผู้ใช้
+          Add
         </button>
       </form>
     </div>
