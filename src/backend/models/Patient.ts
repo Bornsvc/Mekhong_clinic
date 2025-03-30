@@ -30,7 +30,7 @@ export const PatientModel = {
     let queryParams: any[] = [];
 
     if (search) {
-      const searchCondition = "LOWER(first_name) LIKE LOWER($1) OR LOWER(last_name) LIKE LOWER($1) OR LOWER(phone_number) LIKE LOWER($1)";
+      const searchCondition = "first_name ILIKE $1 OR last_name ILIKE $1 OR phone_number ILIKE $1 OR CONCAT(first_name, ' ', last_name) ILIKE $1";
       countQuery += ` WHERE ${searchCondition}`;
       dataQuery += ` WHERE ${searchCondition}`;
       queryParams.push(`%${search}%`);
