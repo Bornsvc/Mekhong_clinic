@@ -6,8 +6,9 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
+    const search = searchParams.get('search') || '';
 
-    const result = await PatientModel.getPaginatedPatients(page, limit);
+    const result = await PatientModel.getPaginatedPatients(page, limit, search);
     return NextResponse.json(result);
   } catch (error) {
     console.error('Error fetching patients:', error);
@@ -49,3 +50,4 @@ export async function POST(request: Request) {
       );
     }
   }
+

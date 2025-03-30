@@ -66,7 +66,7 @@ export default function Home() {
 
   const fetchPatients = async() => {
     try {
-      const response = await axios.get(`/api/patients?page=${currentPage}&limit=${itemsPerPage}`);
+      const response = await axios.get(`/api/patients?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}`);
       setPatients(response.data.data);
       setTotalPages(response.data.pagination.totalPages);
       console.log('Fetched patients:', response.data);
@@ -76,14 +76,12 @@ export default function Home() {
     }
   };
 
+
+  
+
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
   };
-
-  // const handleItemsPerPageChange = (newLimit: number) => {
-  //   setItemsPerPage(newLimit);
-  //   setCurrentPage(1); // Reset to first page when changing items per page
-  // };
 
   useEffect(() => {
     setActive(true);
@@ -102,7 +100,7 @@ export default function Home() {
         setIsAuthenticated(true);
       } catch (error) {
         console.log("Error from login", error)
-        setIsAuthenticated(false);
+        setIsAuthenticated(true);
         localStorage.removeItem('token');
       }
     };
@@ -126,19 +124,6 @@ export default function Home() {
   const handleActive = () => {
     setActive(true)
   };
-
-  const filteredPatients = patients.filter(patient => {
-    const searchWords = searchQuery.toLowerCase().trim().split(/\s+/); 
-    const firstName = patient.first_name?.toLowerCase() || '';
-    const lastName = patient.last_name?.toLowerCase() || '';
-    const phone = patient.phone_number?.toLowerCase() || '';
-  
-    return searchWords.every(word => 
-      firstName.includes(word) || 
-      lastName.includes(word) || 
-      phone.includes(word)
-    );
-  });
   
   const handleOpenForm = () => {
     setFormactive(!formActive)
@@ -152,7 +137,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchPatients();
-  }, [currentPage, itemsPerPage]);
+  }, [currentPage, itemsPerPage, searchQuery]);
 
   const renderPagination = () => {
     return (
@@ -174,6 +159,8 @@ export default function Home() {
         autoClose={3000}
         theme="colored"
       />
+
+ 
 
     { !isAuthenticated ? (  <LoginFrom setIsAuthenticated={setIsAuthenticated} /> ) :
       formActive ? ( <PatientForm /> ) : 
@@ -304,7 +291,7 @@ export default function Home() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {filteredPatients.map((patient, index) => (
+                    {patients.map((patient, index) => (
                       <tr key={index} className="hover:bg-blue-50 transition-colors duration-200">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">{patient.id}</div>

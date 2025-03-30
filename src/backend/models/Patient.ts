@@ -23,14 +23,29 @@ export const PatientModel = {
     return rows;
   },
 
-  async getPaginatedPatients(page: number = 1, limit: number = 10) {
+  async getPaginatedPatients(page: number = 1, limit: number = 10, search?: string) {
     const offset = (page - 1) * limit;
-    const countQuery = 'SELECT COUNT(*) FROM patients';
-    const dataQuery = 'SELECT * FROM patients ORDER BY created_at DESC LIMIT $1 OFFSET $2';
-    
+    let countQuery = 'SELECT COUNT(*) FROM patients';
+    let dataQuery = 'SELECT * FROM patients';
+    let queryParams: any[] = [];
+
+    if (search) {
+      const searchCondition = "LOWER(first_name) LIKE LOWER($1) OR LOWER(last_name) LIKE LOWER($1) OR LOWER(phone_number) LIKE LOWER($1)";
+      countQuery += ` WHERE ${searchCondition}`;
+      dataQuery += ` WHERE ${searchCondition}`;
+      queryParams.push(`%${search}%`);
+    }
+
+    dataQuery += ' ORDER BY created_at DESC';
+
+    if (limit > 0) {
+      dataQuery += ' LIMIT $' + (queryParams.length + 1) + ' OFFSET $' + (queryParams.length + 2);
+      queryParams.push(limit, offset);
+    }
+
     const [countResult, dataResult] = await Promise.all([
-      pool.query(countQuery),
-      pool.query(dataQuery, [limit, offset])
+      pool.query(countQuery, search ? [queryParams[0]] : []),
+      pool.query(dataQuery, queryParams)
     ]);
 
     const totalItems = parseInt(countResult.rows[0].count);

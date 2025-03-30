@@ -187,7 +187,7 @@ export default function PatientDetails() {
               <div className="flex items-center space-x-4">
                 <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
                   <span className="text-blue-600 text-xl">
-                    {patient.first_name[0]}{patient.last_name[0]}
+                    {patient.first_name.includes("ທ") ? "Mr" : "Mrs"}
                   </span>
                 </div>
                 <div>
