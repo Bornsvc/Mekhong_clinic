@@ -69,15 +69,11 @@ export default function Home() {
       const response = await axios.get(`/api/patients?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}`);
       setPatients(response.data.data);
       setTotalPages(response.data.pagination.totalPages);
-      console.log('Fetched patients:', response.data);
     } catch(error) {
-      console.log("Error fetching API", error);
+      console.log("Error from fetchPatients function>>>", error)
       toast.error("Failed to load patients");
     }
   };
-
-
-  
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -159,8 +155,6 @@ export default function Home() {
         autoClose={3000}
         theme="colored"
       />
-
- 
 
     { !isAuthenticated ? (  <LoginFrom setIsAuthenticated={setIsAuthenticated} /> ) :
       formActive ? ( <PatientForm /> ) : 

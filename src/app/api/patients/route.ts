@@ -8,7 +8,7 @@ export async function GET(request: Request) {
     const limit = parseInt(searchParams.get('limit') || '10');
     const search = searchParams.get('search') || '';
 
-    const result = await PatientModel.getPaginatedPatients(page, limit, search);
+    const result = await PatientModel.getPaginatedPatients({ page, limit, search });
     return NextResponse.json(result);
   } catch (error) {
     console.error('Error fetching patients:', error);
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
       // เพิ่มการตรวจสอบข้อมูลที่จำเป็น
       if (!patient.first_name || !patient.last_name || !patient.birth_date) {
         return NextResponse.json(
-          { error: 'กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน' },
+          { error: 'Plaese complete all input.' },
           { status: 400 }
         );
       }
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
       const birthDateRegex = /^\d{4}-\d{2}-\d{2}$/;
       if (!birthDateRegex.test(patient.birth_date)) {
         return NextResponse.json(
-          { error: 'รูปแบบวันที่เกิดไม่ถูกต้อง (YYYY-MM-DD)' },
+          { error: 'Date format is incorrect (YYYY-MM-DD)' },
           { status: 400 }
         );
       }
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
     } catch (error) {
       console.error('Error creating patient:', error);
       return NextResponse.json(
-        { error: 'ไม่สามารถสร้างข้อมูลผู้ป่วยได้' },
+        { error: 'Cannot create patient' },
         { status: 500 }
       );
     }

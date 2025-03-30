@@ -6,7 +6,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
     const patient = await PatientModel.getPatientById(params.id);
     if (!patient) {
       return NextResponse.json(
-        { error: 'ไม่พบข้อมูลผู้ป่วย' },
+        { error: 'Patient not found' },
         { status: 404 }
       );
     }
@@ -14,7 +14,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
   } catch (error) {
     console.error('Error fetching patient:', error);
     return NextResponse.json(
-      { error: 'ไม่สามารถดึงข้อมูลผู้ป่วยได้' },
+      { error: 'Can not fetch patient' },
       { status: 500 }
     );
   }
@@ -28,7 +28,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     const existingPatient = await PatientModel.getPatientById(params.id);
     if (!existingPatient) {
       return NextResponse.json(
-        { error: 'ไม่พบข้อมูลผู้ป่วย' },
+        { error: 'Patient not found' },
         { status: 404 }
       );
     }
@@ -38,7 +38,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       const birthDateRegex = /^\d{4}-\d{2}-\d{2}$/;
       if (!birthDateRegex.test(patient.birth_date)) {
         return NextResponse.json(
-          { error: 'รูปแบบวันที่เกิดไม่ถูกต้อง (YYYY-MM-DD)' },
+          { error: 'Date format is incorrect (YYYY-MM-DD)' },
           { status: 400 }
         );
       }
@@ -61,17 +61,17 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     const existingPatient = await PatientModel.getPatientById(params.id);
     if (!existingPatient) {
       return NextResponse.json(
-        { error: 'ไม่พบข้อมูลผู้ป่วย' },
+        { error: 'Patient not found' },
         { status: 404 }
       );
     }
 
     await PatientModel.deletePatient(params.id);
-    return NextResponse.json({ message: 'ลบข้อมูลผู้ป่วยสำเร็จ' });
+    return NextResponse.json({ message: 'Successful dalete patient.' });
   } catch (error) {
     console.error('Error deleting patient:', error);
     return NextResponse.json(
-      { error: 'ไม่สามารถลบข้อมูลผู้ป่วยได้' },
+      { error: 'Patient not found' },
       { status: 500 }
     );
   }

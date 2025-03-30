@@ -14,21 +14,21 @@ interface ExcelRow {
   Diagnosis: string;
 }
 
-interface Patient {
-  id: string;
-  first_name: string;
-  last_name: string;
-  birth_date: string;
-  age: number;
-  address: string;
-  phone_number: string;
-  purpose: string;
-  medication: string;
-  created_at: string;
-  gender: string;
-  balance: number;
-  diagnosis: string
-}
+// interface Patient {
+//   id: string;
+//   first_name: string;
+//   last_name: string;
+//   birth_date: string;
+//   age: number;
+//   address: string;
+//   phone_number: string;
+//   purpose: string;
+//   medication: string;
+//   created_at: string;
+//   gender: string;
+//   balance: number;
+//   diagnosis: string
+// }
 
 export async function POST(request: Request) {
   try {

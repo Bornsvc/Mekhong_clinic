@@ -1,19 +1,11 @@
 import pool from '../config/database';
-import { DatabaseError } from 'pg';
+import { Patient } from '@/types/patient';
 
-export interface Patient {
-  id?: number;
-  first_name: string;
-  last_name: string;
-  birth_date: Date;
-  age: number;
-  registered: Date;
-  phone_number: string;
-  gender: string;
-  medication: string;
-  balance: number;
-  diagnosis: string;
-  address: string;
+
+interface QueryParams {
+  page?: number;
+  limit?: number;
+  search?: string;
 }
 
 export const PatientModel = {
@@ -23,11 +15,12 @@ export const PatientModel = {
     return rows;
   },
 
-  async getPaginatedPatients(page: number = 1, limit: number = 10, search?: string) {
+  async getPaginatedPatients(params: QueryParams) {
+    const { page = 1, limit = 10, search } = params;
     const offset = (page - 1) * limit;
     let countQuery = 'SELECT COUNT(*) FROM patients';
     let dataQuery = 'SELECT * FROM patients';
-    let queryParams: any[] = [];
+    const queryParams: string[] = [];
 
     if (search) {
       const searchCondition = "first_name ILIKE $1 OR last_name ILIKE $1 OR phone_number ILIKE $1 OR CONCAT(first_name, ' ', last_name) ILIKE $1";
@@ -79,8 +72,6 @@ export const PatientModel = {
         RETURNING *
       `;
       
-      console.log('กำลังพยายามสร้างข้อมูลผู้ป่วย:', patient);
-      
       const values = [
         patient.first_name,
         patient.last_name,
@@ -95,18 +86,11 @@ export const PatientModel = {
       ];
       
       const { rows } = await pool.query(query, values);
-      console.log('สร้างข้อมูลผู้ป่วยสำเร็จ:', rows[0]);
       return rows[0];
     } catch (error) {
-      if (error instanceof DatabaseError) {
-        console.error('เกิดข้อผิดพลาดในการสร้างข้อมูลผู้ป่วย:', {
-          รหัสข้อผิดพลาด: error.code,
-          ข้อความ: error.message,
-          รายละเอียด: error.detail
-        });
-      }
-      const errorMessage = error instanceof Error ? error.message : 'ข้อผิดพลาดที่ไม่ทราบสาเหตุ';
-      throw new Error(`ไม่สามารถสร้างข้อมูลผู้ป่วยได้: ${errorMessage}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to create patient: ${errorMessage}`);
+
     }
 },
 
