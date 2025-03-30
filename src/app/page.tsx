@@ -4,7 +4,7 @@ import PtientIcon from '@/icons/patient.png'
 import AddPtientIcon from '@/icons/Addpatient.png'
 import LogOutIcon from '@/icons/logout.png'
 import { createContext, useState, useEffect, Dispatch, SetStateAction } from 'react';
-import Logo from '@/icons/Screenshot 2568-03-30 at 19.21.12.png'
+import LOGO from '@/icons/LOGO.png'
 import PatientForm from './components/patientForm'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -86,6 +86,7 @@ export default function Home() {
       try {
         const token = localStorage.getItem('token');
         console.log("token:", token)
+
         if (!token) {
           setIsAuthenticated(false);
           return;
@@ -97,7 +98,7 @@ export default function Home() {
         console.log(response)
         setIsAuthenticated(true);
       } catch (error) {
-        console.log("Error from login", error)
+        console.error("Error from login", error)
         setIsAuthenticated(false);
         localStorage.removeItem('token');
       }
@@ -170,10 +171,9 @@ export default function Home() {
           <div className="container mx-auto px-4 py-3 sm:px-6">
             <div className="flex items-center gap-3 sm:gap-6">
               <Image 
-              src={Logo}
-              alt='Logo'
-              width={50}
-              height={50}
+              src={LOGO}
+              alt='LOGO'
+              className='w-12 h-12 rounded-full bg-white'
               />
               <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-white tracking-wide">MEKHONG CLINIC</h1>
             </div>
@@ -236,7 +236,10 @@ export default function Home() {
                   <input
                     type="text"
                     placeholder="Search patients..."
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setCurrentPage(1);
+                    }}
                     className="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>

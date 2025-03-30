@@ -21,7 +21,7 @@ class UserModel {
       const hashedPassword = await bcrypt.hash(newPassword, 10);
       const query = 'UPDATE users SET password = $1 WHERE username = $2';
       const result = await this.pool.query(query, [hashedPassword, username]);
-      return result.rowCount > 0;
+      return result.rowCount !== null && result.rowCount > 0;
     } catch (error) {
       console.error('Error updating password:', error);
       return false;

@@ -3,9 +3,6 @@ import { toast } from 'react-toastify';
 import ShowIcon from '@/icons/show.png'
 import hide from '@/icons/hide.png'
 import Image from 'next/image';
-import dotenv from 'dotenv';
-dotenv.config();
-console.log("JWT_SECRET:", process.env.JWT_SECRET);
 
 interface LoginFormProps {
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
@@ -33,7 +30,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ setIsAuthenticated }) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
       const response = await fetch('/api/auth', {
         method: 'POST',
@@ -47,6 +44,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ setIsAuthenticated }) => {
       });
 
       const data = await response.json();
+      console.log("Login Response:", data.token);
 
       if (!response.ok) {
         console.log("username", formData.username)
@@ -56,6 +54,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ setIsAuthenticated }) => {
       }
 
       localStorage.setItem('token', data.token);
+      console.log("Saved Token:", localStorage.getItem('token')); // ดูว่ามีค่าหรือไม่
       if (formData.rememberMe) {
         localStorage.setItem('username', formData.username);
       } else {
@@ -63,7 +62,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ setIsAuthenticated }) => {
       }
       
       setIsAuthenticated(true);
-      toast.success('เข้าสู่ระบบสำเร็จ');
+      toast.success('Successful login!');
+      console.log("After SET token>>>",localStorage.getItem('token'));
+
 
     } catch (error) {
       // toast.error(error.message || 'Something went wrong');
@@ -79,8 +80,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ setIsAuthenticated }) => {
   }
 
   return (
-    <div className="min-h-screen flex items-start justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 mt-[10%]">
+    <div className="min-h-screen relative flex items-start justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 mt-[10%] z-10">
         <div>
           <h2 className="mt-6 text-center text-4xl font-extrabold text-gray-900">
             Welcome to <span className='text-blue-500'>Mekhong Clinic</span>

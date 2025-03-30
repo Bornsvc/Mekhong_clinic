@@ -1,10 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 export default function AddUserForm() {
-  const router = useRouter();
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -39,8 +37,12 @@ export default function AddUserForm() {
         password: '',
         role: 'user'
       });
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ');
+      }
     }
   };
 

@@ -20,7 +20,7 @@ export const PatientModel = {
     const offset = (page - 1) * limit;
     let countQuery = 'SELECT COUNT(*) FROM patients';
     let dataQuery = 'SELECT * FROM patients';
-    const queryParams: string[] = [];
+    const queryParams: (string | number)[] = [];
 
     if (search) {
       const searchCondition = "first_name ILIKE $1 OR last_name ILIKE $1 OR phone_number ILIKE $1 OR CONCAT(first_name, ' ', last_name) ILIKE $1";
