@@ -2,6 +2,34 @@ import { NextResponse } from 'next/server';
 import * as XLSX from 'xlsx';
 import { PatientModel } from '@/backend/models/Patient';
 
+interface ExcelRow {
+  UHID: string;
+  FullName: string;
+  Dob: string;
+  Registered: string;
+  Age: string;
+  Mobile: string;
+  Gender: string;
+  Balance: string;
+  Diagnosis: string;
+}
+
+interface Patient {
+  id: string;
+  first_name: string;
+  last_name: string;
+  birth_date: string;
+  age: number;
+  address: string;
+  phone_number: string;
+  purpose: string;
+  medication: string;
+  created_at: string;
+  gender: string;
+  balance: number;
+  diagnosis: string
+}
+
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
@@ -33,15 +61,15 @@ export async function POST(request: Request) {
       errors: [] as string[]
     };
 
-    for (const row of data) {
+    for (const row of data as ExcelRow[]) {
       try {
         // Extract and validate required fields
-        const uhid = row['UHID'] as string;
+        const uhid = row.UHID;
         if (!uhid) {
           throw new Error('UHID is required');
         }
 
-        const fullName = row['FullName'] as string;
+        const fullName = row.FullName;
         if (!fullName) {
           // Skip rows without FullName
           continue;
@@ -52,8 +80,8 @@ export async function POST(request: Request) {
         const lastName = lastNameParts.join(' ');
 
         // Convert ISO 8601 date strings to Date objects
-        const dobStr = row['Dob'] as string;
-        const registeredStr = row['Registered'] as string;
+        const dobStr = row.Dob;
+        const registeredStr = row.Registered;
         
         const dob = dobStr ? new Date(dobStr) : null;
         const registered = registeredStr ? new Date(registeredStr) : null;
@@ -67,14 +95,14 @@ export async function POST(request: Request) {
         }
 
         // Validate and convert age to number
-        const ageStr = row['Age'] as string;
+        const ageStr = row.Age;
         const age = ageStr ? parseInt(ageStr.trim()) : 0;
         if (isNaN(age)) {
           throw new Error('Invalid age format');
         }
 
         // Validate and convert balance to number
-        const balanceStr = row['Balance'] as string;
+        const balanceStr = row.Balance;
         const balance = balanceStr ? parseFloat(balanceStr.replace(/[^0-9.-]/g, '').trim()) : 0;
         if (isNaN(balance)) {
           throw new Error('Invalid balance format');
@@ -87,10 +115,10 @@ export async function POST(request: Request) {
           birth_date: dob.toISOString(),
           registered: registered.toISOString(),
           age: age,
-          phone_number: row['Mobile'] as string || '',
-          gender: row['Gender'] as string || '',
+          phone_number: row.Mobile || '',
+          gender: row.Gender || '',
           balance: balance,
-          diagnosis: row['Diagnosis'] as string || ''
+          diagnosis: row.Diagnosis || ''
         };
 
         await PatientModel.createPatient(patient);
