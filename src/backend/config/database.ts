@@ -1,4 +1,6 @@
 import { Pool } from 'pg';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const pool = new Pool({
   user: process.env.POSTGRES_USER,
@@ -6,6 +8,20 @@ const pool = new Pool({
   database: process.env.POSTGRES_DB,
   password: process.env.POSTGRES_PASSWORD,
   port: parseInt(process.env.POSTGRES_PORT || '5432'),
+});
+
+// Test the connection
+pool.connect((err, client, release) => {
+  if (err) {
+    return console.error('Error acquiring client:', err.stack);
+  }
+  client.query('SELECT NOW()', (err) => {
+    release();
+    if (err) {
+      return console.error('Error executing query:', err.stack);
+    }
+    console.log('Connected to PostgreSQL database');
+  });
 });
 
 export default pool;

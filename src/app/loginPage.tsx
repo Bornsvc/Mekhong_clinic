@@ -1,5 +1,11 @@
 import React, { useState, FormEvent, ChangeEvent } from 'react';
 import { toast } from 'react-toastify';
+import ShowIcon from '@/icons/show.png'
+import hide from '@/icons/hide.png'
+import Image from 'next/image';
+import dotenv from 'dotenv';
+dotenv.config();
+console.log("JWT_SECRET:", process.env.JWT_SECRET);
 
 interface LoginFormProps {
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
@@ -14,6 +20,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ setIsAuthenticated }) => {
   });
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [textOrPasswprd, setTextOrPassword] = useState('password');
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value, type, checked } = e.target;
@@ -26,17 +33,50 @@ const LoginForm: React.FC<LoginFormProps> = ({ setIsAuthenticated }) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setIsLoading(true);
+    
     try {
-          localStorage.setItem('token', 'admin-token');
-          setIsAuthenticated(true);
+      const response = await fetch('/api/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: formData.username,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.log("username", formData.username)
+        console.log("password", formData.password)
+        console.log("JWT_SECRET:", process.env.JWT_SECRET);
+        throw new Error(data.message);
+      }
+
+      localStorage.setItem('token', data.token);
+      if (formData.rememberMe) {
+        localStorage.setItem('username', formData.username);
+      } else {
+        localStorage.removeItem('username');
+      }
+      
+      setIsAuthenticated(true);
+      toast.success('เข้าสู่ระบบสำเร็จ');
 
     } catch (error) {
-      toast.error('Login failed');
+      // toast.error(error.message || 'Something went wrong');
+      console.log("JWT_SECRET:", process.env.JWT_SECRET);
       console.error(error);
     } finally {
       setIsLoading(false);
     }
   };
+
+  const hideShowPassword = () => {
+    setTextOrPassword(prevState => prevState === "password" ? "text" : "password");
+  }
 
   return (
     <div className="min-h-screen flex items-start justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
@@ -67,12 +107,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ setIsAuthenticated }) => {
               />
             </div>
 
-            <div>
+            <div className='relative'>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
               </label>
               <input
-                type="password"
+                type={textOrPasswprd}
                 id="password"
                 name="password"
                 value={formData.password}
@@ -82,6 +122,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ setIsAuthenticated }) => {
                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
                          transition duration-150 ease-in-out"
                 placeholder="Enter your password"
+              />
+              <Image 
+              src={textOrPasswprd === 'password' ? hide : ShowIcon}
+              alt='ShowIcon'
+              width={30}
+              height={30}
+              className='absolute right-3 bottom-[5px]'
+              onClick={hideShowPassword}
               />
             </div>
 

@@ -4,6 +4,7 @@ import PtientIcon from '@/icons/patient.png'
 import AddPtientIcon from '@/icons/Addpatient.png'
 import LogOutIcon from '@/icons/logout.png'
 import { createContext, useState, useEffect, Dispatch, SetStateAction } from 'react';
+import Logo from '@/icons/Screenshot 2568-03-30 at 19.21.12.png'
 import PatientForm from './components/patientForm'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -56,7 +57,7 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [toastMassage, setToastMassage] = useState<boolean | null>(null);
   const [patients, setPatients] = useState<Patient[]>([])
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isImportActive, setIsImportActive] = useState<boolean>(false);
 
@@ -84,8 +85,9 @@ export default function Home() {
     const checkAuth = async () => {
       try {
         const token = localStorage.getItem('token');
+        console.log("token:", token)
         if (!token) {
-          setIsAuthenticated(true);
+          setIsAuthenticated(false);
           return;
         }
         // Verify token with backend
@@ -96,7 +98,7 @@ export default function Home() {
         setIsAuthenticated(true);
       } catch (error) {
         console.log("Error from login", error)
-        setIsAuthenticated(true);
+        setIsAuthenticated(false);
         localStorage.removeItem('token');
       }
     };
@@ -167,7 +169,12 @@ export default function Home() {
         <nav className="sticky top-0 z-20 bg-gradient-to-r from-blue-600 to-blue-400 shadow-lg">
           <div className="container mx-auto px-4 py-3 sm:px-6">
             <div className="flex items-center gap-3 sm:gap-6">
-              <h1 className="text-xl md:text-2xl lg:text-2xl font-bold text-white">LOGO</h1>
+              <Image 
+              src={Logo}
+              alt='Logo'
+              width={50}
+              height={50}
+              />
               <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-white tracking-wide">MEKHONG CLINIC</h1>
             </div>
           </div>
