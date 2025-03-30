@@ -1,9 +1,10 @@
 'use client'
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import axios from 'axios';
 import Link from 'next/link';
 import EditPatientForm from '@/app/components/editPatientForm';
+import { FormContext } from "@/app/page"; // Import the context
 
 interface Patient {
   id: string;
@@ -22,6 +23,8 @@ interface Patient {
 }
 
 export default function PatientDetails() {
+   const { setToastMassage } = useContext(FormContext); 
+
   const params = useParams();
   const [patient, setPatient] = useState<Patient | null>(null);
   const [loading, setLoading] = useState(true);
@@ -89,12 +92,15 @@ export default function PatientDetails() {
       if (response.status === 200) {
         setIsDeleteModalOpen(false);
         router.push('/'); 
+        setToastMassage(true);
       } else {
-        throw new Error('ไม่สามารถลบข้อมูลได้');
+        setToastMassage(false);
+        throw new Error('Can not delete patient');
       }
+
     } catch (error) {
-      console.error('เกิดข้อผิดพลาดในการลบข้อมูล:', error);
-      alert('ไม่สามารถลบข้อมูลได้ กรุณาลองใหม่อีกครั้ง');
+      console.error('Delete fail:', error);
+      alert('Can not delete patient, pls try again.');
     } finally {
       setLoading(false);
     }
