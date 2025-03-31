@@ -3,8 +3,15 @@
   "compilerOptions": {
     "module": "ESNext",
     "outDir": "dist",
-    "noEmit": false,
-    "moduleResolution": "node"
+    "target": "ES2019",
+    "lib": ["ES2019"],
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "allowJs": true
   },
   "include": ["src/backend/**/*"]
 }

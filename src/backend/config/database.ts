@@ -1,7 +1,10 @@
 import { Pool } from 'pg';
 import dotenv from 'dotenv';
-dotenv.config();
+import path from 'path';
 
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
+
+// Initialize Pool instance
 const pool = new Pool({
   user: process.env.POSTGRES_USER,
   host: process.env.POSTGRES_HOST,
