@@ -4,6 +4,7 @@ import Image from "next/image";
 import ClodeIcon from "@/icons/close.png";
 import axios from "axios";
 // import { useRouter } from 'next/navigation';
+import { getCurrentUserId } from '@/utils/auth';
 
 interface EditPatientFormProps {
   patientId: string;
@@ -104,6 +105,20 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
       });
 
       if (response.status === 200) {
+        const userId = await getCurrentUserId();
+        
+        // บันทึก audit log
+        await axios.post('/api/audit', {
+          userId: userId,
+          action: 'UPDATE',
+          resourceType: 'PATIENT',
+          resourceId: patientId,
+          details: {
+            changes: formData,
+            timestamp: new Date().toISOString()
+          }
+        });
+
         window.location.reload();
         onClose();
       }
