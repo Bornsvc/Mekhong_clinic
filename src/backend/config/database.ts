@@ -15,16 +15,20 @@ const pool = new Pool({
 
 // Test the connection
 pool.connect((err, client, release) => {
-  if (err) {
-    return console.error('Error acquiring client:', err.stack);
+  if (err || !client) {
+    console.error('Error acquiring client:', err?.stack);
+    return;
   }
-  client.query('SELECT NOW()', (err) => {
+
+  client.query('SELECT NOW()', (err, result) => {
     release();
     if (err) {
-      return console.error('Error executing query:', err.stack);
+      console.error('Error executing query:', err.stack);
+      return;
     }
-    console.log('Connected to PostgreSQL database');
+    console.log('Connected to PostgreSQL database at:', result.rows[0].now);
   });
 });
+
 
 export default pool;

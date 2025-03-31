@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import AddUserForm from '../components/addUserForm';
+import AddUserForm from '../../components/auth/addUserForm';
 
 export default function UsersPage() {
   const router = useRouter();

@@ -1,16 +1,14 @@
 import { NextResponse } from 'next/server';
 import { PatientModel } from '@/backend/models/Patient';
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request) {
   try {
-    // Wait for the params to be fully resolved
-    const patientId = params?.id;  // Ensure params are available
-
-    if (!patientId) {
+    const id = new URL(request.url).pathname.split('/').pop();
+    if (!id) {
       return NextResponse.json({ error: 'Patient ID is required' }, { status: 400 });
     }
 
-    const patient = await PatientModel.getPatientById(patientId);
+    const patient = await PatientModel.getPatientById(id);
 
     if (!patient) {
       return NextResponse.json({ error: 'Patient not found' }, { status: 404 });
@@ -23,18 +21,19 @@ export async function GET(request: Request, { params }: { params: { id: string }
   }
 }
 
-
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request) {
   try {
+    const id = new URL(request.url).pathname.split('/').pop();
+    if (!id) {
+      return NextResponse.json({ error: 'Patient ID is required' }, { status: 400 });
+    }
+
     const patient = await request.json();
     
     // ตรวจสอบว่าผู้ป่วยมีอยู่หรือไม่
-    const existingPatient = await PatientModel.getPatientById(params.id);
+    const existingPatient = await PatientModel.getPatientById(id);
     if (!existingPatient) {
-      return NextResponse.json(
-        { error: 'Patient not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Patient not found' }, { status: 404 });
     }
 
     // ตรวจสอบข้อมูลที่จำเป็น
@@ -48,7 +47,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       }
     }
 
-    const updatedPatient = await PatientModel.updatePatient(params.id, patient);
+    const updatedPatient = await PatientModel.updatePatient(id, patient);
     return NextResponse.json({ data: updatedPatient });
   } catch (error) {
     console.error('Error updating patient:', error);
@@ -59,24 +58,23 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request) {
   try {
-    // ตรวจสอบว่าผู้ป่วยมีอยู่หรือไม่
-    const existingPatient = await PatientModel.getPatientById(params.id);
-    if (!existingPatient) {
-      return NextResponse.json(
-        { error: 'Patient not found' },
-        { status: 404 }
-      );
+    const id = new URL(request.url).pathname.split('/').pop();
+    if (!id) {
+      return NextResponse.json({ error: 'Patient ID is required' }, { status: 400 });
     }
 
-    await PatientModel.deletePatient(params.id);
-    return NextResponse.json({ message: 'Successful dalete patient.' });
+    // ตรวจสอบว่าผู้ป่วยมีอยู่หรือไม่
+    const existingPatient = await PatientModel.getPatientById(id);
+    if (!existingPatient) {
+      return NextResponse.json({ error: 'Patient not found' }, { status: 404 });
+    }
+
+    await PatientModel.deletePatient(id);
+    return NextResponse.json({ message: 'Successfully deleted patient.' });
   } catch (error) {
     console.error('Error deleting patient:', error);
-    return NextResponse.json(
-      { error: 'Patient not found' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

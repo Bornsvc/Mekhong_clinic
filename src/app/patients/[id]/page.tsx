@@ -37,8 +37,10 @@ export default function PatientDetails() {
   useEffect(() => {
     const fetchPatient = async () => {
       try {
-        const response = await axios.get(`/api/patients/${params.id}`);
-        setPatient(response.data.data);
+        if(params !== null){
+          const response = await axios.get(`/api/patients/${params.id}`);
+          setPatient(response.data);
+        }
       } catch (err) {
         console.log("Error>>>>>", err)
         setError('Failed to load patient data');
@@ -87,17 +89,17 @@ export default function PatientDetails() {
   const handleConfirmDelete = async () => {
     try {
       setLoading(true);
-      const response = await axios.delete(`/api/patients/${params.id}`);
-      
-      if (response.status === 200) {
-        setIsDeleteModalOpen(false);
-        router.push('/'); 
-        setToastMassage(true);
-      } else {
-        setToastMassage(false);
-        throw new Error('Can not delete patient');
+      if(params !== null){
+        const response = await axios.delete(`/api/patients/${params.id}`);
+        if (response.status === 200) {
+          setIsDeleteModalOpen(false);
+          router.push('/'); 
+          setToastMassage(true);
+        } else {
+          setToastMassage(false);
+          throw new Error('Can not delete patient');
+        }
       }
-
     } catch (error) {
       console.error('Delete fail:', error);
       alert('Can not delete patient, pls try again.');
@@ -144,6 +146,7 @@ export default function PatientDetails() {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
         {isDeleteModalOpen && <DeleteConfirmationModal />}
+
         {isEditModalOpen && <EditPatientForm patientId={params.id as string} onClose={() => setIsEditModalOpen(false)} />}
 
       <div className="max-w-4xl mx-auto">
