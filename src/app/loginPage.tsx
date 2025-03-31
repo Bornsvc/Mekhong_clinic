@@ -64,7 +64,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ setIsAuthenticated }) => {
       setIsAuthenticated(true);
       toast.success('Successful login!');
       console.log("After SET token>>>",localStorage.getItem('token'));
-
+      window.location.reload();
 
     } catch (error) {
       // toast.error(error.message || 'Something went wrong');
@@ -74,7 +74,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ setIsAuthenticated }) => {
       setIsLoading(false);
     }
   };
-
   const hideShowPassword = () => {
     setTextOrPassword(prevState => prevState === "password" ? "text" : "password");
   }
