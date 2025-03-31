@@ -1,12 +1,14 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getSession } from 'next-auth/react';
 
-export async function getCurrentUserId(): Promise<number | null> {
+export async function getCurrentUserId(): Promise<number> {
   try {
-    const session = await getServerSession(authOptions);
-    return session?.user?.id ? session.user.id : null;
+    const session = await getSession();
+    if (!session?.user?.id) {
+      throw new Error('User not authenticated');
+    }
+    return Number(session.user.id);
   } catch (error) {
     console.error('Error getting current user ID:', error);
-    return null;
+    throw error;
   }
 }

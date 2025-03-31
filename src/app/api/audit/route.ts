@@ -20,7 +20,7 @@ export async function GET() {
       ORDER BY al.created_at DESC
       LIMIT 100
     `;
-    
+
     const result = await pool.query(query);
     return NextResponse.json(result.rows);
   } catch (error) {
@@ -39,7 +39,14 @@ export async function POST(req: Request) {
       RETURNING *
     `;
     
-    await pool.query(query, [userId, action, resourceType, resourceId, details]);
+    // Convert resourceId to string to store the full ID
+    await pool.query(query, [
+      userId, 
+      action, 
+      resourceType, 
+      resourceId.toString(), // Store as string
+      details
+    ]);
     
     return NextResponse.json({ message: 'Audit log created successfully' });
   } catch (error) {
@@ -47,3 +54,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Failed to create audit log' }, { status: 500 });
   }
 }
+

@@ -3,8 +3,9 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import ClodeIcon from "@/icons/close.png";
 import axios from "axios";
-// import { useRouter } from 'next/navigation';
-import { getCurrentUserId } from '@/utils/auth';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+// import { getCurrentUserId } from '@/utils/auth';
 
 interface EditPatientFormProps {
   patientId: string;
@@ -26,6 +27,16 @@ interface FormData {
 }
 
 const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose }) => {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  // Add this useEffect for authentication check
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin');
+    }
+  }, [status, router]);
+
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -90,6 +101,11 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!session?.user?.id) {
+      router.push('/auth/signin');
+      return;
+    }
+
     try {
       const response = await axios.put(`/api/patients/${patientId}`, {
         first_name: formData.firstName,
@@ -105,11 +121,9 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
       });
 
       if (response.status === 200) {
-        const userId = await getCurrentUserId();
-        
-        // บันทึก audit log
+        // ใช้ session.user.id แทน getCurrentUserId
         await axios.post('/api/audit', {
-          userId: userId,
+          userId: session.user.id,
           action: 'UPDATE',
           resourceType: 'PATIENT',
           resourceId: patientId,
@@ -124,9 +138,13 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
       }
     } catch (error) {
       console.error('Error updating patient:', error);
-      alert('Failed to update patient. Please try again.');
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        router.push('/auth/signin');
+      } else {
+        alert('Failed to update patient. Please try again.');
+      }
     }
-  };
+};
 
   if (loading) {
     return (
