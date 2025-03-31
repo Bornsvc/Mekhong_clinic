@@ -47,7 +47,8 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
     const fetchPatient = async () => {
       try {
         const response = await axios.get(`/api/patients/${patientId}`);
-        const patient = response.data.data;
+        console.log(response.data)
+        const patient = response.data;
         setFormData({
           firstName: patient.first_name,
           lastName: patient.last_name,
@@ -64,6 +65,7 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
         setLoading(false);
       } catch (err) {
         console.error("Error fetching patient:", err);
+        console.log(formData)
         setError('Failed to load patient data');
         setLoading(false);
       }
