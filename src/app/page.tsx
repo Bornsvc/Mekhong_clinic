@@ -230,14 +230,14 @@ export default function Home() {
           {/* Main Content Area */}
           <div className="flex-1 flex flex-col h-full overflow-hidden px-4 md:px-0">
             {/* Search Bar */}
-            <div className="p-4 md:p-6 bg-gray-50 rounded-lg shadow-md border border-gray-200 mt-3 mb-3">
+            <div className="p-4 mr-3 md:p-6 bg-gray-50 rounded-lg shadow-md border border-gray-200 mt-3 mb-3">
               <div className="flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
                 <div className="relative w-full md:w-96">
                   <input
                     type="text"
                     placeholder="Search patients..."
                     onChange={(e) => {
-                      setSearchQuery(e.target.value);
+                      setSearchQuery((e.target.value));
                       setCurrentPage(1);
                     }}
                     className="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -265,7 +265,7 @@ export default function Home() {
             </div>
 
            {/* Table Container */}
-            <div className="flex-1 overflow-hidden bg-white rounded-lg shadow-md border border-gray-200">
+            <div className="flex-1 mr-3 overflow-hidden bg-white rounded-lg shadow-md border border-gray-200">
            
                 
                 <table className="min-w-full divide-y divide-gray-200">

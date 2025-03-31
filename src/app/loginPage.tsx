@@ -129,7 +129,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ setIsAuthenticated }) => {
               alt='ShowIcon'
               width={30}
               height={30}
-              className='absolute right-3 bottom-[5px]'
+              className='absolute right-3 bottom-[5px] opacity-50'
               onClick={hideShowPassword}
               />
             </div>
