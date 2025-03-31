@@ -37,20 +37,23 @@ export default function PatientDetails() {
   useEffect(() => {
     const fetchPatient = async () => {
       try {
-        if(params !== null){
+        if (params?.id) {  
           const response = await axios.get(`/api/patients/${params.id}`);
           setPatient(response.data);
+        } else {
+          setError('Invalid patient ID');
         }
       } catch (err) {
-        console.log("Error>>>>>", err)
+        console.log("Error>>>>>", err);
         setError('Failed to load patient data');
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchPatient();
-  }, [params.id]);
+  }, [params?.id]); 
+  
 
   if (loading) {
     return (
@@ -147,7 +150,10 @@ export default function PatientDetails() {
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
         {isDeleteModalOpen && <DeleteConfirmationModal />}
 
-        {isEditModalOpen && <EditPatientForm patientId={params.id as string} onClose={() => setIsEditModalOpen(false)} />}
+        {isEditModalOpen && typeof params?.id === 'string' && (
+          <EditPatientForm patientId={params.id} onClose={() => setIsEditModalOpen(false)} />
+        )}
+
 
       <div className="max-w-4xl mx-auto">
         {/* Back Link */}
