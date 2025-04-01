@@ -24,7 +24,7 @@ async function createUser(username, password, role) {
       RETURNING id, username, role, email
     `;
     
-    const email = `${username}@mekong-clinic.com`; // สร้าง email อัตโนมัติ
+    // const email = `${username}@mekong-clinic.com`; // สร้าง email อัตโนมัติ
     const result = await pool.query(query, [username, hashedPassword, role, email]);
     console.log('สร้างผู้ใช้สำเร็จ:', result.rows[0]);
   } catch (error) {

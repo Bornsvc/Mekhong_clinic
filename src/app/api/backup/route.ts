@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { Pool } from 'pg';
-import { S3Client, PutObjectCommand, ListObjectsCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3'; // ListObjectsCommand
 import nodemailer from 'nodemailer';
 
 interface Row {
@@ -97,34 +97,60 @@ export async function POST() {
     const result = await performBackup();
     return NextResponse.json(result);
   } catch (error) {
-    console.log(error)
-    return NextResponse.json(
-      { error: 'Failed to perform backup' },
-      { status: 500 }
-    );
+    console.error('Error in backup endpoint:', error);
   }
 }
 
-// GET endpoint to list backup files from S3
-export async function GET() {
+// PUT endpoint to restore from backup
+export async function PUT(request: Request) {
   try {
-    const listObjectsCommand = {
-      Bucket: process.env.AWS_S3_BUCKET || ''
-    };
+    const { backupKey } = await request.json();
+    
+    // Get backup data from S3
+    const response = await s3Client.send(new GetObjectCommand({
+      Bucket: process.env.AWS_S3_BUCKET || '',
+      Key: backupKey
+    }));
 
-    const data = await s3Client.send(new ListObjectsCommand(listObjectsCommand));
-    const backups = data.Contents?.map(item => ({
-      key: item.Key,
-      lastModified: item.LastModified,
-      size: item.Size
-    })) || [];
+    const backupData = JSON.parse(await response.Body?.transformToString() || '{}');
 
-    return NextResponse.json(backups);
+    // Start transaction
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+
+      // Restore data for each table
+      for (const [table, data] of Object.entries(backupData)) {
+        // Clear existing data
+        await client.query(`TRUNCATE TABLE ${table} CASCADE`);
+
+        // Insert backup data
+        for (const row of data as Row[]) {
+          const columns = Object.keys(row);
+          const values = Object.values(row);
+          const placeholders = values.map((_, i) => `$${i + 1}`).join(', ');
+
+          await client.query(
+            `INSERT INTO ${table} (${columns.join(', ')}) VALUES (${placeholders})`,
+            values
+          );
+        }
+      }
+
+      await client.query('COMMIT');
+      await sendNotification(
+        'Restore Successful',
+        `Data restored successfully from backup: ${backupKey}`
+      );
+      return NextResponse.json({ success: true, message: 'Data restored successfully' });
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
   } catch (error) {
-    console.error('Error listing backups:', error);
-    return NextResponse.json(
-      { error: 'Failed to list backups' },
-      { status: 500 }
-    );
+    console.error('Error restoring from backup:', error);
+    return NextResponse.json({ error: 'Restore failed' }, { status: 500 });
   }
 }
