@@ -47,6 +47,7 @@ testDatabaseConnection().catch(err => {
 const userModel = new UserModel(pool);
 
 // Authentication route
+<<<<<<< Updated upstream
 app.post('/api/auth', async (req, res, next) => {
   try {
     const { username, password } = req.body;
@@ -86,6 +87,51 @@ throw error;
 
   // Add error handling middleware
   app.use(errorHandler);
+=======
+interface AuthError extends Error {
+  status?: number;
+}
+
+// app.post('/api/auth', async (req: Request, res: Response, next: NextFunction) => {
+//   try {
+//     const { username, password } = req.body;
+//     const user = await userModel.findByUsername(username);
+
+//     if (!user) {
+//       const error: AuthError = new Error('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
+//       error.status = 401;
+//       throw error;
+//     }
+
+//     const isValidPassword = await userModel.validatePassword(password, user.password);
+//     if (!isValidPassword) {
+//       const error: AuthError = new Error('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
+//       error.status = 401;
+//       throw error;
+//     }
+
+//     const token = jwt.sign(
+//       { id: user.id, username: user.username, role: user.role },
+//       process.env.JWT_SECRET || 'default-secret-key',
+//       { expiresIn: '24h' }
+//     );
+
+//     return res.json({
+//       message: 'เข้าสู่ระบบสำเร็จ',
+//       token,
+//       user: {
+//         username: user.username,
+//         role: user.role
+//       }
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+
+// Add error handling middleware
+// app.use(errorHandler);
+>>>>>>> Stashed changes
 
   app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
