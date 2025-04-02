@@ -58,9 +58,10 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [toastMassage, setToastMassage] = useState<boolean | null>(null);
   const [patients, setPatients] = useState<Patient[]>([])
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isImportActive, setIsImportActive] = useState<boolean>(false);
+
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -71,6 +72,7 @@ export default function Home() {
       const response = await axios.get(`/api/patients?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}`);
       setPatients(response.data.data);
       setTotalPages(response.data.pagination.totalPages);
+      // setIsAuthenticated(true)
     } catch(error) {
       console.log("Error from fetchPatients function>>>", error)
       toast.error("Failed to load patients");
@@ -94,19 +96,18 @@ export default function Home() {
           headers: { Authorization: `Bearer ${token}` }
         });
         console.log("response>>>", response)
-        setIsAuthenticated(true);
+        // setIsAuthenticated(true);
       } catch (error) {
         console.error("Error from login", error)
         setIsAuthenticated(false);
-        // localStorage.removeItem('token');
+        localStorage.removeItem('token');
       }
     };
 
     checkAuth();
     fetchPatients();
-  }, [fetchPatients]); // เพิ่ม dependency
+  }, [fetchPatients]); 
 
-  // แก้ไข useEffect ที่สอง
   useEffect(() => {
     if (toastMassage === true) {
       toast.success("Successfully to add patient!");
@@ -116,12 +117,11 @@ export default function Home() {
       toast.error("Fail to add patient!");
       setToastMassage(null);
     }
-  }, [toastMassage, fetchPatients]); // เพิ่ม dependency
+  }, [toastMassage, fetchPatients]); 
 
-  // แก้ไข useEffect สุดท้าย
   useEffect(() => {
     fetchPatients();
-  }, [currentPage, itemsPerPage, searchQuery, fetchPatients]); // เพิ่ม dependency
+  }, [currentPage, itemsPerPage, searchQuery, fetchPatients]); 
 
   const renderPagination = () => {
     return (
@@ -133,6 +133,18 @@ export default function Home() {
         />
       </div>
     );
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('topken')
+    // setIsAuthenticated(false);
+    router.push('/loginPage')
+    router.push("/loginPage");
+  }
+
+  const handleOpenForm = () => {
+    setFormactive(true);
+    console.log(formActive)
   };
 
   return (
@@ -160,7 +172,7 @@ export default function Home() {
               alt='LOGO'
               className='w-12 h-12 rounded-full bg-white'
               />
-              <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-white tracking-wide">MEKHONG CLINIC</h1>
+              <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-white tracking-wide">MEKONG CLINIC</h1>
             </div>
           </div>
         </nav>
@@ -194,7 +206,6 @@ export default function Home() {
             {/* Menu Items */}
             <div className={`${isMobileMenuOpen ? 'flex' : 'hidden'} md:flex flex-col justify-between h-[calc(100%-60px)] md:h-full`}>
               <div 
-                // onClick={null}
                 className={`flex items-center gap-4 p-4 cursor-pointer transition-all duration-200 justify-center md:justify-start
                   ${active ? 'bg-blue-50 border-r-4 border-blue-500' : 'hover:bg-gray-50'}`}
               >
@@ -204,7 +215,7 @@ export default function Home() {
 
               <div 
                 className={`flex items-center gap-4 p-4 w-full cursor-pointer justify-center md:justify-start hover:bg-gray-50`}
-                // onClick={handleLogout}
+                  onClick={handleLogout}
               >
                 <Image src={LogOutIcon} alt="LogOutIcon" width={24} height={24} />
                 <span className="font-medium text-gray-700 inline">Log out</span>
@@ -230,7 +241,7 @@ export default function Home() {
                 </div>
                 <div className="flex items-center gap-6 mr-10">
                   <button
-                    // onClick={handleOpenForm}
+                    onClick={handleOpenForm}
                     className="flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-xl shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-300 w-full md:w-auto"
                   >
                     <Image src={AddPtientIcon} alt="Add" width={24} height={24} />
