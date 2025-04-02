@@ -14,6 +14,7 @@ import Link from 'next/link';
 import UploadIcon from '@/icons/import.png'
 import ImportFile from './components/importPatientForm'
 import Pagination from './components/Pagination'
+import { useCallback } from 'react';
 
 interface Patient {
   id: string;
@@ -65,7 +66,7 @@ export default function Home() {
   const [totalPages, setTotalPages] = useState<number>(1);
   const [itemsPerPage] = useState<number>(11);
 
-  const fetchPatients = async() => {
+  const fetchPatients = useCallback(async () => {
     try {
       const response = await axios.get(`/api/patients?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}`);
       setPatients(response.data.data);
@@ -74,7 +75,7 @@ export default function Home() {
       console.log("Error from fetchPatients function>>>", error)
       toast.error("Failed to load patients");
     }
-  };
+  }, [currentPage, itemsPerPage, searchQuery]);
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -85,29 +86,27 @@ export default function Home() {
     const checkAuth = async () => {
       try {
         const token = localStorage.getItem('token');
-        console.log("token:", token)
-
         if (!token) {
           setIsAuthenticated(false);
           return;
         }
-        // Verify token with backend
         const response = await axios.get('/api/auth/verify', {
           headers: { Authorization: `Bearer ${token}` }
         });
-        console.log(response)
+        console.log("response>>>", response)
         setIsAuthenticated(true);
       } catch (error) {
         console.error("Error from login", error)
         setIsAuthenticated(false);
-        localStorage.removeItem('token');
+        // localStorage.removeItem('token');
       }
     };
 
     checkAuth();
-    fetchPatients()
-  }, [])
+    fetchPatients();
+  }, [fetchPatients]); // เพิ่ม dependency
 
+  // แก้ไข useEffect ที่สอง
   useEffect(() => {
     if (toastMassage === true) {
       toast.success("Successfully to add patient!");
@@ -117,26 +116,12 @@ export default function Home() {
       toast.error("Fail to add patient!");
       setToastMassage(null);
     }
-  }, [toastMassage]);
-  
+  }, [toastMassage, fetchPatients]); // เพิ่ม dependency
 
-  const handleActive = () => {
-    setActive(true)
-  };
-  
-  const handleOpenForm = () => {
-    setFormactive(!formActive)
-  }
-  
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setIsAuthenticated(false);
-  }
-
-
+  // แก้ไข useEffect สุดท้าย
   useEffect(() => {
     fetchPatients();
-  }, [currentPage, itemsPerPage, searchQuery]);
+  }, [currentPage, itemsPerPage, searchQuery, fetchPatients]); // เพิ่ม dependency
 
   const renderPagination = () => {
     return (
@@ -209,7 +194,7 @@ export default function Home() {
             {/* Menu Items */}
             <div className={`${isMobileMenuOpen ? 'flex' : 'hidden'} md:flex flex-col justify-between h-[calc(100%-60px)] md:h-full`}>
               <div 
-                onClick={handleActive}
+                // onClick={null}
                 className={`flex items-center gap-4 p-4 cursor-pointer transition-all duration-200 justify-center md:justify-start
                   ${active ? 'bg-blue-50 border-r-4 border-blue-500' : 'hover:bg-gray-50'}`}
               >
@@ -219,7 +204,7 @@ export default function Home() {
 
               <div 
                 className={`flex items-center gap-4 p-4 w-full cursor-pointer justify-center md:justify-start hover:bg-gray-50`}
-                onClick={handleLogout}
+                // onClick={handleLogout}
               >
                 <Image src={LogOutIcon} alt="LogOutIcon" width={24} height={24} />
                 <span className="font-medium text-gray-700 inline">Log out</span>
@@ -245,7 +230,7 @@ export default function Home() {
                 </div>
                 <div className="flex items-center gap-6 mr-10">
                   <button
-                    onClick={handleOpenForm}
+                    // onClick={handleOpenForm}
                     className="flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-xl shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-300 w-full md:w-auto"
                   >
                     <Image src={AddPtientIcon} alt="Add" width={24} height={24} />
