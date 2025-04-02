@@ -2,11 +2,17 @@ import { NextResponse } from 'next/server';
 import { Pool } from 'pg';
 
 const pool = new Pool({
-  user: process.env.POSTGRES_USER,
-  host: process.env.POSTGRES_HOST,
-  database: process.env.POSTGRES_DB,
-  password: process.env.POSTGRES_PASSWORD,
-  port: parseInt(process.env.POSTGRES_PORT || '5432'),
+  user: process.env.POSTGRES_USER || 'default_user',
+  host: process.env.POSTGRES_HOST || 'localhost',
+  database: process.env.POSTGRES_DB || 'default_db',
+  password: process.env.POSTGRES_PASSWORD || 'default_password',
+  port: Number(process.env.POSTGRES_PORT) || 5432,
+});
+
+// ปิด Pool เมื่อโปรเซสถูกปิด
+process.on('exit', () => {
+  console.log('Closing database connection...');
+  pool.end();
 });
 
 export async function GET() {
@@ -31,27 +37,37 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const { userId, action, resourceType, resourceId, details } = await req.json();
+    const body = await req.json();
     
+    if (
+      typeof body.userId !== 'number' ||
+      typeof body.action !== 'string' ||
+      typeof body.resourceType !== 'string' ||
+      typeof body.resourceId !== 'number' ||
+      typeof body.details !== 'string'
+    ) {
+      return NextResponse.json({ error: 'Invalid request data' }, { status: 400 });
+    }
+
     const query = `
       INSERT INTO audit_logs (user_id, action, resource_type, resource_id, details)
       VALUES ($1, $2, $3, $4, $5)
       RETURNING *
     `;
-    
-    // Convert resourceId to string to store the full ID
+
     await pool.query(query, [
-      userId, 
-      action, 
-      resourceType, 
-      resourceId.toString(), // Store as string
-      details
+      body.userId, 
+      body.action, 
+      body.resourceType, 
+      body.resourceId.toString(), // Store as string
+      body.details
     ]);
-    
+
     return NextResponse.json({ message: 'Audit log created successfully' });
   } catch (error) {
     console.error('Error creating audit log:', error);
     return NextResponse.json({ error: 'Failed to create audit log' }, { status: 500 });
   }
 }
+
 
