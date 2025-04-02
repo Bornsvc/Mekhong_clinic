@@ -137,9 +137,7 @@ export default function Home() {
 
   const handleLogout = () => {
     localStorage.removeItem('topken')
-    // setIsAuthenticated(false);
-    router.push('/loginPage')
-    router.push("/loginPage");
+    setIsAuthenticated(false);
   }
 
   const handleOpenForm = () => {
