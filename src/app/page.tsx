@@ -158,14 +158,15 @@ export default function Home() {
 
   return (
     <FormContext.Provider value={{ formActive, setFormactive, toastMassage, setToastMassage, setSearchQuery, setIsImportActive }}>
-      
-      <ToastContainer 
-        position="top-right"
-        autoClose={3000}
-        theme="colored"
-      />
+      {isMounted && (
+        <ToastContainer 
+          position="top-right"
+          autoClose={3000}
+          theme="colored"
+        />
+      )}
 
-      {formActive ? ( <PatientForm /> ) : (
+      {formActive ? <PatientForm />  : (
         <div>
           <div className="min-h-screen bg-gray-50 flex flex-col">
             <nav className="sticky top-0 z-20 bg-gradient-to-r from-blue-600 to-blue-400 shadow-lg">

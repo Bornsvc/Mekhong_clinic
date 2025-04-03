@@ -14,6 +14,9 @@ const nextConfig = {
     }
     return config;
   },
+  env: {
+    PORT: 3001
+  }
 };
 
 module.exports = nextConfig;
