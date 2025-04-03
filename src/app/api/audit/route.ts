@@ -17,9 +17,50 @@ process.on('exit', () => {
 export async function GET() {
   try {
     const query = `
-      SELECT 
-        al.*,
-        u.username as user_name
+      SELECT al.id,
+             TO_CHAR(al.created_at, 'YYYY-MM-DD HH24:MI:SS') as timestamp,
+             u.username as user_name,
+             al.action,
+             al.resource_type,
+             al.resource_id,
+             CASE 
+               WHEN al.old_details IS NOT NULL THEN
+                 jsonb_build_object(
+                   'changes', 
+                   jsonb_build_object(
+                     'first_name', (al.old_details::jsonb->'changes'->>'first_name'),
+                     'last_name', (al.old_details::jsonb->'changes'->>'last_name'),
+                     'birth_date', (al.old_details::jsonb->'changes'->>'birth_date'),
+                     'age', (al.old_details::jsonb->'changes'->>'age'),
+                     'phone_number', (al.old_details::jsonb->'changes'->>'phone_number'),
+                     'gender', (al.old_details::jsonb->'changes'->>'gender'),
+                     'medication', (al.old_details::jsonb->'changes'->>'medication'),
+                     'balance', (al.old_details::jsonb->'changes'->>'balance'),
+                     'diagnosis', (al.old_details::jsonb->'changes'->>'diagnosis'),
+                     'address', (al.old_details::jsonb->'changes'->>'address')
+                   )
+                 )::text
+               ELSE NULL 
+             END as old_details,
+             CASE 
+               WHEN al.details IS NOT NULL THEN
+                 jsonb_build_object(
+                   'changes', 
+                   jsonb_build_object(
+                     'first_name', (al.details::jsonb->'changes'->>'first_name'),
+                     'last_name', (al.details::jsonb->'changes'->>'last_name'),
+                     'birth_date', (al.details::jsonb->'changes'->>'birth_date'),
+                     'age', (al.details::jsonb->'changes'->>'age'),
+                     'phone_number', (al.details::jsonb->'changes'->>'phone_number'),
+                     'gender', (al.details::jsonb->'changes'->>'gender'),
+                     'medication', (al.details::jsonb->'changes'->>'medication'),
+                     'balance', (al.details::jsonb->'changes'->>'balance'),
+                     'diagnosis', (al.details::jsonb->'changes'->>'diagnosis'),
+                     'address', (al.details::jsonb->'changes'->>'address')
+                   )
+                 )::text
+               ELSE NULL 
+             END as details
       FROM audit_logs al
       LEFT JOIN users u ON al.user_id = u.id
       ORDER BY al.created_at DESC
@@ -40,17 +81,18 @@ export async function POST(req: Request) {
     
     if (
       typeof body.userId !== 'number' ||  
-      typeof body.action !== 'string' ||
-      typeof body.resourceType !== 'string' ||
-      typeof body.resourceId !== 'string' ||
-      typeof body.details !== 'string'  
+      typeof body.action !== 'string' || 
+      typeof body.resourceType !== 'string' || 
+      typeof body.resourceId !== 'string' || 
+      typeof body.details !== 'string' ||
+      typeof body.oldDetails !== 'string'
     ) {
       return NextResponse.json({ error: 'Invalid request data' }, { status: 400 });
     }
 
     const query = `
-      INSERT INTO audit_logs (user_id, action, resource_type, resource_id, details)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO audit_logs (user_id, action, resource_type, resource_id, details, old_details)
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *
     `;
 
@@ -59,7 +101,8 @@ export async function POST(req: Request) {
       body.action,
       body.resourceType,
       body.resourceId,
-      body.details 
+      body.details,
+      body.oldDetails
     ]);
 
     return NextResponse.json({ message: 'Audit log created successfully' });

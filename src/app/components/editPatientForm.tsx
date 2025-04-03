@@ -41,6 +41,19 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
     balance: 0,
     diagnosis: "",
   });
+  const [oldDormData, setOldFormData] = useState({
+    firstName: "",
+    lastName: "",
+    birthDate: "",
+    age: 0,
+    address: "",
+    phoneNumber: "",
+    purpose: "",
+    medication: "",
+    gender: "",
+    balance: 0,
+    diagnosis: "",
+  });
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -51,6 +64,7 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
       try {
         const response = await axios.get(`/api/patients/${patientId}`);
         const patient = response.data;
+        const olddata = response.data;
         setFormData({
           firstName: patient.first_name,
           lastName: patient.last_name,
@@ -64,6 +78,20 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
           balance: patient.balance,
           diagnosis: patient.diagnosis || '',
         });
+
+        setOldFormData({
+          firstName: olddata.first_name,
+          lastName: olddata.last_name,
+          birthDate: new Date(olddata.birth_date).toISOString().split('T')[0],
+          age: olddata.age,
+          address: olddata.address,
+          phoneNumber: olddata.phone_number,
+          purpose: olddata.purpose || '',
+          medication: olddata.medication || '',
+          gender: olddata.gender,
+          balance: olddata.balance,
+          diagnosis: olddata.diagnosis || '',
+        })
         setLoading(false);
       } catch (err) {
         console.error("Error fetching patient:", err);
@@ -93,7 +121,7 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
     
     try {
       if (!formData.birthDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        alert('Please input date of birst follow this format YYYY-MM-DD');
+        alert('Please input date of birth follow this format YYYY-MM-DD');
         return;
       }
 
@@ -110,42 +138,53 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
         address: formData.address || null,
       };
 
+      const oldData = {
+        first_name: oldDormData.firstName,
+        last_name: oldDormData.lastName,
+        birth_date: oldDormData.birthDate,
+        age: oldDormData.age,
+        phone_number: oldDormData.phoneNumber,
+        gender: oldDormData.gender,
+        medication: oldDormData.medication || null,
+        balance: Number(oldDormData.balance),
+        diagnosis: oldDormData.diagnosis || null,
+        address: oldDormData.address || null,
+      };
+
       const response = await axios.put(`/api/patients/${patientId}`, updateData);
 
       const token = localStorage.getItem('token');
       const responseUser = await axios.get('/api/auth/verify', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}`}
       });
+      
       if (response.status === 200) {
         if(responseUser.status === 200){
           const auditData = {
             userId: responseUser.data.userId,
-            action: 'EDIT',  // เปลี่ยนจาก UPDATE เป็น EDIT
+            action: 'EDIT',
             resourceType: 'PATIENT',
             resourceId: patientId,
-            details: JSON.stringify({  // แปลง details เป็น string
-              changes: updateData,
-              timestamp: new Date().toISOString()
+            details: JSON.stringify({
+              changes: updateData
+            }),
+            oldDetails: JSON.stringify({
+              changes: oldData
             })
           };
           
-          console.log('Sending audit data:', auditData);
-          
           await axios.post('/api/audit', auditData);
-          console.log("บันทึกประวัติการแก้ไขสำเร็จ")
           window.location.reload();
           onClose();
         }
-      } else {
-          console.log("ไม่สามารถบันทึกประวัติการแก้ไขได้")
-        }
-      } catch (error) {
+      }
+    } catch (error) {
       console.error('Error updating patient:', error);
       if (axios.isAxiosError(error)) {
-        const errorMessage = error.response?.data?.error || error.response?.data?.message || 'cannot update patient data';
+        const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Cannot update patient data';
         alert(errorMessage);
       } else {
-        alert('Something went wrong pls try again.');
+        alert('Something went wrong. Please try again.');
       }
     }
   };
