@@ -18,15 +18,19 @@ const pool = new Pool({
 async function createUser(username, password, role) {
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
+    const email = `${username}@mekong-clinic.com`;
+    // const expiryDate = new Date();
+    // expiryDate.setFullYear(expiryDate.getFullYear() + 1); // Set expiry to 1 year from creation
+    
     const query = `
-      INSERT INTO users (username, password, role, email)
-      VALUES ($1, $2, $3, $4)
-      RETURNING id, username, role, email
+      INSERT INTO users (username, password, role, email, expires_at)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING id, username, role, email, expires_at
     `;
     
-    // const email = `${username}@mekong-clinic.com`; // สร้าง email อัตโนมัติ
-    const result = await pool.query(query, [username, hashedPassword, role, email]);
+    const result = await pool.query(query, [username, hashedPassword, role, email, expiryDate]);
     console.log('สร้างผู้ใช้สำเร็จ:', result.rows[0]);
+    // console.log('Account expires on:', expiryDate.toLocaleDateString());
   } catch (error) {
     console.error('เกิดข้อผิดพลาด:', error);
   } finally {

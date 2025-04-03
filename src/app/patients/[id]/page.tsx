@@ -38,6 +38,7 @@ export default function PatientDetails() {
     const fetchPatient = async () => {
       try {
         if (params?.id) {  
+          console.log(">>>",params?.id)
           const response = await axios.get(`/api/patients/${params.id}`);
           setPatient(response.data);
         } else {
@@ -88,15 +89,34 @@ export default function PatientDetails() {
   const deletePatient = async () => {
     setIsDeleteModalOpen(true);
   };
+
+     
   
   const handleConfirmDelete = async () => {
     try {
       setLoading(true);
+      const token = localStorage.getItem('token');
+      const responseUser = await axios.get('/api/auth/verify', {
+        headers: { Authorization: `Bearer ${token}`}
+      });
       if(params !== null){
         const response = await axios.delete(`/api/patients/${params.id}`);
         if (response.status === 200) {
           setIsDeleteModalOpen(false);
           router.push('/'); 
+          if(responseUser.status === 200){
+            const auditData = {
+              userId: responseUser.data.userId,
+              action: 'DELETE',
+              resourceType: 'PATIENT',
+              resourceId: String(params.id),
+              details: null,
+              oldDetails: JSON.stringify({
+                changes: patient
+              }),
+            };
+            await axios.post('/api/audit', auditData);
+          }
           setToastMassage(true);
         } else {
           setToastMassage(false);

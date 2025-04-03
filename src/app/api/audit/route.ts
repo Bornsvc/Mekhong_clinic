@@ -84,8 +84,8 @@ export async function POST(req: Request) {
       typeof body.action !== 'string' || 
       typeof body.resourceType !== 'string' || 
       typeof body.resourceId !== 'string' || 
-      typeof body.details !== 'string' ||
-      typeof body.oldDetails !== 'string'
+      (body.details !== null && typeof body.details !== 'string') ||
+      (body.oldDetails !== null && typeof body.oldDetails !== 'string')
     ) {
       return NextResponse.json({ error: 'Invalid request data' }, { status: 400 });
     }
