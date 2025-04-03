@@ -1,11 +1,15 @@
-const express = require('express');
-const cors = require('cors');
-const { Pool } = require('pg');
-const { UserModel } = require('./models/User');
-const jwt = require('jsonwebtoken');
-const dotenv = require('dotenv');
-const path = require('path');
-const { errorHandler } = require('./middleware/errorHandler');
+import express, { Request, Response, NextFunction } from 'express';
+import cors from 'cors';
+import { Pool } from 'pg';
+import UserModel from './models/User';
+import jwt from 'jsonwebtoken';                                                                          
+import dotenv from 'dotenv';
+import path from 'path';
+
+
+// Configure static file serving
+const publicPath = path.join(__dirname, '../../public');
+
 
 dotenv.config();
 
@@ -15,6 +19,8 @@ const port = process.env.PORT || 3001;
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.static(publicPath));
+
 
 const pool = new Pool({
   connectionTimeoutMillis: 5000,
@@ -47,47 +53,49 @@ testDatabaseConnection().catch(err => {
 const userModel = new UserModel(pool);
 
 // Authentication route
-<<<<<<< Updated upstream
-app.post('/api/auth', async (req, res, next) => {
+
+interface AuthError extends Error {
+  status?: number;
+}
+
+app.post('/api/auth', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { username, password } = req.body;
     const user = await userModel.findByUsername(username);
 
     if (!user) {
-      const error = new Error('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง') as any;
-error.status = 401;
-throw error;
+      const error: AuthError = new Error('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
+      error.status = 401;
+      throw error;
     }
 
     const isValidPassword = await userModel.validatePassword(password, user.password);
     if (!isValidPassword) {
-      const error = new Error('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง') as any;
-error.status = 401;
-throw error;
+      const error: AuthError = new Error('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
+      error.status = 401;
+      throw error;
     }
 
-      const token = jwt.sign(
-        { id: user.id, username: user.username, role: user.role },
-        process.env.JWT_SECRET || 'default-secret-key',
-        { expiresIn: '24h' }
-      );
+    const token = jwt.sign(
+      { id: user.id, username: user.username, role: user.role },
+      process.env.JWT_SECRET || 'default-secret-key',
+      { expiresIn: '24h' }
+    );
 
-      return res.json({
-        message: 'เข้าสู่ระบบสำเร็จ',
-        token,
-        user: {
-          username: user.username,
-          role: user.role
-        }
-      });
-    } catch (error) {
-      next(error);
-    }
-  });
+    return res.json({
+      message: 'เข้าสู่ระบบสำเร็จ',
+      token,
+      user: {
+        username: user.username,
+        role: user.role
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
-  // Add error handling middleware
-  app.use(errorHandler);
-=======
+
 interface AuthError extends Error {
   status?: number;
 }
@@ -131,20 +139,39 @@ interface AuthError extends Error {
 
 // Add error handling middleware
 // app.use(errorHandler);
->>>>>>> Stashed changes
 
-  app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-  });
+// Add error handling middleware
 
-  // Handle uncaught exceptions
-  process.on('uncaughtException', (error) => {
-    console.error('Uncaught Exception:', error);
+
+
+// Graceful shutdown function
+const gracefulShutdown = (signal: string) => {
+  console.log(`Received ${signal}. Starting graceful shutdown...`);
+  pool.end().then(() => {
+    console.log('Database pool has ended');
+    process.exit(0);
+  }).catch((err) => {
+    console.error('Error during database pool shutdown:', err);
     process.exit(1);
   });
+};
 
-  // Handle unhandled promise rejections
-  process.on('unhandledRejection', (error) => {
-    console.error('Unhandled Rejection:', error);
-    process.exit(1);
-  });
+// Handle process signals
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error: Error) => {
+  console.error('Uncaught Exception:', error);
+  gracefulShutdown('uncaughtException');
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (error: Error) => {
+  console.error('Unhandled Rejection:', error);
+  gracefulShutdown('unhandledRejection');
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});

@@ -14,11 +14,12 @@ export async function GET(request: Request) {
     }
 
     const token = authHeader.split(" ")[1];
-    const decodedToken = jwt.verify(token, JWT_SECRET) as { role: string };
+    const decodedToken = jwt.verify(token, JWT_SECRET) as { role: string; id: string };
 
     return NextResponse.json({
       authenticated: true,
       role: decodedToken.role,
+      userId: decodedToken.id
     });
   } catch (error) {
     console.log(error);

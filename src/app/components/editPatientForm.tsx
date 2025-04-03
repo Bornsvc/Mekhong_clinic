@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import ClodeIcon from "@/icons/close.png";
 import axios from "axios";
-import { useSession } from 'next-auth/react';
+// import { useSession } from 'next-auth/react';
 // import { useRouter } from 'next/navigation';
 // import { getCurrentUserId } from '@/utils/auth';
 
@@ -27,11 +27,21 @@ interface FormData {
 }
 
 const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose }) => {
-  const { data: session } = useSession();
-
-  // ลบ useEffect สำหรับ authentication check ออก
   
   const [formData, setFormData] = useState<FormData>({
+    firstName: "",
+    lastName: "",
+    birthDate: "",
+    age: 0,
+    address: "",
+    phoneNumber: "",
+    purpose: "",
+    medication: "",
+    gender: "",
+    balance: 0,
+    diagnosis: "",
+  });
+  const [oldDormData, setOldFormData] = useState({
     firstName: "",
     lastName: "",
     birthDate: "",
@@ -54,6 +64,7 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
       try {
         const response = await axios.get(`/api/patients/${patientId}`);
         const patient = response.data;
+        const olddata = response.data;
         setFormData({
           firstName: patient.first_name,
           lastName: patient.last_name,
@@ -67,6 +78,20 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
           balance: patient.balance,
           diagnosis: patient.diagnosis || '',
         });
+
+        setOldFormData({
+          firstName: olddata.first_name,
+          lastName: olddata.last_name,
+          birthDate: new Date(olddata.birth_date).toISOString().split('T')[0],
+          age: olddata.age,
+          address: olddata.address,
+          phoneNumber: olddata.phone_number,
+          purpose: olddata.purpose || '',
+          medication: olddata.medication || '',
+          gender: olddata.gender,
+          balance: olddata.balance,
+          diagnosis: olddata.diagnosis || '',
+        })
         setLoading(false);
       } catch (err) {
         console.error("Error fetching patient:", err);
@@ -78,58 +103,6 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
     fetchPatient();
   }, [patientId]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-      // ตรวจสอบรูปแบบวันเกิด
-      if (!formData.birthDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        alert('กรุณากรอกวันเกิดในรูปแบบ YYYY-MM-DD');
-        return;
-      }
-
-      const updateData = {
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        birth_date: formData.birthDate, // ส่งค่าวันเกิดโดยตรงในรูปแบบ YYYY-MM-DD
-        age: formData.age,
-        phone_number: formData.phoneNumber,
-        gender: formData.gender,
-        medication: formData.medication || null,
-        balance: Number(formData.balance),
-        diagnosis: formData.diagnosis || null,
-        address: formData.address || null,
-      };
-
-      const response = await axios.put(`/api/patients/${patientId}`, updateData);
-
-      if (response.status === 200) {
-        if (session?.user?.id) {
-          await axios.post('/api/audit', {
-            userId: session.user.id,
-            action: 'UPDATE',
-            resourceType: 'PATIENT',
-            resourceId: patientId,
-            details: {
-              changes: updateData,
-              timestamp: new Date().toISOString()
-            }
-          });
-        }
-
-        window.location.reload();
-        onClose();
-      }
-    } catch (error) {
-      console.error('Error updating patient:', error);
-      if (axios.isAxiosError(error)) {
-        const errorMessage = error.response?.data?.error || error.response?.data?.message || 'ไม่สามารถอัพเดทข้อมูลผู้ป่วยได้';
-        alert(errorMessage);
-      } else {
-        alert('เกิดข้อผิดพลาดในการอัพเดทข้อมูลผู้ป่วย กรุณาลองใหม่อีกครั้ง');
-      }
-    }
-  };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     const updatedData: Partial<FormData> = { [name]: value };
@@ -141,6 +114,79 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
     }
 
     setFormData((prevData) => ({ ...prevData, ...updatedData }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      if (!formData.birthDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        alert('Please input date of birth follow this format YYYY-MM-DD');
+        return;
+      }
+
+      const updateData = {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        birth_date: formData.birthDate, 
+        age: formData.age,
+        phone_number: formData.phoneNumber,
+        gender: formData.gender,
+        medication: formData.medication || null,
+        balance: Number(formData.balance),
+        diagnosis: formData.diagnosis || null,
+        address: formData.address || null,
+      };
+
+      const oldData = {
+        first_name: oldDormData.firstName,
+        last_name: oldDormData.lastName,
+        birth_date: oldDormData.birthDate,
+        age: oldDormData.age,
+        phone_number: oldDormData.phoneNumber,
+        gender: oldDormData.gender,
+        medication: oldDormData.medication || null,
+        balance: Number(oldDormData.balance),
+        diagnosis: oldDormData.diagnosis || null,
+        address: oldDormData.address || null,
+      };
+
+      const response = await axios.put(`/api/patients/${patientId}`, updateData);
+
+      const token = localStorage.getItem('token');
+      const responseUser = await axios.get('/api/auth/verify', {
+        headers: { Authorization: `Bearer ${token}`}
+      });
+      
+      if (response.status === 200) {
+        if(responseUser.status === 200){
+          const auditData = {
+            userId: responseUser.data.userId,
+            action: 'EDIT',
+            resourceType: 'PATIENT',
+            resourceId: patientId,
+            details: JSON.stringify({
+              changes: updateData
+            }),
+            oldDetails: JSON.stringify({
+              changes: oldData
+            })
+          };
+          
+          await axios.post('/api/audit', auditData);
+          window.location.reload();
+          onClose();
+        }
+      }
+    } catch (error) {
+      console.error('Error updating patient:', error);
+      if (axios.isAxiosError(error)) {
+        const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Cannot update patient data';
+        alert(errorMessage);
+      } else {
+        alert('Something went wrong. Please try again.');
+      }
+    }
   };
 
   if (loading) {
