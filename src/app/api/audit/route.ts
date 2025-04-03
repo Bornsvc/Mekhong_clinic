@@ -9,7 +9,6 @@ const pool = new Pool({
   port: Number(process.env.POSTGRES_PORT) || 5432,
 });
 
-// ปิด Pool เมื่อโปรเซสถูกปิด
 process.on('exit', () => {
   console.log('Closing database connection...');
   pool.end();
@@ -40,11 +39,11 @@ export async function POST(req: Request) {
     const body = await req.json();
     
     if (
-      typeof body.userId !== 'number' ||
+      typeof body.userId !== 'number' ||  
       typeof body.action !== 'string' ||
       typeof body.resourceType !== 'string' ||
-      typeof body.resourceId !== 'number' ||
-      typeof body.details !== 'string'
+      typeof body.resourceId !== 'string' ||
+      typeof body.details !== 'string'  
     ) {
       return NextResponse.json({ error: 'Invalid request data' }, { status: 400 });
     }
@@ -56,11 +55,11 @@ export async function POST(req: Request) {
     `;
 
     await pool.query(query, [
-      body.userId, 
-      body.action, 
-      body.resourceType, 
-      body.resourceId.toString(), // Store as string
-      body.details
+      body.userId,
+      body.action,
+      body.resourceType,
+      body.resourceId,
+      body.details 
     ]);
 
     return NextResponse.json({ message: 'Audit log created successfully' });

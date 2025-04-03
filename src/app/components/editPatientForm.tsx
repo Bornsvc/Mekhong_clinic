@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import ClodeIcon from "@/icons/close.png";
 import axios from "axios";
-import { useSession } from 'next-auth/react';
+// import { useSession } from 'next-auth/react';
 // import { useRouter } from 'next/navigation';
 // import { getCurrentUserId } from '@/utils/auth';
 
@@ -27,7 +27,6 @@ interface FormData {
 }
 
 const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose }) => {
-  const { data: session, status } = useSession();
   
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
@@ -113,28 +112,34 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
 
       const response = await axios.put(`/api/patients/${patientId}`, updateData);
 
+      const token = localStorage.getItem('token');
+      const responseUser = await axios.get('/api/auth/verify', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       if (response.status === 200) {
-        // Check if session is authenticated
-        if (status === 'authenticated' && session?.user?.id) {
-          await axios.post('/api/audit', {
-            userId: session.user.id,
-            action: 'UPDATE',
+        if(responseUser.status === 200){
+          const auditData = {
+            userId: responseUser.data.userId,
+            action: 'EDIT',  // เปลี่ยนจาก UPDATE เป็น EDIT
             resourceType: 'PATIENT',
             resourceId: patientId,
-            details: {
+            details: JSON.stringify({  // แปลง details เป็น string
               changes: updateData,
               timestamp: new Date().toISOString()
-            }
-          });
-          console.log("OKKKK PASSSSSSSS")
-        } else {
-          console.error("User not authenticated or session ID missing");
+            })
+          };
+          
+          console.log('Sending audit data:', auditData);
+          
+          await axios.post('/api/audit', auditData);
+          console.log("บันทึกประวัติการแก้ไขสำเร็จ")
+          window.location.reload();
+          onClose();
         }
-
-        window.location.reload();
-        onClose();
-      }
-    } catch (error) {
+      } else {
+          console.log("ไม่สามารถบันทึกประวัติการแก้ไขได้")
+        }
+      } catch (error) {
       console.error('Error updating patient:', error);
       if (axios.isAxiosError(error)) {
         const errorMessage = error.response?.data?.error || error.response?.data?.message || 'cannot update patient data';
