@@ -21,7 +21,7 @@ export default function AuditLogsPage() {
   useEffect(() => {
     const fetchLogs = async () => {
       try {
-        const response = await axios.get('/api/audit');
+        const response = await axios.get('/api/audit/');
         setLogs(response.data);
       } catch (error) {
         console.error('Error fetching audit logs:', error);

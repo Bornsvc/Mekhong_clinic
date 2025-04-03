@@ -29,7 +29,7 @@ interface Patient {
   created_at: string;
   gender: string;
   balance: number;
-  diagnosis: string
+  diagnosis: string;
 }
 
 interface FormContextType {

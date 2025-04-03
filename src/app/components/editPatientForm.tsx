@@ -27,9 +27,7 @@ interface FormData {
 }
 
 const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose }) => {
-  const { data: session } = useSession();
-
-  // ลบ useEffect สำหรับ authentication check ออก
+  const { data: session, status } = useSession();
   
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
@@ -78,20 +76,32 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
     fetchPatient();
   }, [patientId]);
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    const updatedData: Partial<FormData> = { [name]: value };
+
+    if (name === "birthDate") {
+      const birthYear = new Date(value).getFullYear();
+      const currentYear = new Date().getFullYear();
+      updatedData.age = currentYear - birthYear;
+    }
+
+    setFormData((prevData) => ({ ...prevData, ...updatedData }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     try {
-      // ตรวจสอบรูปแบบวันเกิด
       if (!formData.birthDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        alert('กรุณากรอกวันเกิดในรูปแบบ YYYY-MM-DD');
+        alert('Please input date of birst follow this format YYYY-MM-DD');
         return;
       }
 
       const updateData = {
         first_name: formData.firstName,
         last_name: formData.lastName,
-        birth_date: formData.birthDate, // ส่งค่าวันเกิดโดยตรงในรูปแบบ YYYY-MM-DD
+        birth_date: formData.birthDate, 
         age: formData.age,
         phone_number: formData.phoneNumber,
         gender: formData.gender,
@@ -104,7 +114,8 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
       const response = await axios.put(`/api/patients/${patientId}`, updateData);
 
       if (response.status === 200) {
-        if (session?.user?.id) {
+        // Check if session is authenticated
+        if (status === 'authenticated' && session?.user?.id) {
           await axios.post('/api/audit', {
             userId: session.user.id,
             action: 'UPDATE',
@@ -115,6 +126,9 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
               timestamp: new Date().toISOString()
             }
           });
+          console.log("OKKKK PASSSSSSSS")
+        } else {
+          console.error("User not authenticated or session ID missing");
         }
 
         window.location.reload();
@@ -123,24 +137,12 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
     } catch (error) {
       console.error('Error updating patient:', error);
       if (axios.isAxiosError(error)) {
-        const errorMessage = error.response?.data?.error || error.response?.data?.message || 'ไม่สามารถอัพเดทข้อมูลผู้ป่วยได้';
+        const errorMessage = error.response?.data?.error || error.response?.data?.message || 'cannot update patient data';
         alert(errorMessage);
       } else {
-        alert('เกิดข้อผิดพลาดในการอัพเดทข้อมูลผู้ป่วย กรุณาลองใหม่อีกครั้ง');
+        alert('Something went wrong pls try again.');
       }
     }
-  };
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    const updatedData: Partial<FormData> = { [name]: value };
-
-    if (name === "birthDate") {
-      const birthYear = new Date(value).getFullYear();
-      const currentYear = new Date().getFullYear();
-      updatedData.age = currentYear - birthYear;
-    }
-
-    setFormData((prevData) => ({ ...prevData, ...updatedData }));
   };
 
   if (loading) {
