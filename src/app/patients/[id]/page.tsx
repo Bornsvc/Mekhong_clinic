@@ -31,6 +31,7 @@ export default function PatientDetails() {
   const [error, setError] = useState('');
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [patientName, setPatientName] = useState(``);
 
   const router = useRouter();
 
@@ -41,6 +42,7 @@ export default function PatientDetails() {
           console.log(">>>",params?.id)
           const response = await axios.get(`/api/patients/${params.id}`);
           setPatient(response.data);
+          setPatientName(`${response.data.first_name || ''} ${response.data.last_name || ''}`)
         } else {
           setError('Invalid patient ID');
         }
@@ -108,7 +110,7 @@ export default function PatientDetails() {
             const auditData = {
               userId: responseUser.data.userId,
               action: 'DELETE',
-              resourceType: 'PATIENT',
+              resourceType: `${patientName}`,
               resourceId: String(params.id),
               details: null,
               oldDetails: JSON.stringify({

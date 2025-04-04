@@ -89,44 +89,61 @@ export default function AuditLogsPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">Audit Log History</h1>
-      <div className="bg-white rounded-lg shadow overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <h1 className="text-3xl font-bold mb-8 text-gray-800">Audit Log History</h1>
+      <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+        <table className="min-w-full divide-y divide-gray-200 h-[500px]">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Timestamp
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Resource</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">User</th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Action</th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Resource</th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Old Details
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 New Details
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white divide-y divide-gray-100">
             {logs.map((log) => (
-              <tr key={log.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{log.timestamp}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{log.user_name}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <span className={`px-2 py-1 rounded 
+              <tr key={log.id} className="hover:bg-gray-50 transition-colors duration-150">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-600">
+                  {new Date(log.timestamp).toLocaleString()}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                  <span className="font-medium">{log.user_name}</span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <span className={`px-3 py-1.5 rounded-full text-xs font-medium
                     ${
                       log.action === 'DELETE' ? 'bg-red-100 text-red-800' : 
-                      log.action === 'EDIT' ? 'bg-yellow-100 text-yellow-800' : 'text-gray-500'}
+                      log.action === 'EDIT' ? 'bg-yellow-100 text-yellow-800' : 
+                      log.action === 'CREATE' ? 'bg-emerald-100 text-emerald-800' : 'text-gray-100'}
                     `
                   }>
                     {log.action}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{log.resource_type}</td>
-                <td className="px-6 py-4">{renderDetails(log.old_details, log.details)}</td>
-                <td className="px-6 py-4">{renderDetails(log.details, log.old_details)}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs font-medium">
+                    {log.resource_type}
+                  </span>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="max-h-40 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-50">
+                    {renderDetails(log.old_details, log.details)}
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="max-h-40 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-50">
+                    {renderDetails(log.details, log.old_details)}
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>

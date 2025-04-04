@@ -70,7 +70,25 @@ const CustomerForm: React.FC = () => {
         address: formData.address,
       });
   
-      if (response.data.data) { // Check for data instead of success
+      if (response.status === 200) {
+        const token = localStorage.getItem('token');
+        const responseUser = await axios.get('/api/auth/verify', {
+          headers: { Authorization: `Bearer ${token}`}
+        });
+        if(responseUser.status === 200){
+          const auditData = {
+            userId: responseUser.data.userId,
+            action: 'CREATE',
+            resourceType: `${formData.firstName || ''} ${formData.lastName || ''}`,
+            resourceId: response.data.data.id,
+            details: JSON.stringify({
+              changes: formData
+            }),
+            oldDetails: null
+          };
+          
+          await axios.post('/api/audit', auditData);
+        }
         setToastMassage(true);
         setFormactive(false);
         setSearchQuery("");

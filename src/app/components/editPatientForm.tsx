@@ -157,13 +157,13 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
       const responseUser = await axios.get('/api/auth/verify', {
         headers: { Authorization: `Bearer ${token}`}
       });
-      
+
       if (response.status === 200) {
         if(responseUser.status === 200){
           const auditData = {
             userId: responseUser.data.userId,
             action: 'EDIT',
-            resourceType: 'PATIENT',
+            resourceType: `${updateData.first_name || ''} ${updateData.last_name || ''}`,
             resourceId: patientId,
             details: JSON.stringify({
               changes: updateData
