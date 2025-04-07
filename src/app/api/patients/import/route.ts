@@ -12,23 +12,10 @@ interface ExcelRow {
   Gender: string;
   Balance: string;
   Diagnosis: string;
+  Address: string;
+  Purpose: string;
+  Medication: string;
 }
-
-// interface Patient {
-//   id: string;
-//   first_name: string;
-//   last_name: string;
-//   birth_date: string;
-//   age: number;
-//   address: string;
-//   phone_number: string;
-//   purpose: string;
-//   medication: string;
-//   created_at: string;
-//   gender: string;
-//   balance: number;
-//   diagnosis: string
-// }
 
 export async function POST(request: Request) {
   try {
@@ -56,7 +43,8 @@ export async function POST(request: Request) {
     const data = XLSX.utils.sheet_to_json(worksheet);
 
     const results = {
-      success: 0,
+      created: 0,
+      updated: 0,
       failed: 0,
       errors: [] as string[]
     };
@@ -80,15 +68,52 @@ export async function POST(request: Request) {
         const lastName = lastNameParts.join(' ');
 
         // Convert ISO 8601 date strings to Date objects
+        // Parse DOB with more robust date handling
         const dobStr = row.Dob;
-        const registeredStr = row.Registered;
+        let dob = null;
         
-        const dob = dobStr ? new Date(dobStr) : null;
-        const registered = registeredStr ? new Date(registeredStr) : null;
+        if (dobStr) {
+          // Try parsing various date formats
+          // First try DD/MM/YYYY format as it's the expected format
+          const [day, month, year] = dobStr.split(/[\/\-]/).map(Number);
+          if (day && month && year) {
+            dob = new Date(year, month - 1, day);
+          } else if (typeof dobStr === 'number') {
+            // Handle Excel date serial numbers
+            dob = new Date((dobStr - 25569) * 86400 * 1000);
+          } else {
+            // Try parsing string date as fallback
+            dob = new Date(dobStr);
+          }
+        }
 
         if (!dob || isNaN(dob.getTime())) {
-          throw new Error('Invalid date format for Dob');
+          throw new Error(`Invalid date format for DOB: ${dobStr}`);
         }
+
+        // Validate DOB is not in future
+        if (dob > new Date()) {
+          throw new Error('Date of birth cannot be in the future');
+        }
+
+        // Calculate age from DOB and validate against provided age
+        const today = new Date();
+        let calculatedAge = today.getFullYear() - dob.getFullYear();
+        const providedAge = parseInt(row.Age);
+
+        // Adjust age if birthday hasn't occurred this year
+        const monthDiff = today.getMonth() - dob.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+          calculatedAge--;
+        }
+
+        // Allow 1 year difference due to potential data entry timing differences
+        if (Math.abs(calculatedAge - providedAge) > 1) {
+          throw new Error(`Age mismatch: calculated age (${calculatedAge}) differs significantly from provided age (${providedAge})`);
+        }
+
+        const registeredStr = row.Registered;
+        const registered = registeredStr ? new Date(registeredStr) : null;
 
         if (!registered || isNaN(registered.getTime())) {
           throw new Error('Invalid date format for Registered');
@@ -96,7 +121,7 @@ export async function POST(request: Request) {
 
         // Validate and convert age to number
         const ageStr = row.Age;
-        const age = ageStr ? parseInt(ageStr.trim()) : 0;
+        const age = typeof ageStr === 'string' ? parseInt(ageStr.trim()) : typeof ageStr === 'number' ? ageStr : 0;
         if (isNaN(age)) {
           throw new Error('Invalid age format');
         }
@@ -118,11 +143,24 @@ export async function POST(request: Request) {
           phone_number: row.Mobile || '',
           gender: row.Gender || '',
           balance: balance,
-          diagnosis: row.Diagnosis || ''
+          diagnosis: row.Diagnosis || '',
+          address: row.Address || '',
+          purpose: row.Purpose || '',
+          medication: row.Medication || ''
         };
 
-        await PatientModel.createPatient(patient);
-        results.success++;
+        // Check if patient already exists
+        const existingPatient = await PatientModel.getPatientById(uhid);
+        
+        if (existingPatient) {
+          // Update existing patient
+          await PatientModel.updatePatient(uhid, patient);
+          results.updated++;
+        } else {
+          // Create new patient
+          await PatientModel.createPatient(patient);
+          results.created++;
+        }
       } catch (error) {
         results.failed++;
         results.errors.push(
