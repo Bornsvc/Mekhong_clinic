@@ -261,7 +261,18 @@ export default function Home() {
                         {/* Export Button */}
                         <div className="relative group">
                           <button 
-                            // onClick={() => setIsExportActive(!isExportActive)}
+                            onClick={async () => {
+                              try {
+                                const response = await axios.get('/api/patients/all');
+                                if (response.data) {
+                                  const { exportPatientsToExcel } = await import('../utils/exportToExcel');
+                                  exportPatientsToExcel(response.data);
+                                }
+                              } catch (error) {
+                                console.error('Export failed:', error);
+                                toast.error('Failed to export patients data');
+                              }
+                            }}
                             className="rounded-full hover:bg-gray-200 p-2 flex items-center"
                           >
                             <Image src={ExportIcon} alt="Export" width={24} height={24} />
