@@ -171,7 +171,7 @@ export default function Home() {
         <div>
           <div className="min-h-screen bg-gray-50 flex flex-col">
             <nav className="sticky top-0 z-20 bg-gradient-to-r from-blue-600 to-blue-400 shadow-lg">
-              <div className="container mx-auto px-4 py-3 sm:px-6">
+              <div className="flex mx-auto px-4 py-3 sm:px-6">
                 <div className="flex items-center gap-3 sm:gap-6">
                   <Image 
                     src={LOGO}
@@ -213,7 +213,7 @@ export default function Home() {
                       ${active ? 'bg-blue-50 border-r-4 border-blue-500' : 'hover:bg-gray-50'}`}
                   >
                     <Image src={PtientIcon} alt="Patient" width={24} height={24} />
-                    <span className="font-medium text-gray-700 inline">Patients</span>
+                    <span className="font-medium text-gray-700 inline">ຄົນໄຂ້</span>
                   </div>
 
                   <div 
@@ -221,7 +221,7 @@ export default function Home() {
                       onClick={handleLogout}
                   >
                     <Image src={LogOutIcon} alt="LogOutIcon" width={24} height={24} />
-                    <span className="font-medium text-gray-700 inline">Log out</span>
+                    <span className="font-medium text-gray-700 inline">ອອກຈາກລະບົບ</span>
                   </div>
                 </div>
               </div>
@@ -232,7 +232,7 @@ export default function Home() {
                     <div className="relative w-full md:w-96">
                       <input
                         type="text"
-                        placeholder="Search patients..."
+                        placeholder="ຄົ້ນຫາຜູ້ປ່ວຍ..."
                         onChange={(e) => {
                           setSearchQuery((e.target.value));
                           setCurrentPage(1);
@@ -292,7 +292,7 @@ export default function Home() {
                         className="flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-xl shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-300 w-full md:w-auto"
                       >
                         <Image src={AddPtientIcon} alt="Add" width={24} height={24} />
-                        <span>Add Patient</span>
+                        <span>ເພິ້ມຄົນໄຂ້</span>
                       </button>
                       {isImportActive ?  <ImportFile /> : null}
                     </div>
@@ -304,25 +304,25 @@ export default function Home() {
                     <thead className="bg-gray-50">
                       <tr>
                         <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          UHID
+                          ລະຫັດ
                         </th>
                         <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          FullName
+                          ຊື່ / ນາມສະກຸນ
                         </th>
                         <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          DOB
+                          ວັນ / ເດືອນ / ປີເກີດ
                         </th>
                         <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Age
+                          ອາຍຸ
                         </th>
                         <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Registered
+                          ລົງທະບຽນ
                         </th>
                         <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Gender
+                          ເພດ
                         </th>
                         <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Mobile
+                          ເບີໂທລະສັບ
                         </th>
                       </tr>
                     </thead>

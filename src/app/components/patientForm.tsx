@@ -122,20 +122,20 @@ const CustomerForm: React.FC = () => {
         
         <div>
           <h2 className="text-center text-4xl font-extrabold text-gray-900 tracking-tight">
-            Patient Information
+            ຂໍ້ມູນສ່ວນຕົວ
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Please fill in the details below
+            ກະລຸນາຕື່ມລາຍລະອຽດຂ້າງລຸ່ມນີ້
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           {/* Personal Information Section */}
           <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-gray-700">Personal Information</h3>
+            <h3 className="text-xl font-semibold text-gray-700">ຂໍ້ມູນສ່ວນຕົວ</h3>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">ຊື່</label>
                 <input
                   id="firstName"
                   type="text"
@@ -146,7 +146,7 @@ const CustomerForm: React.FC = () => {
                 />
               </div>
               <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">ນາມສະກຸນ</label>
                 <input
                   id="lastName"
                   type="text"
@@ -160,7 +160,7 @@ const CustomerForm: React.FC = () => {
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div>
-                <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+                <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700 mb-1">ວັນເກີດ</label>
                 <input
                   id="birthDate"
                   type="date"
@@ -171,7 +171,7 @@ const CustomerForm: React.FC = () => {
                 />
               </div>
               <div>
-                <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-1">Age</label>
+                <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-1">ອາຍຸ</label>
                 <input
                   id="age"
                   type="number"
@@ -185,7 +185,7 @@ const CustomerForm: React.FC = () => {
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div>
-                <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">ເພດ</label>
                 <select
                   id="gender"
                   name="gender"
@@ -193,14 +193,14 @@ const CustomerForm: React.FC = () => {
                   onChange={handleChange}
                   className="appearance-none relative block w-full px-3 py-3 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
                 >
-                  <option value="">Select Gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
+                  <option value="">ເລືອກເພດ</option>
+                  <option value="male">ຊາຍ</option>
+                  <option value="female">ຍິງ</option>
+                  <option value="other">ອື່ນໆ</option>
                 </select>
               </div>
               <div>
-                <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">ເບີໂທລະສັບ</label>
                 <input
                   id="phoneNumber"
                   type="tel"
@@ -213,7 +213,7 @@ const CustomerForm: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+              <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">ທີ່ຢູ່</label>
               <textarea
                 id="address"
                 name="address"
@@ -227,9 +227,9 @@ const CustomerForm: React.FC = () => {
 
           {/* Medical Information Section */}
           <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-gray-700">Medical Information</h3>
+            <h3 className="text-xl font-semibold text-gray-700">ຂໍ້ມູນທາງການແພດ</h3>
             <div>
-              <label htmlFor="diagnosis" className="block text-sm font-medium text-gray-700 mb-1">Diagnosis</label>
+              <label htmlFor="diagnosis" className="block text-sm font-medium text-gray-700 mb-1">ການວິນິດໄຊ</label>
               <textarea
                 id="diagnosis"
                 name="diagnosis"
@@ -241,7 +241,7 @@ const CustomerForm: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="medication" className="block text-sm font-medium text-gray-700 mb-1">Medication</label>
+              <label htmlFor="medication" className="block text-sm font-medium text-gray-700 mb-1">ຢາທີ່ໃຊ້</label>
               <input
                 id="medication"
                 type="text"
@@ -255,10 +255,10 @@ const CustomerForm: React.FC = () => {
 
           {/* Registration Information Section */}
           <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-gray-700">Registration Details</h3>
+            <h3 className="text-xl font-semibold text-gray-700">ລາຍລະອຽດການລົງທະບຽນ</h3>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div>
-                <label htmlFor="registered" className="block text-sm font-medium text-gray-700 mb-1">Registration Date</label>
+                <label htmlFor="registered" className="block text-sm font-medium text-gray-700 mb-1">ວັນທີລົງທະບຽນ</label>
                 <input
                   id="registered"
                   type="date"
@@ -269,7 +269,7 @@ const CustomerForm: React.FC = () => {
                 />
               </div>
               <div>
-                <label htmlFor="balance" className="block text-sm font-medium text-gray-700 mb-1">Balance</label>
+                <label htmlFor="balance" className="block text-sm font-medium text-gray-700 mb-1">ຍອດເງິນຄົງເຫຼືອ</label>
                 <input
                   id="balance"
                   type="number"
@@ -286,7 +286,7 @@ const CustomerForm: React.FC = () => {
             type="submit"
             className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-xl font-bold rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200 ease-in-out transform hover:-translate-y-1"
           >
-            Add Patient
+            ເພີ່ມຂໍ້ມູນຄົນໄຂ້
           </button>
         </form>
       </div>

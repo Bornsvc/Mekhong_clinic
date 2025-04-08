@@ -35,10 +35,10 @@ const ConfirmClose: React.FC<ConfirmCloseProps> = ({ comFirm, setComfirm }) => {
         ${isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
       >
         <h1 className="text-2xl font-bold text-gray-800 mb-4">
-          Are you sure you want to leave?
+          ເຈົ້າແນ່ໃຈບໍ່ວ່າຈະອອກ?
         </h1>
         <p className="text-gray-600 mb-8">
-          Any unsaved changes will be lost.
+          ການປ່ຽນແປງທີ່ຍັງບໍ່ໄດ້ບັນທຶກຈະຖືກລຶບ.
         </p>
         <div className="space-y-3">
           <button
@@ -47,7 +47,7 @@ const ConfirmClose: React.FC<ConfirmCloseProps> = ({ comFirm, setComfirm }) => {
             transition-all duration-200 transform hover:-translate-y-0.5 
             font-semibold tracking-wide shadow-md hover:shadow-lg"
           >
-            Leave Page
+            ອອກຈາກໜ້ານີ້
           </button>
           <button
             onClick={handleClickNo}
@@ -55,7 +55,7 @@ const ConfirmClose: React.FC<ConfirmCloseProps> = ({ comFirm, setComfirm }) => {
             transition-all duration-200 transform hover:-translate-y-0.5 
             font-semibold tracking-wide border border-gray-200"
           >
-            Stay Here
+            ຢູ່ໜ້ານີ້ຕໍ່
           </button>
         </div>
       </div>
