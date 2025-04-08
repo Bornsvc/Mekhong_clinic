@@ -14,6 +14,7 @@ CREATE SEQUENCE IF NOT EXISTS patient_id_seq START 1;
 CREATE TABLE IF NOT EXISTS patients (
     id VARCHAR(10) PRIMARY KEY DEFAULT 'MK-' || LPAD(NEXTVAL('patient_id_seq')::TEXT, 7, '0'),
     first_name VARCHAR(100) NOT NULL,
+    middle_name VARCHAR(100),
     last_name VARCHAR(100) NOT NULL,
     birth_date DATE NOT NULL,
     age INTEGER,
@@ -24,9 +25,14 @@ CREATE TABLE IF NOT EXISTS patients (
     balance DECIMAL(10,2) DEFAULT 0,
     diagnosis TEXT,
     address TEXT,
+    nationality VARCHAR(100),
+    social_security_id VARCHAR(50),
+    social_security_expiration DATE,
+    social_security_company VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
 -- Create trigger to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()

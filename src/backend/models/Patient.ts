@@ -65,15 +65,20 @@ export const PatientModel = {
     try {
       const query = `
         INSERT INTO patients (
-          first_name, last_name, birth_date, age, registered,
-          phone_number, gender, medication, balance, diagnosis, address
-        ) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP,
-          $5, $6, $7, $8, $9, $10)
+          first_name, middle_name, last_name, birth_date, age, registered,
+          phone_number, gender, medication, balance, diagnosis, address,
+          nationality, social_security_id, social_security_expiration, social_security_company
+        ) VALUES (
+          $1, $2, $3, $4, $5, CURRENT_TIMESTAMP,
+          $6, $7, $8, $9, $10, $11,
+          $12, $13, $14, $15
+        )
         RETURNING *
       `;
-      
+  
       const values = [
         patient.first_name,
+        patient.middle_name,
         patient.last_name,
         patient.birth_date,
         patient.age,
@@ -82,17 +87,22 @@ export const PatientModel = {
         patient.medication,
         patient.balance,
         patient.diagnosis,
-        patient.address
+        patient.address,
+        patient.nationality,
+        patient.social_security_id,
+        patient.social_security_expiration,
+        patient.social_security_company
       ];
-      
+  
       const { rows } = await pool.query(query, values);
       return rows[0];
+  
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       throw new Error(`Failed to create patient: ${errorMessage}`);
-
     }
-},
+  },
+  
 
   async updatePatient(id: string, patient: Partial<Patient>) {
     const fields = Object.keys(patient).map((key, index) => `${key} = $${index + 1}`);

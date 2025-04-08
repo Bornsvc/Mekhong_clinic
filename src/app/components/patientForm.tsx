@@ -7,6 +7,7 @@ import ConfirmClose from './confirmClose'
 
 interface FormData {
   firstName: string;
+  middleName: string;
   lastName: string;
   birthDate: string;
   age: number;
@@ -18,12 +19,17 @@ interface FormData {
   gender: string;
   balance: number;
   diagnosis: string;
+  nationality: string;
+  socialSecurityId: string;
+  socialSecurityExpiration: string;
+  socialSecurityCompany: string;
 }
 
 const CustomerForm: React.FC = () => {
 
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
+    middleName: "",
     lastName: "",
     birthDate: "",
     age: 0,
@@ -35,6 +41,10 @@ const CustomerForm: React.FC = () => {
     gender: "",
     balance: 0,
     diagnosis: "",
+    nationality: "",
+    socialSecurityId: "",
+    socialSecurityExpiration: "",
+    socialSecurityCompany: "",
   });
 
   const { setFormactive, setToastMassage, setSearchQuery } = useContext(FormContext); 
@@ -43,11 +53,23 @@ const CustomerForm: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     const updatedData: Partial<FormData> = { [name]: value };
+    const formattedDate = value.split("T")[0];
 
     if (name === "birthDate") {
-      const birthYear = new Date(value).getFullYear();
+      // ตัดเวลาออกให้เหลือแค่ YYYY-MM-DD
+      updatedData.birthDate = formattedDate;
+      updatedData.socialSecurityExpiration = formattedDate;
+
+      const birthYear = new Date(formattedDate).getFullYear();
       const currentYear = new Date().getFullYear();
       updatedData.age = currentYear - birthYear;
+
+      console.log('updatedData.birthDate>>>>>',updatedData.birthDate)
+    }
+
+    if(name === 'socialSecurityExpiration'){
+      updatedData.socialSecurityExpiration = formattedDate;
+      console.log('updatedData.socialSecurityExpiration>>>>>',updatedData.socialSecurityExpiration)
     }
 
     setFormData((prevData) => ({ ...prevData, ...updatedData }));
@@ -58,6 +80,7 @@ const CustomerForm: React.FC = () => {
     try {
       const response = await axios.post('/api/patients', {
         first_name: formData.firstName,
+        middle_name: formData.middleName,
         last_name: formData.lastName,
         birth_date: formData.birthDate,
         age: (formData.age),
@@ -68,6 +91,10 @@ const CustomerForm: React.FC = () => {
         balance: formData.balance,
         diagnosis: formData.diagnosis || '',
         address: formData.address,
+        nationality: formData.nationality,
+        social_security_id: formData.socialSecurityId,
+        social_security_expiration: formData.socialSecurityExpiration,
+        social_security_company: formData.socialSecurityCompany,
       });
   
       if (response.status === 200) {
@@ -96,6 +123,7 @@ const CustomerForm: React.FC = () => {
       } else {
         setToastMassage(false);
       }
+
     } catch (error) {
       console.error('Error submitting form:', error);
       setToastMassage(false);
@@ -108,31 +136,31 @@ const CustomerForm: React.FC = () => {
   };
   
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl w-full space-y-8 bg-white p-10 rounded-2xl shadow-lg relative">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 transition-all duration-300">
+      <div className="max-w-4xl w-full space-y-8 bg-white p-10 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 relative">
         <Image
           src={ClodeIcon}
           alt="ClodeIcon"
           width={30}
           height={30}
-          className="absolute top-6 right-6 cursor-pointer hover:opacity-75 transition-opacity"
+          className="absolute top-6 right-6 cursor-pointer hover:opacity-75 hover:scale-110 transition-all duration-200"
           onClick={handleClose}
         />
         {comFirm ? <ConfirmClose comFirm={comFirm} setComfirm={setComfirm} /> : null}
         
-        <div>
-          <h2 className="text-center text-4xl font-extrabold text-gray-900 tracking-tight">
+        <div className="transform hover:scale-[1.01] transition-all duration-200">
+          <h2 className="text-center text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-800 tracking-tight">
             ຂໍ້ມູນສ່ວນຕົວ
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="mt-2 text-center text-sm text-gray-600 animate-fade-in">
             ກະລຸນາຕື່ມລາຍລະອຽດຂ້າງລຸ່ມນີ້
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-8">
           {/* Personal Information Section */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-gray-700">ຂໍ້ມູນສ່ວນຕົວ</h3>
+          <div className="space-y-6 bg-gray-50 p-6 rounded-xl transition-all duration-200 hover:shadow-md">
+            <h3 className="text-xl font-semibold text-gray-800 border-b pb-2">ຂໍ້ມູນສ່ວນຕົວ</h3>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div>
                 <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">ຊື່</label>
@@ -146,7 +174,18 @@ const CustomerForm: React.FC = () => {
                 />
               </div>
               <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">ນາມສະກຸນ</label>
+                <label htmlFor="middleName" className="block text-sm font-medium text-gray-700 mb-1">ຊື່ເລ່ນ</label>
+                <input
+                  id="middleName"
+                  type="text"
+                  name="middleName"
+                  value={formData.middleName}
+                  onChange={handleChange}
+                  className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
+                />
+              </div>
+              <div>
+                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">ນາມສກຸນ</label>
                 <input
                   id="lastName"
                   type="text"
@@ -184,6 +223,17 @@ const CustomerForm: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div>
+                <label htmlFor="nationality" className="block text-sm font-medium text-gray-700 mb-1">ສັນຊາດ</label>
+                <input
+                  id="nationality"
+                  type="text"
+                  name="nationality"
+                  value={formData.nationality}
+                  onChange={handleChange}
+                  className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
+                />
+              </div>
               <div>
                 <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">ເພດ</label>
                 <select
@@ -225,9 +275,49 @@ const CustomerForm: React.FC = () => {
             </div>
           </div>
 
+          {/* Social Security Information Section */}
+          <div className="space-y-6 bg-gray-50 p-6 rounded-xl transition-all duration-200 hover:shadow-md">
+            <h3 className="text-xl font-semibold text-gray-800 border-b pb-2">ຂໍ້ມູນປະກັນສັງຄົມ</h3>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div>
+                <label htmlFor="socialSecurityId" className="block text-sm font-medium text-gray-700 mb-1">ເລກປະກັນສັງຄົມ</label>
+                <input
+                  id="socialSecurityId"
+                  type="text"
+                  name="socialSecurityId"
+                  value={formData.socialSecurityId}
+                  onChange={handleChange}
+                  className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
+                />
+              </div>
+              <div>
+                <label htmlFor="socialSecurityExpiration" className="block text-sm font-medium text-gray-700 mb-1">ວັນໝົດອາຍຸ</label>
+                <input
+                  id="socialSecurityExpiration"
+                  type="date"
+                  name="socialSecurityExpiration"
+                  value={formData.socialSecurityExpiration}
+                  onChange={handleChange}
+                  className="appearance-none relative block w-full px-3 py-3 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="socialSecurityCompany" className="block text-sm font-medium text-gray-700 mb-1">ບໍລິສັດປະກັນ</label>
+              <input
+                id="socialSecurityCompany"
+                type="text"
+                name="socialSecurityCompany"
+                value={formData.socialSecurityCompany}
+                onChange={handleChange}
+                className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
+              />
+            </div>
+          </div>
+
           {/* Medical Information Section */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-gray-700">ຂໍ້ມູນທາງການແພດ</h3>
+          <div className="space-y-6 bg-gray-50 p-6 rounded-xl transition-all duration-200 hover:shadow-md">
+            <h3 className="text-xl font-semibold text-gray-800 border-b pb-2">ຂໍ້ມູນທາງການແພດ</h3>
             <div>
               <label htmlFor="diagnosis" className="block text-sm font-medium text-gray-700 mb-1">ການວິນິດໄຊ</label>
               <textarea
@@ -254,8 +344,8 @@ const CustomerForm: React.FC = () => {
           </div>
 
           {/* Registration Information Section */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-gray-700">ລາຍລະອຽດການລົງທະບຽນ</h3>
+          <div className="space-y-6 bg-gray-50 p-6 rounded-xl transition-all duration-200 hover:shadow-md">
+            <h3 className="text-xl font-semibold text-gray-800 border-b pb-2">ລາຍລະອຽດການລົງທະບຽນ</h3>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div>
                 <label htmlFor="registered" className="block text-sm font-medium text-gray-700 mb-1">ວັນທີລົງທະບຽນ</label>
@@ -284,7 +374,7 @@ const CustomerForm: React.FC = () => {
 
           <button
             type="submit"
-            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-xl font-bold rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200 ease-in-out transform hover:-translate-y-1"
+            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-xl font-bold rounded-lg text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
           >
             ເພີ່ມຂໍ້ມູນຄົນໄຂ້
           </button>

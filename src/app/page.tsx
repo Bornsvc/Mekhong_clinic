@@ -20,6 +20,7 @@ import LogOutIcon from '@/icons/logout.png'
 interface Patient {
   id: string;
   first_name: string;
+  middle_name: string;
   last_name: string;
   birth_date: string;
   age: number;
@@ -31,6 +32,10 @@ interface Patient {
   gender: string;
   balance: number;
   diagnosis: string;
+  nationality: string;
+  social_security_id: string;
+  social_security_expiration: string;
+  social_security_company: string;
 }
 
 interface FormContextType {

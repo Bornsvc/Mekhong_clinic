@@ -4,26 +4,33 @@ import { useParams, useRouter } from 'next/navigation';
 import axios from 'axios';
 import Link from 'next/link';
 import EditPatientForm from '@/app/components/editPatientForm';
-import { FormContext } from "@/app/page"; // Import the context
+import { FormContext } from "@/app/page";
 
 interface Patient {
   id: string;
   first_name: string;
+  middle_name?: string; // เพิ่ม
   last_name: string;
   birth_date: string;
+  registered: string;
   age: number;
-  address: string;
   phone_number: string;
-  purpose: string;
-  medication: string;
-  created_at: string;
   gender: string;
   balance: number;
   diagnosis: string;
+  address?: string;
+  medication?: string;
+  nationality?: string; // เพิ่ม
+  social_security_id?: string; // เพิ่ม
+  social_security_expiration?: string; // เพิ่ม
+  social_security_company?: string; // เพิ่ม
+  purpose?: string;
+  created_at?: string;
+  updated_at?: string; // เพิ่ม
 }
 
 export default function PatientDetails() {
-   const { setToastMassage } = useContext(FormContext); 
+  const { setToastMassage } = useContext(FormContext); 
 
   const params = useParams();
   const [patient, setPatient] = useState<Patient | null>(null);
@@ -92,8 +99,6 @@ export default function PatientDetails() {
     setIsDeleteModalOpen(true);
   };
 
-     
-  
   const handleConfirmDelete = async () => {
     try {
       setLoading(true);
@@ -133,7 +138,6 @@ export default function PatientDetails() {
     }
   };
   
-  // Add this modal component just before the final return statement
   const DeleteConfirmationModal = () => {
     if (isDeleteModalOpen) {
       return (
@@ -160,25 +164,19 @@ export default function PatientDetails() {
           </div>
         </div>
       );
-    }else{
-      return null;
-    } 
-
-   
+    }
+    return null;
   };
-  
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-        {isDeleteModalOpen && <DeleteConfirmationModal />}
+      {isDeleteModalOpen && <DeleteConfirmationModal />}
 
-        {isEditModalOpen && typeof params?.id === 'string' && (
-          <EditPatientForm patientId={params.id} onClose={() => setIsEditModalOpen(false)} />
-        )}
-
+      {isEditModalOpen && typeof params?.id === 'string' && (
+        <EditPatientForm patientId={params.id} onClose={() => setIsEditModalOpen(false)} />
+      )}
 
       <div className="max-w-4xl mx-auto">
-        {/* Back Link */}
         <Link
           href="/"
           className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6 group"
@@ -190,7 +188,6 @@ export default function PatientDetails() {
         </Link>
 
         <div className="bg-white shadow-xl rounded-lg overflow-hidden">
-          {/* Header Section */}
           <div className="px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-400">
             <div className="flex justify-between items-center">
               <div>
@@ -207,8 +204,8 @@ export default function PatientDetails() {
                   <span>Edit</span>
                 </button>
                 <button 
-                onClick={deletePatient}
-                className="px-4 py-2 bg-red-500 rounded-lg text-white hover:bg-red-600 transition-all duration-200 flex items-center space-x-2 shadow-sm hover:shadow-md">
+                  onClick={deletePatient}
+                  className="px-4 py-2 bg-red-500 rounded-lg text-white hover:bg-red-600 transition-all duration-200 flex items-center space-x-2 shadow-sm hover:shadow-md">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
@@ -219,7 +216,6 @@ export default function PatientDetails() {
           </div>
   
           <div className="p-6 space-y-8">
-            {/* Status Card */}
             <div className="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
               <div className="flex items-center space-x-4">
                 <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
@@ -230,7 +226,7 @@ export default function PatientDetails() {
                 <div>
                   <h2 className="text-xl font-semibold">{`${patient.first_name} ${patient.last_name}`}</h2>
                   <p className="text-gray-500">
-                    Patient since: {new Date(patient.created_at).toLocaleDateString('en-US')}
+                    Patient since: {new Date(patient.registered).toLocaleDateString('en-US')}
                   </p>
                 </div>
               </div>
@@ -242,9 +238,7 @@ export default function PatientDetails() {
               </div>
             </div>
   
-            {/* Main Information Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Personal Information */}
               <div className="bg-white p-6 rounded-lg border border-gray-200">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                   <svg className="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -253,6 +247,18 @@ export default function PatientDetails() {
                   Personal Information
                 </h3>
                 <div className="space-y-4">
+                  <div className="grid grid-cols-1 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-500">Full Name</p>
+                      <p className="text-base font-medium">
+                        {`${patient.first_name} ${patient.last_name}`} ({patient.middle_name || ''})
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Nationality</p>
+                      <p className="text-base font-medium">{patient.nationality || 'Not specified'}</p>
+                    </div>
+                  </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <p className="text-sm text-gray-500">Date of Birth</p>
@@ -269,29 +275,54 @@ export default function PatientDetails() {
                   </div>
                 </div>
               </div>
-  
-              {/* Contact Information */}
+
               <div className="bg-white p-6 rounded-lg border border-gray-200">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                   <svg className="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
-                  Contact Information
+                  Social Security Information
                 </h3>
                 <div className="space-y-4">
                   <div>
-                    <p className="text-sm text-gray-500">Phone Number</p>
-                    <p className="text-base font-medium">{patient.phone_number}</p>
+                    <p className="text-sm text-gray-500">Social Security ID</p>
+                    <p className="text-base font-medium">{patient.social_security_id || 'Not provided'}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Address</p>
-                    <p className="text-base font-medium">{patient.address}</p>
+                    <p className="text-sm text-gray-500">Expiration Date</p>
+                    <p className="text-base font-medium">
+                      {patient.social_security_expiration 
+                        ? new Date(patient.social_security_expiration).toLocaleDateString('en-US')
+                        : 'Not provided'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Company</p>
+                    <p className="text-base font-medium">{patient.social_security_company || 'Not provided'}</p>
                   </div>
                 </div>
               </div>
             </div>
-  
-            {/* Medical Information */}
+
+            <div className="bg-white p-6 rounded-lg border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <svg className="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+                Contact Information
+              </h3>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm text-gray-500">Phone Number</p>
+                  <p className="text-base font-medium">{patient.phone_number}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Address</p>
+                  <p className="text-base font-medium">{patient.address}</p>
+                </div>
+              </div>
+            </div>
+
             <div className="bg-white p-6 rounded-lg border border-gray-200">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <svg className="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -319,5 +350,4 @@ export default function PatientDetails() {
       </div>
     </div>
   );
-  
 }

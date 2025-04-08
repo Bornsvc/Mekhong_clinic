@@ -24,6 +24,10 @@ interface FormData {
   gender: string;
   balance: number;
   diagnosis: string;
+  nationality?: string; // เพิ่ม
+  socialSecurityId?: string; // เพิ่ม
+  socialSecurityExpiration?: string; // เพิ่ม
+  socialSecurityCompany?: string; // เพิ่ม
 }
 
 const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose }) => {
@@ -40,6 +44,10 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
     gender: "",
     balance: 0,
     diagnosis: "",
+    nationality: "",
+    socialSecurityId: "",
+    socialSecurityExpiration: "",
+    socialSecurityCompany: "",
   });
   const [oldDormData, setOldFormData] = useState({
     firstName: "",
@@ -53,6 +61,10 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
     gender: "",
     balance: 0,
     diagnosis: "",
+    nationality: "",
+    socialSecurityId: "",
+    socialSecurityExpiration: "",
+    socialSecurityCompany: "",
   });
 
   const [loading, setLoading] = useState(true);
@@ -91,6 +103,10 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
           gender: olddata.gender,
           balance: olddata.balance,
           diagnosis: olddata.diagnosis || '',
+          nationality: olddata.nationality,
+          socialSecurityId: olddata.socialSecurityId,
+          socialSecurityExpiration: olddata.socialSecurityExpiration,
+          socialSecurityCompany: olddata.socialSecurityCompany,
         })
         setLoading(false);
       } catch (err) {
