@@ -183,7 +183,7 @@ export default function Home() {
                     alt='LOGO'
                     className='w-12 h-12 rounded-full bg-white'
                   />
-                  <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-white tracking-wide">MEKONG CLINIC</h1>
+                  <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white tracking-wide">MEKONG CLINIC</h1>
                 </div>
               </div>
             </nav>
@@ -226,7 +226,7 @@ export default function Home() {
                       onClick={handleLogout}
                   >
                     <Image src={LogOutIcon} alt="LogOutIcon" width={24} height={24} />
-                    <span className="font-medium text-gray-700 inline">ອອກຈາກລະບົບ</span>
+                    <span className="font-medium text-gray-700 text-lg inline">ອອກຈາກລະບົບ</span>
                   </div>
                 </div>
               </div>
@@ -242,7 +242,7 @@ export default function Home() {
                           setSearchQuery((e.target.value));
                           setCurrentPage(1);
                         }}
-                        className="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
                       />
                     </div>
                     <div className="flex items-center gap-6 mr-10">
@@ -308,25 +308,25 @@ export default function Home() {
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th scope="col" className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                           ລະຫັດ
                         </th>
-                        <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th scope="col" className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                           ຊື່ / ນາມສະກຸນ
                         </th>
-                        <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th scope="col" className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                           ວັນ / ເດືອນ / ປີເກີດ
                         </th>
-                        <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th scope="col" className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                           ອາຍຸ
                         </th>
-                        <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th scope="col" className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                           ລົງທະບຽນ
                         </th>
-                        <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th scope="col" className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                           ເພດ
                         </th>
-                        <th scope="col" className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th scope="col" className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                           ເບີໂທລະສັບ
                         </th>
                       </tr>
@@ -335,31 +335,31 @@ export default function Home() {
                       {patients.map((patient, index) => (
                         <tr key={index} className="hover:bg-blue-50 transition-colors duration-200">
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-900">{patient.id}</div>
+                            <div className="text-base text-gray-900">{patient.id}</div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-medium text-blue-600 hover:text-blue-800">
-                              <Link href={`/patients/${patient.id}`}>{`${patient.first_name} ${patient.last_name}`}</Link>
+                            <div className="text-base font-medium text-blue-600 hover:text-blue-800">
+                              <Link href={`/patients/${patient.id}`}>{`${patient.first_name} ${patient.last_name} (${patient.middle_name})`}</Link>
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-900">
+                            <div className="text-base text-gray-900">
                               {formatDate(patient.birth_date)}
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-900">{patient.age}</div>
+                            <div className="text-base text-gray-900">{patient.age}</div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-900">
+                            <div className="text-base text-gray-900">
                               {formatDate(patient.created_at)}
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-900 capitalize">{patient.gender}</div>
+                            <div className="text-base text-gray-900 capitalize">{patient.gender}</div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-900">{patient.phone_number}</div>
+                            <div className="text-base text-gray-900">{patient.phone_number}</div>
                           </td>
                         </tr>
                       ))}
