@@ -23,11 +23,19 @@ export const PatientModel = {
     const queryParams: (string | number)[] = [];
 
     if (search) {
-      const searchCondition = "first_name ILIKE $1 OR last_name ILIKE $1 OR phone_number ILIKE $1 OR CONCAT(first_name, ' ', last_name) ILIKE $1";
+      const searchCondition = `
+        first_name ILIKE $1 
+        OR last_name ILIKE $1 
+        OR middle_name ILIKE $1 
+        OR phone_number ILIKE $1 
+        OR CONCAT(first_name, ' ', last_name) ILIKE $1
+        OR CONCAT(first_name, ' ', middle_name, ' ', last_name) ILIKE $1
+      `;
       countQuery += ` WHERE ${searchCondition}`;
       dataQuery += ` WHERE ${searchCondition}`;
       queryParams.push(`%${search}%`);
     }
+    
 
     dataQuery += ' ORDER BY created_at DESC';
 
