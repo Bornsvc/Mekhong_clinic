@@ -15,7 +15,12 @@ interface ExcelRow {
   Address: string;
   Purpose: string;
   Medication: string;
+  Nationality?: string;
+  'Social Security ID'?: string;  // Updated field name
+  'Social Security Expiration'?: string;  // Updated field name
+  'Social Security Company'?: string;  // Updated field name
 }
+
 
 export async function POST(request: Request) {
   try {
@@ -41,6 +46,7 @@ export async function POST(request: Request) {
     const workbook = XLSX.read(arrayBuffer, { type: 'buffer' });
     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
     const data = XLSX.utils.sheet_to_json(worksheet);
+    console.log('Imported Excel Data:', data);
 
     const results = {
       created: 0,
@@ -51,6 +57,13 @@ export async function POST(request: Request) {
 
     for (const row of data as ExcelRow[]) {
       try {
+        // Log each row's social security data
+        console.log('Row Social Security Data:', {
+          id: row.SocialSecurityID,
+          expiration: row.SocialSecurityExpiration,
+          company: row.SocialSecurityCompany
+        });
+
         // Extract and validate required fields
         const uhid = row.UHID;
         if (!uhid) {
@@ -72,40 +85,56 @@ export async function POST(request: Request) {
         const dobStr = row.Dob;
         let dob = null;
         
-        if (dobStr) {
-          // Try parsing various date formats
-          // First try DD/MM/YYYY format as it's the expected format
-          const [day, month, year] = dobStr.split(/[\/\-]/).map(Number);
-          if (day && month && year) {
-            dob = new Date(year, month - 1, day);
-          } else if (typeof dobStr === 'number') {
+        if (dobStr && dobStr !== '') {
+          if (typeof dobStr === 'number') {
             // Handle Excel date serial numbers
             dob = new Date((dobStr - 25569) * 86400 * 1000);
-          } else {
-            // Try parsing string date as fallback
-            dob = new Date(dobStr);
+          } else if (typeof dobStr === 'string') {
+            // Try parsing DD/MM/YYYY format
+            const parts = dobStr.split(/[\/\-]/);
+            if (parts.length === 3) {
+              const [day, month, year] = parts.map(Number);
+              if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+                dob = new Date(year, month - 1, day);
+              }
+            }
+            
+            // If DD/MM/YYYY parsing failed, try as ISO date
+            if (!dob || isNaN(dob.getTime())) {
+              dob = new Date(dobStr);
+            }
           }
-        }
 
-        if (!dob || isNaN(dob.getTime())) {
-          throw new Error(`Invalid date format for DOB: ${dobStr}`);
+          // Validate the parsed date
+          if (!dob || isNaN(dob.getTime())) {
+            throw new Error(`Invalid date format for DOB: ${dobStr}`);
+          }
+
+          // Validate DOB is not in future
+          if (dob > new Date()) {
+            throw new Error('Date of birth cannot be in the future');
+          }
+        } else {
+          // Skip validation for empty dates
+          dob = null;
         }
 
         // Validate DOB is not in future
-        if (dob > new Date()) {
+        if (dob !== null && dob > new Date()) {
           throw new Error('Date of birth cannot be in the future');
         }
 
         // Calculate age from DOB and validate against provided age
         const today = new Date();
-        let calculatedAge = today.getFullYear() - dob.getFullYear();
+        let calculatedAge = dob !== null ? today.getFullYear() - dob.getFullYear() : 0;
         const providedAge = parseInt(row.Age);
 
         // Adjust age if birthday hasn't occurred this year
-        const monthDiff = today.getMonth() - dob.getMonth();
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+        const monthDiff = dob !== null ?  today.getMonth() - dob.getMonth() : 0;
+        if (dob && monthDiff < 0 || dob !== null ? (monthDiff === 0 && today.getDate() < dob.getDate()) : 0) {
           calculatedAge--;
         }
+        
 
         // Allow 1 year difference due to potential data entry timing differences
         if (Math.abs(calculatedAge - providedAge) > 1) {
@@ -113,10 +142,25 @@ export async function POST(request: Request) {
         }
 
         const registeredStr = row.Registered;
-        const registered = registeredStr ? new Date(registeredStr) : null;
+        let registered = null;
 
-        if (!registered || isNaN(registered.getTime())) {
-          throw new Error('Invalid date format for Registered');
+        if (registeredStr && registeredStr !== '') {
+          if (typeof registeredStr === 'number') {
+            // Handle Excel date serial numbers
+            registered = new Date((registeredStr - 25569) * 86400 * 1000);
+          } else {
+            // Try parsing various date formats
+            const [day, month, year] = registeredStr.split(/[\/\-]/).map(Number);
+            if (day && month && year) {
+              registered = new Date(year, month - 1, day);
+            } else {
+              registered = new Date(registeredStr);
+            }
+          }
+
+          if (!registered || isNaN(registered.getTime())) {
+            throw new Error(`Invalid date format for Registration date: ${registeredStr}`);
+          }
         }
 
         // Validate and convert age to number
@@ -126,19 +170,47 @@ export async function POST(request: Request) {
           throw new Error('Invalid age format');
         }
 
-        // Validate and convert balance to number
+        // Validate and convert balance to number with 2 decimal places
         const balanceStr = row.Balance;
-        const balance = balanceStr ? parseFloat(balanceStr.replace(/[^0-9.-]/g, '').trim()) : 0;
+        const balance = balanceStr 
+          ? (typeof balanceStr === 'number' 
+              ? Number(balanceStr.toFixed(2))
+              : Number(parseFloat(String(balanceStr).replace(/[^0-9.-]/g, '').trim()).toFixed(2)))
+          : 0.00;
         if (isNaN(balance)) {
           throw new Error('Invalid balance format');
         }
+
+        // Handle social security fields
+        const socialSecurityId = row['Social Security ID'] !== undefined ? String(row['Social Security ID']).trim() : '';
+        
+        // Handle social security expiration date
+        let socialSecurityExpiration = null;
+        if (row['Social Security Expiration'] && String(row['Social Security Expiration']).trim() !== '') {
+          if (typeof row['Social Security Expiration'] === 'number') {
+            socialSecurityExpiration = new Date((row['Social Security Expiration'] - 25569) * 86400 * 1000);
+          } else {
+            const expDate = String(row['Social Security Expiration']).trim();
+            const parts = expDate.split(/[\/\-]/);
+            if (parts.length === 3) {
+              const [day, month, year] = parts.map(Number);
+              if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+                socialSecurityExpiration = new Date(year, month - 1, day);
+              }
+            } else {
+              socialSecurityExpiration = new Date(expDate);
+            }
+          }
+        }
+
+        const socialSecurityCompany = row['Social Security Company'] !== undefined ? String(row['Social Security Company']).trim() : '';
 
         const patient = {
           id: uhid,
           first_name: firstName,
           last_name: lastName || '',
-          birth_date: dob.toISOString(),
-          registered: registered.toISOString(),
+          birth_date: dob ? dob.toISOString() : new Date().toISOString(),
+          registered: registered ? registered.toISOString() : new Date().toISOString(),
           age: age,
           phone_number: row.Mobile || '',
           gender: row.Gender || '',
@@ -146,7 +218,11 @@ export async function POST(request: Request) {
           diagnosis: row.Diagnosis || '',
           address: row.Address || '',
           purpose: row.Purpose || '',
-          medication: row.Medication || ''
+          medication: row.Medication || '',
+          nationality: row.Nationality || '',
+          social_security_id: socialSecurityId,
+          social_security_expiration: socialSecurityExpiration ? socialSecurityExpiration.toISOString() : null,
+          social_security_company: socialSecurityCompany,
         };
 
         // Check if patient already exists

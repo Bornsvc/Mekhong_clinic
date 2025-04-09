@@ -1,11 +1,11 @@
-import React, { useState, useCallback, useContext } from 'react';
-import { FormContext } from "@/app/page";
+import React, { useState, useCallback } from 'react'; // useContext
+// import { FormContext } from "@/app/page";
 import axios from 'axios';
-import CloseIcon from '@/icons/close.png'
-import Image from 'next/image';
+// import CloseIcon from '@/icons/close.png'
+// import Image from 'next/image';
 
 function ImportPatientForm() {
-  const { setIsImportActive } = useContext(FormContext);
+  // const { setIsImportActive } = useContext(FormContext);
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -53,15 +53,16 @@ function ImportPatientForm() {
         },
       });
 
-      if (response.data.success) {
+      // Check for data.message instead of data.success
+      if (response.data.message === 'Import completed') {
         const result = {
-          success: response.data.successCount || 0,
-          failed: response.data.failedCount || 0,
-          errors: response.data.errors || []
+          success: response.data.data.created || 0,  // Changed from successCount to data.created
+          failed: response.data.data.failed || 0,    // Changed from failedCount to data.failed
+          errors: response.data.data.errors || []    // Changed to data.errors
         };
         console.log('Import result:', result);
-        setImportResult(result);
-        alert(`Import completed! Successfully imported ${result.success} records.${result.failed > 0 ? ` Failed to import ${result.failed} records.` : ''}`); 
+        console.log(response.data)
+        setImportResult(result); 
       } else {
         console.error('Import failed:', response.data);
         alert('Import failed. Please check the file format and try again.');
@@ -86,16 +87,16 @@ function ImportPatientForm() {
       <div className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md">
       <div className='flex justify-between items-center mb-6'>
         <h2 className="text-2xl font-bold text-gray-800 w-full text-center">
-            Import Patient File
+            ນຳເຂົ້າໄຟສຄົນໄຂ້
         </h2>
-        <Image
+        {/* <Image
             src={CloseIcon}
             alt="Close"
             width={24}
             height={24}
             className="cursor-pointer hover:opacity-75 transition-opacity"
             onClick={() => setIsImportActive(false)}
-        />
+        /> */}
         </div>
 
         <div className="flex flex-col gap-5">
@@ -125,15 +126,15 @@ function ImportPatientForm() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                   </svg>
                   <p className="text-lg font-medium text-gray-800">{file.name}</p>
-                  <p className="text-sm text-gray-500">File selected</p>
+                  <p className="text-sm text-gray-500">ໄຟສທີຖືກເລືອກ</p>
                 </>
               ) : (
                 <>
                   <svg className="w-10 h-10 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                   </svg>
-                  <p className="text-lg font-medium text-gray-800">Drag & Drop your file here</p>
-                  <p className="text-sm text-gray-500">or click to browse</p>
+                  <p className="text-lg font-medium text-gray-800">ລາກ ເເລະ ວາງໄຟສບ່ອນນີ້</p>
+                  <p className="text-sm text-gray-500">ຫຼື ກົດໄປທີເລືອກໄຟສ</p>
                 </>
               )}
             </div>
@@ -143,8 +144,8 @@ function ImportPatientForm() {
             <div className="space-y-4 w-full">
               <div className="bg-gray-100 p-4 rounded-lg">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-gray-700 font-medium">Import Summary</span>
-                  <span className="text-sm text-gray-500">{importResult.success + importResult.failed} total</span>
+                  <span className="text-gray-700 font-medium">ການກວດສອບໄຟລ໌</span>
+                  <span className="text-sm text-gray-500">{importResult.success + importResult.failed} ລວມທັງໝົດ</span>
                 </div>
                 <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                   <div 
@@ -156,13 +157,13 @@ function ImportPatientForm() {
                   />
                 </div>
                 <div className="flex justify-between items-center mt-2 z-40">
-                  <span className="text-green-600 font-medium">{importResult.success} successful</span>
-                  <span className="text-red-600 font-medium">{importResult.failed} failed</span>
+                  <span className="text-green-600 font-medium">{importResult.success} ສຳເລັດ</span>
+                  <span className="text-red-600 font-medium">{importResult.failed} ລົ້ມເຫຼວ</span>
                 </div>
               </div>
               {importResult.errors.length > 0 && (
                 <div className="bg-red-50 p-4 rounded-lg">
-                  <p className="text-red-800 font-medium mb-2">Errors:</p>
+                  <p className="text-red-800 font-medium mb-2">ຜິດພາດ:</p>
                   <ul className="text-red-600 text-sm list-disc pl-4 max-h-40 overflow-y-auto">
                     {importResult.errors.map((error, index) => (
                       <li key={index}>{error}</li>
@@ -175,13 +176,7 @@ function ImportPatientForm() {
                   onClick={() => window.location.reload()}
                   className="flex-1 py-3 px-4 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors"
                 >
-                  Refresh Page
-                </button>
-                <button
-                  onClick={() => setIsImportActive(false)}
-                  className="flex-1 py-3 px-4 bg-gray-500 text-white rounded-lg font-semibold hover:bg-gray-600 transition-colors"
-                >
-                  Close
+                  ລີ່ໜ້າ
                 </button>
               </div>
             </div>
