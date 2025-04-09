@@ -1,5 +1,5 @@
 import cron from 'node-cron';
-import { performBackup } from './route';
+import { performBackup } from '@/lib/backup';
 import { cleanupOldBackups } from './retention';
 import { BACKUP_SCHEDULE } from './config'
 
