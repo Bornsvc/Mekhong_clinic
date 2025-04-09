@@ -51,7 +51,7 @@ async function sendNotification(subject: string, message: string) {
 }
 
 // Function for performing the backup
-export async function performBackup() {
+async function performBackup() {
   try {
     const tables = ['users', 'patients', 'audit_logs'];
     const backupData: { [key: string]: Row[] } = {};
