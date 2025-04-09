@@ -144,7 +144,7 @@ export default function PatientDetails() {
       return (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-8 max-w-xl w-full mx-4">
-            <h3 className="text-2xl font-semibold mb-6">ລົບຄົນເຈັບ</h3>
+            <h3 className="text-2xl font-semibold mb-6">ລົບຄົນໄຂ້</h3>
             <p className="text-gray-600 mb-8 text-lg">
               ທ່ານແນ່ໃຈະລົບຄົນເຈັບນີ້? ການກະທຳນີ້ບໍ່ສາມາດຍ້ອນກັບໄດ້.
             </p>
@@ -192,7 +192,7 @@ export default function PatientDetails() {
           <div className="px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-400">
             <div className="flex justify-between items-center">
               <div>
-                <h1 className="text-3xl font-bold text-white">ລາຍລະອຽດຄົນເຈັບ</h1>
+                <h1 className="text-3xl font-bold text-white">ລາຍລະອຽດຄົນໄຂ້</h1>
                 <p className="text-blue-100 mt-1 text-lg">ລະຫັດ: {patient.id}</p>
               </div>
               <div className="flex gap-3">

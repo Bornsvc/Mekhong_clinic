@@ -5,6 +5,7 @@ import { PatientModel } from '@/backend/models/Patient';
 interface ExcelRow {
   UHID: string;
   FullName: string;
+  MiddleName: string;
   Dob: string;
   Registered: string;
   Age: string;
@@ -79,6 +80,9 @@ export async function POST(request: Request) {
         // Split full name into first and last name
         const [firstName, ...lastNameParts] = fullName.trim().split(' ');
         const lastName = lastNameParts.join(' ');
+
+        const middleName = row.MiddleName || '';
+        const middle_name = middleName || '';
 
         // Convert ISO 8601 date strings to Date objects
         // Parse DOB with more robust date handling
@@ -204,6 +208,7 @@ export async function POST(request: Request) {
           id: String(uhid),
           first_name: firstName,
           last_name: lastName || '',
+          middle_name: middle_name || '',
           birth_date: dob ? dob.toISOString() : new Date().toISOString(),
           registered: registered ? registered.toISOString() : new Date().toISOString(),
           age: Number(age),
@@ -219,7 +224,6 @@ export async function POST(request: Request) {
           social_security_id: socialSecurityId || undefined,
           social_security_expiration: socialSecurityExpiration ? socialSecurityExpiration.toISOString() : undefined,
           social_security_company: socialSecurityCompany || undefined,
-          middle_name: undefined,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         };

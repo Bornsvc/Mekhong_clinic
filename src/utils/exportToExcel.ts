@@ -7,6 +7,7 @@ export const exportPatientsToExcel = (patients: Patient[]) => {
     patients.map(patient => ({
       UHID: patient.id,
       FullName: `${patient.first_name} ${patient.last_name}`,
+      MiddleName: patient.middle_name,
       Dob: new Date(patient.birth_date).toLocaleDateString(),
       Age: patient.age,
       Registered: patient.created_at,
