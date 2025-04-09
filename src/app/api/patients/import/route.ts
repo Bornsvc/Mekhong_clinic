@@ -57,12 +57,12 @@ export async function POST(request: Request) {
 
     for (const row of data as ExcelRow[]) {
       try {
-        // Log each row's social security data
-        console.log('Row Social Security Data:', {
-          id: row.SocialSecurityID,
-          expiration: row.SocialSecurityExpiration,
-          company: row.SocialSecurityCompany
-        });
+        // // Log each row's social security data
+        // console.log('Row Social Security Data:', {
+        //   id: row.SocialSecurityID,
+        //   expiration: row.SocialSecurityExpiration,
+        //   company: row.SocialSecurityCompany
+        // });
 
         // Extract and validate required fields
         const uhid = row.UHID;
@@ -172,14 +172,18 @@ export async function POST(request: Request) {
 
         // Validate and convert balance to number with 2 decimal places
         const balanceStr = row.Balance;
-        const balance = balanceStr 
-          ? (typeof balanceStr === 'number' 
-              ? Number(balanceStr.toFixed(2))
-              : Number(parseFloat(String(balanceStr).replace(/[^0-9.-]/g, '').trim()).toFixed(2)))
-          : 0.00;
+        const balance = typeof balanceStr === 'string' 
+          ? parseFloat(balanceStr.replace(/[^0-9.-]/g, '').trim()) 
+          : typeof balanceStr === 'number' 
+            ? balanceStr 
+            : 0;
+
         if (isNaN(balance)) {
           throw new Error('Invalid balance format');
         }
+
+        // Use toFixed() on the numeric value
+        const formattedBalance = Number(balance.toFixed(2));
 
         // Handle social security fields
         const socialSecurityId = row['Social Security ID'] !== undefined ? String(row['Social Security ID']).trim() : '';
@@ -197,23 +201,27 @@ export async function POST(request: Request) {
         const socialSecurityCompany = row['Social Security Company'] !== undefined ? String(row['Social Security Company']).trim() : '';
 
         const patient = {
-          id: uhid,
+          id: String(uhid),
           first_name: firstName,
           last_name: lastName || '',
           birth_date: dob ? dob.toISOString() : new Date().toISOString(),
           registered: registered ? registered.toISOString() : new Date().toISOString(),
-          age: age,
-          phone_number: row.Mobile || '',
-          gender: row.Gender || '',
-          balance: balance,
-          diagnosis: row.Diagnosis || '',
-          address: row.Address || '',
-          purpose: row.Purpose || '',
-          medication: row.Medication || '',
-          nationality: row.Nationality || '',
-          social_security_id: socialSecurityId,
-          social_security_expiration: socialSecurityExpiration ? socialSecurityExpiration.toISOString() : null,
-          social_security_company: socialSecurityCompany,
+          age: Number(age),
+          phone_number: String(row.Mobile || ''),
+          gender: String(row.Gender || ''),
+          balance: formattedBalance,
+          diagnosis: String(row.Diagnosis || ''),
+          // Optional fields with proper type handling
+          address: row.Address || undefined,
+          medication: row.Medication || undefined,
+          purpose: row.Purpose || undefined,
+          nationality: row.Nationality || undefined,
+          social_security_id: socialSecurityId || undefined,
+          social_security_expiration: socialSecurityExpiration ? socialSecurityExpiration.toISOString() : undefined,
+          social_security_company: socialSecurityCompany || undefined,
+          middle_name: undefined,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         };
 
         // Check if patient already exists
