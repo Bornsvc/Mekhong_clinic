@@ -339,7 +339,7 @@ export default function Home() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-base font-medium text-blue-600 hover:text-blue-800">
-                              <Link href={`/patients/${patient.id}`}>{`${patient.first_name} ${patient.last_name} (${patient.middle_name})`}</Link>
+                              <Link href={`/patients/${patient.id}`}>{`${patient.first_name} ${patient.last_name} (${patient.middle_name || 'ຊື່ເລ່ນ' })`}</Link>
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">

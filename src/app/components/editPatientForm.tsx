@@ -16,6 +16,7 @@ interface FormData {
   firstName: string;
   lastName: string;
   birthDate: string;
+  middle_name: string
   age: number;
   address: string;
   phoneNumber: string;
@@ -35,6 +36,7 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
+    middle_name:"",
     birthDate: "",
     age: 0,
     address: "",
@@ -52,6 +54,7 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
   const [oldDormData, setOldFormData] = useState({
     firstName: "",
     lastName: "",
+    middle_name:"",
     birthDate: "",
     age: 0,
     address: "",
@@ -80,6 +83,7 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
         setFormData({
           firstName: patient.first_name,
           lastName: patient.last_name,
+          middle_name: patient.middle_name,
           birthDate: new Date(patient.birth_date).toISOString().split('T')[0],
           age: patient.age,
           address: patient.address,
@@ -98,6 +102,7 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
         setOldFormData({
           firstName: olddata.first_name,
           lastName: olddata.last_name,
+          middle_name: olddata.middle_name,
           birthDate: new Date(olddata.birth_date).toISOString().split('T')[0],
           age: olddata.age,
           address: olddata.address,
@@ -148,6 +153,7 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
       const updateData = {
         first_name: formData.firstName,
         last_name: formData.lastName,
+        middle_name: formData.middle_name,
         birth_date: formData.birthDate, 
         age: formData.age,
         phone_number: formData.phoneNumber,
@@ -165,6 +171,7 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
       const oldData = {
         first_name: oldDormData.firstName,
         last_name: oldDormData.lastName,
+        middle_name: oldDormData.middle_name,
         birth_date: oldDormData.birthDate,
         age: oldDormData.age,
         phone_number: oldDormData.phoneNumber,
@@ -238,27 +245,29 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
   }
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-lg p-8 max-w-4xl w-full my-8 relative">
-        <Image
-          src={ClodeIcon}
-          alt="CloseIcon"
-          width={30}
-          height={30}
-          className="absolute top-6 right-6 cursor-pointer hover:opacity-75 transition-opacity"
-          onClick={onClose}
-        />
-
-        <div>
-          <h2 className="text-center text-5xl font-extrabold text-gray-900 tracking-tight">
-            ແກ້ໄຂຂໍ້ມູນຜູ້ປ່ວຍ
-          </h2>
-          <p className="mt-2 text-center text-base text-gray-600">
-            ອັບເດດລາຍລະອຽດຂອງຜູ້ປ່ວຍຂ້າງລຸ່ມນີ້
-          </p>
+    <div className="fixed inset-0 bg-black/60 flex items-start justify-center z-50 overflow-y-auto">
+      <div className="bg-white rounded-lg p-8 max-w-4xl w-full my-8 relative mx-4">
+        <div className=" bg-white pb-4 z-10">
+          <Image
+            src={ClodeIcon}
+            alt="CloseIcon"
+            width={30}
+            height={30}
+            className="absolute top-6 right-6 cursor-pointer hover:opacity-75 transition-opacity"
+            onClick={onClose}
+          />
+        
+          <div>
+            <h2 className="text-center text-5xl font-extrabold text-gray-900 ">
+              ແກ້ໄຂຂໍ້ມູນຜູ້ປ່ວຍ
+            </h2>
+            <p className="mt-2 text-center text-base text-gray-600">
+              ອັບເດດລາຍລະອຽດຂອງຜູ້ປ່ວຍຂ້າງລຸ່ມນີ້
+            </p>
+          </div>
         </div>
-
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+    
+        <form onSubmit={handleSubmit} className="mt-8">
            {/* Personal Information Section */}
           <div className="space-y-4">
             <h3 className="text-xl font-semibold text-gray-700">ຂໍ້ມູນສ່ວນໂຕ</h3>
@@ -281,6 +290,17 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
                   type="text"
                   name="lastName"
                   value={formData.lastName}
+                  onChange={handleChange}
+                  className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
+                />
+              </div>
+              <div>
+                <label htmlFor="middle_name" className="block text-base font-medium text-gray-700 mb-1">ຊື່ເລ່ນ</label>
+                <input
+                  id="middle_name"
+                  type="text"
+                  name="middle_name"
+                  value={formData.middle_name}
                   onChange={handleChange}
                   className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
                 />
@@ -424,9 +444,7 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
             </div>
 
             <div>
-              <label htmlFor="medication" className="block text-base font-medium text-gray-700 mb-1">ຢາທີ່ໃຊ້
-
-</label>
+              <label htmlFor="medication" className="block text-base font-medium text-gray-700 mb-1">ຢາທີ່ໃຊ້</label>
               <textarea
                 id="medication"
                 name="medication"
@@ -450,7 +468,7 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
             </div>
           </div>
 
-          <div className="flex justify-end space-x-4">
+          <div className="flex justify-end space-x-4 mt-5">
             <button
               type="button"
               onClick={onClose}
