@@ -50,6 +50,7 @@ export default function PatientDetails() {
           const response = await axios.get(`/api/patients/${params.id}`);
           setPatient(response.data);
           setPatientName(`${response.data.first_name || ''} ${response.data.last_name || ''}`)
+          console.log(response.data)
         } else {
           setError('Invalid patient ID');
         }
@@ -286,7 +287,11 @@ export default function PatientDetails() {
                     <p className="text-base text-gray-500">ວັນໝົດອາຍຸ</p>
                     <p className="text-lg font-medium">
                       {patient.social_security_expiration 
-                        ? new Date(patient.social_security_expiration).toLocaleDateString('en-US')
+                        ? new Date(patient.social_security_expiration).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })
                         : 'ບໍ່ມີຂໍ້ມູນ'}
                     </p>
                   </div>

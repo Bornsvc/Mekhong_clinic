@@ -52,6 +52,27 @@ export async function PUT(request: Request) {
       }
     }
 
+    // Add date validation for social security expiration
+    if (patient.social_security_expiration) {
+      try {
+        const expDate = new Date(patient.social_security_expiration);
+        if (isNaN(expDate.getTime())) {
+          return NextResponse.json(
+            { error: 'Invalid social security expiration date format' },
+            { status: 400 }
+          );
+        }
+        // Ensure the date is stored in ISO format
+        patient.social_security_expiration = expDate.toISOString();
+      } catch (error) {
+        console.error('Error parsing social security expiration date:', error);
+        return NextResponse.json(
+          { error: 'Invalid social security expiration date' },
+          { status: 400 }
+        );
+      }
+    }
+
     const updatedPatient = await PatientModel.updatePatient(id, patient);
     console.log('Updated Patient:', updatedPatient); // ตรวจสอบข้อมูลที่ได้รับจากการอัปเดต
 

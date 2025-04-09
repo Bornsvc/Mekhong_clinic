@@ -186,20 +186,11 @@ export async function POST(request: Request) {
         
         // Handle social security expiration date
         let socialSecurityExpiration = null;
-        if (row['Social Security Expiration'] && String(row['Social Security Expiration']).trim() !== '') {
-          if (typeof row['Social Security Expiration'] === 'number') {
+        if (row['Social Security Expiration']) {
+          if (typeof row['Social Security Expiration'] === 'string') {
+            socialSecurityExpiration = new Date(row['Social Security Expiration']);
+          } else if (typeof row['Social Security Expiration'] === 'number') {
             socialSecurityExpiration = new Date((row['Social Security Expiration'] - 25569) * 86400 * 1000);
-          } else {
-            const expDate = String(row['Social Security Expiration']).trim();
-            const parts = expDate.split(/[\/\-]/);
-            if (parts.length === 3) {
-              const [day, month, year] = parts.map(Number);
-              if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-                socialSecurityExpiration = new Date(year, month - 1, day);
-              }
-            } else {
-              socialSecurityExpiration = new Date(expDate);
-            }
           }
         }
 
