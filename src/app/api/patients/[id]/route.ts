@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { PatientModel } from '@/backend/models/Patient';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/authOptions';
+
 
 export async function GET(request: Request) {
   try {
