@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useContext } from 'react'; 
-import { FormContext } from "@/app/page";
+import { FormContext } from "@/context/FormContext";
 import axios from 'axios';
 import CloseIcon from '@/icons/close.png'
 import Image from 'next/image';

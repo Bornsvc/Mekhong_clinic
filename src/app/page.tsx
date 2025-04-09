@@ -1,5 +1,5 @@
 "use client"
-import { createContext, useState, useEffect, Dispatch, SetStateAction, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import PatientForm from './components/patientForm'
@@ -16,6 +16,7 @@ import Image from 'next/image';
 import PtientIcon from '@/icons/patient.png'
 import AddPtientIcon from '@/icons/add.png'
 import LogOutIcon from '@/icons/logout.png'
+import { FormContext } from '@/context/FormContext'
 
 interface Patient {
   id: string;
@@ -38,23 +39,7 @@ interface Patient {
   social_security_company: string;
 }
 
-interface FormContextType {
-  formActive: boolean;
-  setFormactive: Dispatch<SetStateAction<boolean>>;
-  setToastMassage: React.Dispatch<React.SetStateAction<boolean | null>>;
-  toastMassage: null | boolean;
-  setSearchQuery: React.Dispatch<SetStateAction<string>>;
-  setIsImportActive: Dispatch<SetStateAction<boolean>>;
-}
 
-const FormContext = createContext<FormContextType>({
-  formActive: false,
-  toastMassage: null,
-  setFormactive: () => {},
-  setToastMassage: () => {},
-  setSearchQuery: () => {},
-  setIsImportActive: () => {}
-});
 
 export default function Home() {
   const router = useRouter();
@@ -376,7 +361,7 @@ export default function Home() {
   );
 }
 
-export { FormContext };
+// export { FormContext };
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);

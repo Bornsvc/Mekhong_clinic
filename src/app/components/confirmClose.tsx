@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { FormContext } from "@/app/page";
+import { FormContext } from "@/context/FormContext";
 
 type ConfirmCloseProps = {
   comFirm: boolean;

@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { FormContext } from "@/app/page"; // Import the context
+import { FormContext } from "@/context/FormContext"; // Import the context
 import Image from "next/image";
 import ClodeIcon from "@/icons/close.png";
 import axios from "axios";

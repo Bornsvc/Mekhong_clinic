@@ -4,7 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import axios from 'axios';
 import Link from 'next/link';
 import EditPatientForm from '@/app/components/editPatientForm';
-import { FormContext } from "@/app/page";
+import { FormContext } from "@/context/FormContext";
 
 interface Patient {
   id: string;

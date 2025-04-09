@@ -5,7 +5,7 @@ import ShowIcon from '@/icons/show.png'
 import hide from '@/icons/hide.png'
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { FormContext } from "@/app/page";
+import { FormContext } from "@/context/FormContext";
 
 export default function LoginPage() {
   const router = useRouter();
