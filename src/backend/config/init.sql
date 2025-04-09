@@ -12,7 +12,7 @@ CREATE SEQUENCE IF NOT EXISTS patient_id_seq START 1;
 
 -- Create patients table
 CREATE TABLE IF NOT EXISTS patients (
-    id VARCHAR(10) PRIMARY KEY DEFAULT 'MK-' || LPAD(NEXTVAL('patient_id_seq')::TEXT, 7, '0'),
+    id VARCHAR(7) PRIMARY KEY DEFAULT LPAD(NEXTVAL('patient_id_seq')::TEXT, 7, '0'),
     first_name VARCHAR(100) NOT NULL,
     middle_name VARCHAR(100),
     last_name VARCHAR(100) NOT NULL,

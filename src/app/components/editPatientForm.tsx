@@ -334,7 +334,7 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
                   id="phoneNumber"
                   type="tel"
                   name="phoneNumber"
-                  value={formData.phoneNumber}
+                  value={formData.phoneNumber || ''}
                   onChange={handleChange}
                   className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
                 />
@@ -346,7 +346,7 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
               <textarea
                 id="address"
                 name="address"
-                value={formData.address}
+                value={formData.address || ''}
                 onChange={handleChange}
                 rows={3}
                 className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
@@ -416,7 +416,7 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
               <textarea
                 id="diagnosis"
                 name="diagnosis"
-                value={formData.diagnosis}
+                value={formData.diagnosis || ''}
                 onChange={handleChange}
                 rows={4}
                 className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
@@ -430,7 +430,7 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
               <textarea
                 id="medication"
                 name="medication"
-                value={formData.medication}
+                value={formData.medication || ''}
                 onChange={handleChange}
                 rows={4}
                 className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"

@@ -1,10 +1,11 @@
 'use client'
-import React, { useState, FormEvent, ChangeEvent } from 'react';
+import React, { useState, FormEvent, ChangeEvent, useContext } from 'react';
 import { toast } from 'react-toastify';
 import ShowIcon from '@/icons/show.png'
 import hide from '@/icons/hide.png'
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { FormContext } from "@/app/page";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,6 +17,7 @@ export default function LoginPage() {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [textOrPasswprd, setTextOrPassword] = useState('password');
+  const { setToastMassage } = useContext(FormContext)
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value, type, checked } = e.target;
@@ -55,14 +57,17 @@ export default function LoginPage() {
       }
       
       toast.success('Successful login!');
-      router.push('/');
+      setToastMassage(true)
+      setTimeout(() => {
+        router.push('/');
+        setIsLoading(false);
+      }, 1500); 
+      
 
     } catch (error) {
       console.error(error);
       toast.error('Login failed. Please check your credentials.');
-    } finally {
-      setIsLoading(false);
-    }
+    } 
   };
 
   const hideShowPassword = () => {

@@ -13,7 +13,6 @@ export interface AuthRequest extends Request {
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
-
 export const authenticateToken = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const authHeader = req.headers['authorization'];

@@ -179,9 +179,9 @@ export default function PatientDetails() {
       <div className="max-w-4xl mx-auto">
         <Link
           href="/"
-          className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6 group"
+          className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6 group text-lg"
         >
-          <svg className="w-5 h-5 mr-2 transform transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-6 h-6 mr-2 transform transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
           </svg>
           ກັບຄືນສູ່ລາຍຊື່ຄົນເຈັບ
@@ -191,22 +191,22 @@ export default function PatientDetails() {
           <div className="px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-400">
             <div className="flex justify-between items-center">
               <div>
-                <h1 className="text-2xl font-bold text-white">ລາຍລະອຽດຄົນເຈັບ</h1>
-                <p className="text-blue-100 mt-1">ລະຫັດ: {patient.id}</p>
+                <h1 className="text-3xl font-bold text-white">ລາຍລະອຽດຄົນເຈັບ</h1>
+                <p className="text-blue-100 mt-1 text-lg">ລະຫັດ: {patient.id}</p>
               </div>
               <div className="flex gap-3">
                 <button 
                   onClick={() => setIsEditModalOpen(true)}
-                  className="px-4 py-2 bg-yellow-500 rounded-lg text-white hover:bg-yellow-600 transition-all duration-200 flex items-center space-x-2 shadow-sm hover:shadow-md">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  className="px-4 py-2 bg-yellow-500 rounded-lg text-white hover:bg-yellow-600 transition-all duration-200 flex items-center space-x-2 shadow-sm hover:shadow-md text-lg">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
-                  <span>ເເກ້ໄຂ</span>
+                  <span>ເເກ້ໄສ</span>
                 </button>
                 <button 
                   onClick={deletePatient}
-                  className="px-4 py-2 bg-red-500 rounded-lg text-white hover:bg-red-600 transition-all duration-200 flex items-center space-x-2 shadow-sm hover:shadow-md">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  className="px-4 py-2 bg-red-500 rounded-lg text-white hover:bg-red-600 transition-all duration-200 flex items-center space-x-2 shadow-sm hover:shadow-md text-lg">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
                   <span>ລົບ</span>
@@ -214,25 +214,25 @@ export default function PatientDetails() {
               </div>
             </div>
           </div>
-  
+
           <div className="p-6 space-y-8">
             <div className="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
               <div className="flex items-center space-x-4">
-                <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
-                  <span className="text-blue-600 text-xl">
+                <div className="h-14 w-14 rounded-full bg-blue-100 flex items-center justify-center">
+                  <span className="text-blue-600 text-2xl">
                     {patient.first_name.includes("ທ") ? "Mr" : "Mrs"}
                   </span>
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold">{`${patient.first_name} ${patient.last_name} (${patient.middle_name})` }</h2>
-                  <p className="text-gray-500">
+                  <h2 className="text-2xl font-semibold">{`${patient.first_name} ${patient.last_name} (${patient.middle_name})` }</h2>
+                  <p className="text-gray-500 text-lg">
                     Patient since: {new Date(patient.registered).toLocaleDateString('en-US')}
                   </p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-sm text-gray-500">ຍອດເງິນຄົງເຫຼືອ</p>
-                <p className={`text-lg font-semibold ${patient.balance > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                <p className="text-base text-gray-500">ຍອດເງິນຄົງເຫຼືອ</p>
+                <p className={`text-xl font-semibold ${patient.balance > 0 ? 'text-red-600' : 'text-green-600'}`}>
                   ₭ {patient.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
               </div>
@@ -249,91 +249,91 @@ export default function PatientDetails() {
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm text-gray-500">ວັນເດືອນປີເກີດ</p>
-                      <p className="text-base font-medium">{new Date(patient.birth_date).toLocaleDateString('en-US')}</p>
+                      <p className="text-base text-gray-500">ວັນເດືອນປີເກີດ</p>
+                      <p className="text-lg font-medium">{new Date(patient.birth_date).toLocaleDateString('en-US')}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">ອາຍຸ</p>
-                      <p className="text-base font-medium">{patient.age} ປີ</p>
+                      <p className="text-base text-gray-500">ອາຍຸ</p>
+                      <p className="text-lg font-medium">{patient.age} ປີ</p>
                     </div>
                   </div>
                   <div className='grid grid-cols-2 gap-4'>
                     <div>
-                      <p className="text-sm text-gray-500">ເພດ</p>
-                      <p className="text-base font-medium">{patient.gender === 'male' ? 'ຊາຍ' : 'ຍິງ'}</p>
+                      <p className="text-base text-gray-500">ເພດ</p>
+                      <p className="text-lg font-medium">{patient.gender === 'male' ? 'ຊາຍ' : 'ຍິງ'}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">ສັນຊາດ</p>
-                      <p className="text-base font-medium">{patient.nationality}</p>
+                      <p className="text-base text-gray-500">ສັນຊາດ</p>
+                      <p className="text-lg font-medium">{patient.nationality || 'ບໍ່ມີຂໍ້ມູນ'}</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div className="bg-white p-6 rounded-lg border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                  <svg className="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                  <svg className="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
                   ຂໍ້ມູນປະກັນສັງຄົມ
                 </h3>
                 <div className="space-y-4">
                   <div>
-                    <p className="text-sm text-gray-500">Social Security ID</p>
-                    <p className="text-base font-medium">{patient.social_security_id || 'Not provided'}</p>
+                    <p className="text-base text-gray-500">ເລກປະຈຳປະກັນສັງຄົມ</p>
+                    <p className="text-lg font-medium">{patient.social_security_id || 'ບໍ່ມີຂໍ້ມູນ'}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Expiration Date</p>
-                    <p className="text-base font-medium">
+                    <p className="text-base text-gray-500">ວັນໝົດອາຍຸ</p>
+                    <p className="text-lg font-medium">
                       {patient.social_security_expiration 
                         ? new Date(patient.social_security_expiration).toLocaleDateString('en-US')
-                        : 'Not provided'}
+                        : 'ບໍ່ມີຂໍ້ມູນ'}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Company</p>
-                    <p className="text-base font-medium">{patient.social_security_company || 'Not provided'}</p>
+                    <p className="text-base text-gray-500">ບໍລິສັດ</p>
+                    <p className="text-lg font-medium">{patient.social_security_company || 'ບໍ່ມີຂໍ້ມູນ'}</p>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="bg-white p-6 rounded-lg border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <svg className="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                <svg className="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
                 ຂໍ້ມູນການຕິດຕໍ່
               </h3>
               <div className="space-y-4">
                 <div>
-                  <p className="text-sm text-gray-500">ເບີໂທລະສັບ</p>
-                  <p className="text-base font-medium">{patient.phone_number}</p>
+                  <p className="text-base text-gray-500">ເບີໂທລະສັບ</p>
+                  <p className="text-lg font-medium">{patient.phone_number}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">ທີ່ຢູ່</p>
-                  <p className="text-base font-medium">{patient.address}</p>
+                  <p className="text-base text-gray-500">ທີ່ຢູ່</p>
+                  <p className="text-lg font-medium">{patient.address || 'ບໍ່ມີຂໍ້ມູນ'}</p>
                 </div>
               </div>
             </div>
 
             <div className="bg-white p-6 rounded-lg border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <svg className="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                <svg className="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
                 Medical Information
               </h3>
               <div className="space-y-6">
                 <div>
-                  <p className="text-sm text-gray-500 mb-2">ການວິນິດໄສ</p>
-                  <div className="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap">
+                  <p className="text-base text-gray-500 mb-2">ການວິນິດໄສ</p>
+                  <div className="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap text-lg">
                     {patient.diagnosis || 'ບໍ່ມີຂໍ້ມູນ'}
                   </div>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500 mb-2">ຢາທີ່ໃຊ້</p>
-                  <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-base text-gray-500 mb-2">ຢາທີ່ໃຊ້</p>
+                  <div className="bg-gray-50 p-4 rounded-lg text-lg">
                     {patient.medication || 'ບໍ່ມີຂໍ້ມູນ'}
                   </div>
                 </div>

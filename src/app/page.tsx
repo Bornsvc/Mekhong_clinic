@@ -14,7 +14,7 @@ import UploadIcon from '@/icons/import.png'
 import LOGO from '@/icons/LOGO.png'
 import Image from 'next/image';
 import PtientIcon from '@/icons/patient.png'
-import AddPtientIcon from '@/icons/Addpatient.png'
+import AddPtientIcon from '@/icons/add.png'
 import LogOutIcon from '@/icons/logout.png'
 
 interface Patient {
@@ -120,14 +120,14 @@ export default function Home() {
 
   useEffect(() => {
     if (toastMassage === true) {
-      toast.success("Successfully to add patient!");
+      toast.success("ເພີ່ມຜູ້ປ່ວຍສຳເລັດແລ້ວ!");
       setToastMassage(null);
-      fetchPatients(); 
+      fetchPatients(); // เพิ่มบรรทัดนี้
     } else if (toastMassage === false) {
-      toast.error("Fail to add patient!");
+      toast.error("ເພີ່ມຜູ້ປ່ວຍບໍ່ສຳເລັດ!");
       setToastMassage(null);
     }
-  }, [toastMassage, fetchPatients]); 
+  }, [toastMassage]); 
 
   useEffect(() => {
     fetchPatients();
@@ -297,7 +297,7 @@ export default function Home() {
                         className="flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-xl shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-300 w-full md:w-auto"
                       >
                         <Image src={AddPtientIcon} alt="Add" width={24} height={24} />
-                        <span>ເພິ້ມຄົນໄຂ້</span>
+                        <span className='text-lg'>ເພິ້ມຄົນໄຂ້</span>
                       </button>
                       {isImportActive ?  <ImportFile /> : null}
                     </div>
@@ -308,25 +308,25 @@ export default function Home() {
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th scope="col" className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                        <th scope="col" className="FG px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">
                           ລະຫັດ
                         </th>
-                        <th scope="col" className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                        <th scope="col" className="px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">
                           ຊື່ / ນາມສະກຸນ
                         </th>
-                        <th scope="col" className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                        <th scope="col" className="px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">
                           ວັນ / ເດືອນ / ປີເກີດ
                         </th>
-                        <th scope="col" className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                        <th scope="col" className="px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">
                           ອາຍຸ
                         </th>
-                        <th scope="col" className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                        <th scope="col" className="px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">
                           ລົງທະບຽນ
                         </th>
-                        <th scope="col" className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                        <th scope="col" className="px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">
                           ເພດ
                         </th>
-                        <th scope="col" className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                        <th scope="col" className="px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">
                           ເບີໂທລະສັບ
                         </th>
                       </tr>
