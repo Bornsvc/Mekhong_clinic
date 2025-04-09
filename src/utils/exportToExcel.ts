@@ -19,7 +19,9 @@ export const exportPatientsToExcel = (patients: Patient[]) => {
       Medication: patient.medication,
       Nationality: patient.nationality,
       'Social Security ID': patient.social_security_id,
-      'Social Security Expiration': patient.social_security_expiration,
+    'Social Security Expiration': patient.social_security_expiration 
+    ? new Date(patient.social_security_expiration).toLocaleDateString('en-CA') 
+    : null,
       'Social Security Company': patient.social_security_company,
     }))
   );

@@ -95,7 +95,7 @@ export async function POST(request: Request) {
             if (parts.length === 3) {
               const [day, month, year] = parts.map(Number);
               if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-                dob = new Date(year, month - 1, day);
+                dob = new Date(year, month - 1, day );
               }
             }
             

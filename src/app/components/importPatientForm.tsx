@@ -1,11 +1,11 @@
-import React, { useState, useCallback } from 'react'; // useContext
-// import { FormContext } from "@/app/page";
+import React, { useState, useCallback, useContext } from 'react'; 
+import { FormContext } from "@/app/page";
 import axios from 'axios';
-// import CloseIcon from '@/icons/close.png'
-// import Image from 'next/image';
+import CloseIcon from '@/icons/close.png'
+import Image from 'next/image';
 
 function ImportPatientForm() {
-  // const { setIsImportActive } = useContext(FormContext);
+  const { setIsImportActive } = useContext(FormContext);
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -89,14 +89,14 @@ function ImportPatientForm() {
         <h2 className="text-2xl font-bold text-gray-800 w-full text-center">
             ນຳເຂົ້າໄຟສຄົນໄຂ້
         </h2>
-        {/* <Image
+        <Image
             src={CloseIcon}
             alt="Close"
             width={24}
             height={24}
             className="cursor-pointer hover:opacity-75 transition-opacity"
             onClick={() => setIsImportActive(false)}
-        /> */}
+        />
         </div>
 
         <div className="flex flex-col gap-5">
