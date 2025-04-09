@@ -98,6 +98,23 @@ export async function POST() {
     return NextResponse.json(result);
   } catch (error) {
     console.error('Error in backup endpoint:', error);
+    return NextResponse.json(
+      { error: 'Failed to perform backup' },
+      { status: 500 }
+    );
+  }
+}
+
+// GET endpoint to check backup status
+export async function GET() {
+  try {
+    return NextResponse.json({ status: 'Backup endpoint is ready' });
+  } catch (error) {
+    console.error('Error checking backup status:', error);
+    return NextResponse.json(
+      { error: 'Failed to check backup status' },
+      { status: 500 }
+    );
   }
 }
 
