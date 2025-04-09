@@ -6,10 +6,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 console.log("JWT_SECRET:", process.env.JWT_SECRET);
 
-
-
 const userModel = new UserModel(pool);
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+
+
 
 
 
