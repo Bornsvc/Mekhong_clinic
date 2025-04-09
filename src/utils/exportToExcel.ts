@@ -17,6 +17,10 @@ export const exportPatientsToExcel = (patients: Patient[]) => {
       Address: patient.address,
       Purpose: patient.purpose,
       Medication: patient.medication,
+      Nationality: patient.nationality,
+      'Social Security ID': patient.social_security_id,
+      'Social Security Expiration': patient.social_security_expiration,
+      'Social Security Company': patient.social_security_company,
     }))
   );
 
