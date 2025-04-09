@@ -15,7 +15,9 @@ const nextConfig = {
     return config;
   },
   env: {
-    PORT: 3001
+    PORT: "3001",
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL || "http://localhost:3001",
+    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET || "your-secret-key"
   }
 };
 

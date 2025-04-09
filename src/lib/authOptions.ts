@@ -21,6 +21,11 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    strategy: 'jwt',
+    maxAge: 24 * 60 * 60, // 24 hours
+  },
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -56,9 +61,17 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = user.role;
+        token.id = user.id;
+      }
+      return token;
+    },
     async session({ session, token }) {
       if (token && session.user) {
-        session.user.id = Number(token.sub);
+        session.user.id = Number(token.id);
+        session.user.role = token.role;
       }
       return session;
     }
