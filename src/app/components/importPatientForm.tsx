@@ -99,6 +99,17 @@ function ImportPatientForm() {
         />
         </div>
 
+        {/* Add Excel Format Guide */}
+        <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+          <p className="text-sm font-medium text-blue-800 mb-2">ຮູບແບບ Excel ທີ່ຕ້ອງການ:</p>
+          <div className="text-xs text-blue-600 font-mono bg-white p-2 rounded border border-blue-200 overflow-x-auto">
+            <code>
+              UHID | FullName | MiddleName | Age | Registered | Gender | Mobile | Balance | Diagnosis | Address | Purpose | Medication | Nationality | Social Security ID | Social Security Expiration | Social Security Company
+            </code>
+          </div>
+          <p className="text-xs text-blue-600 mt-2">* ຕ້ອງມີຄໍລຳທັງໝົດຢູ່ແຖວທຳອິດຂອງ Excel</p>
+        </div>
+
         <div className="flex flex-col gap-5">
           <div
             onDragEnter={handleDragIn}

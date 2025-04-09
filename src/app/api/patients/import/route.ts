@@ -81,8 +81,8 @@ export async function POST(request: Request) {
         const [firstName, ...lastNameParts] = fullName.trim().split(' ');
         const lastName = lastNameParts.join(' ');
 
-        const middleName = row.MiddleName || '';
-        const middle_name = middleName || '';
+        const middleName = 'MiddleName' in row ? row.MiddleName || '' : '';
+        const middle_name = middleName ? middleName.trim() : '';
 
         // Convert ISO 8601 date strings to Date objects
         // Parse DOB with more robust date handling
