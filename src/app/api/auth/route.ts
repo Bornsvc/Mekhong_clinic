@@ -4,18 +4,16 @@ import UserModel from '@/backend/models/User';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
-console.log("JWT_SECRET:", process.env.JWT_SECRET);
+console.log("JWTSECRET:", process.env.JWTSECRET);
 
 const userModel = new UserModel(pool);
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWTSECRET = process.env.JWTSECRET || 'your-secret-key';
 
 
 
 
 
 export async function POST(request: NextRequest) {
-
-
   try {
     const { username, password } = await request.json();
     console.log("Received username:", username);
@@ -24,10 +22,13 @@ export async function POST(request: NextRequest) {
 
 
     const user = await userModel.findByUsername(username);
-    console.log("Found user:", user);
+    if(user){
+      console.log("Found user:", user);
+    }
+    
     if (!user) {
       return NextResponse.json(
-        { message: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง' },
+        { message: 'ชื่อผู้ใช้ไม่ถูกต้อง' },
         { status: 401 }
       );
     }
@@ -35,14 +36,14 @@ export async function POST(request: NextRequest) {
     const isValidPassword = await userModel.validatePassword(password, user.password);
     if (!isValidPassword) {
       return NextResponse.json(
-        { message: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง' },
+        { message: 'รหัสผ่านไม่ถูกต้อง' },
         { status: 401 }
       );
     }
 
     const token = jwt.sign(
       { id: user.id, username: user.username, role: user.role },
-      JWT_SECRET,
+      JWTSECRET,
       { expiresIn: '24h' }
     );
 

@@ -39,8 +39,6 @@ interface Patient {
   social_security_company: string;
 }
 
-
-
 export default function Home() {
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
@@ -105,11 +103,11 @@ export default function Home() {
 
   useEffect(() => {
     if (toastMassage === true) {
-      toast.success("ເພີ່ມຜູ້ປ່ວຍສຳເລັດແລ້ວ!");
+      toast.success("ເພີ່ມຜູ້ຄົນໄຂ້ສຳເລັດແລ້ວ!");
       setToastMassage(null);
       fetchPatients(); // เพิ่มบรรทัดนี้
     } else if (toastMassage === false) {
-      toast.error("ເພີ່ມຜູ້ປ່ວຍບໍ່ສຳເລັດ!");
+      toast.error("ເພີ່ມຜູ້ໄຂ້ບໍ່ສຳເລັດ!");
       setToastMassage(null);
     }
   }, [toastMassage]); 

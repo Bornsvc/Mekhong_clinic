@@ -111,25 +111,93 @@ export const PatientModel = {
     }
   },
   
+  async updatePatient(id: string, patient: Patient) {
+    try {
+      // ตรวจสอบการเชื่อมต่อกับฐานข้อมูล
+      await pool.query('SELECT 1');
 
-  async updatePatient(id: string, patient: Partial<Patient>) {
-    const fields = Object.keys(patient).map((key, index) => `${key} = $${index + 1}`);
-    const values = Object.values(patient);
-    
-    const query = `
-      UPDATE patients 
-      SET ${fields.join(', ')}
-      WHERE id = $${values.length + 1}
-      RETURNING *
-    `;
-    
-    const { rows } = await pool.query(query, [...values, id]);
-    return rows[0];
+      // ตรวจสอบข้อมูลที่จำเป็น
+      if (!patient.first_name?.trim() || !patient.last_name?.trim()) {
+        throw new Error('กรุณากรอกชื่อและนามสกุลให้ครบถ้วน');
+      }
+
+      // ตรวจสอบรูปแบบวันที่
+      if (patient.birth_date) {
+        const birthDate = new Date(patient.birth_date);
+        if (isNaN(birthDate.getTime())) {
+          throw new Error('รูปแบบวันเกิดไม่ถูกต้อง');
+        }
+        patient.birth_date = birthDate.toISOString().split('T')[0];
+      }
+
+      const query = `
+        UPDATE patients
+        SET
+          first_name = $1,
+          middle_name = $2,
+          last_name = $3,
+          birth_date = $4,
+          age = $5,
+          phone_number = $6,
+          gender = $7,
+          medication = $8,
+          balance = $9,
+          diagnosis = $10,
+          address = $11,
+          nationality = $12,
+          social_security_id = $13,
+          social_security_expiration = $14,
+          social_security_company = $15,
+          updated_at = CURRENT_TIMESTAMP
+        WHERE id = $16
+        RETURNING *
+      `;
+
+      const values = [
+        patient.first_name,
+        patient.middle_name,
+        patient.last_name,
+        patient.birth_date,
+        patient.age,
+        patient.phone_number,
+        patient.gender,
+        patient.medication,
+        patient.balance,
+        patient.diagnosis,
+        patient.address,
+        patient.nationality,
+        patient.social_security_id,
+        patient.social_security_expiration,
+        patient.social_security_company,
+        id
+      ];
+
+      const { rows } = await pool.query(query, values);
+      if (!rows || rows.length === 0) {
+        throw new Error('ไม่พบข้อมูลผู้ป่วยที่ต้องการอัพเดท');
+      }
+
+      console.log('อัพเดทข้อมูลผู้ป่วยสำเร็จ:', rows[0]);
+      return rows[0];
+    } catch (error: unknown) {
+      console.error('Error in updatePatient:', error);
+      if (error instanceof Error) {
+        // ตรวจสอบข้อผิดพลาดเกี่ยวกับ plpgsql extension
+        if (error.message.includes('plpgsql') || error.message.includes('$libdir/plpgsql')) {
+          throw new Error('ระบบฐานข้อมูลมีปัญหาเกี่ยวกับ plpgsql extension กรุณาติดต่อผู้ดูแลระบบเพื่อตรวจสอบการติดตั้ง');
+        }
+        // ตรวจสอบข้อผิดพลาดเกี่ยวกับการเชื่อมต่อฐานข้อมูล
+        if (error.message.includes('connection') || error.message.includes('timeout')) {
+          throw new Error('ไม่สามารถเชื่อมต่อกับฐานข้อมูลได้ กรุณาลองใหม่อีกครั้งหรือติดต่อผู้ดูแลระบบ');
+        }
+        throw error;
+      }
+      throw new Error('เกิดข้อผิดพลาดที่ไม่คาดคิดในการอัปเดตข้อมูลผู้ป่วย');
+    }
   },
-
   async deletePatient(id: string) {
     const query = 'DELETE FROM patients WHERE id = $1 RETURNING *';
     const { rows } = await pool.query(query, [id]);
     return rows[0];
   }
-};
+}

@@ -6,16 +6,14 @@ dotenv.config({ path: new URL('../../.env', import.meta.url).pathname });
 const { Pool } = pg;
 
 const pool = new Pool({
-  user: process.env.POSTGRES_USER || 'born',
-  host: process.env.POSTGRES_HOST || 'localhost',
-  database: process.env.POSTGRES_DB || 'mekong_clinic',
-  password: process.env.POSTGRES_PASSWORD,
-  port: parseInt(process.env.POSTGRES_PORT || '5432'),
-  connectionString: process.env.POSTGRESURL,
-  // ssl: {
-  //   ca: fs.readFileSync('/path/to/rds-combined-ca-bundle.pem'),
-  //   rejectUnauthorized: false // เปิดใช้งาน SSL และยอมรับการเชื่อมต่อที่ไม่ถูกต้อง
-  // }
+  connectionString: process.env.POSTGRESURL, // ใช้ connectionString จาก .env
+  ssl: process.env.SSLMODE === 'require' ? { rejectUnauthorized: true } : false, // การเชื่อมต่อ SSL
+  // ถ้าไม่ได้ใช้ connectionString ก็สามารถใช้ค่าเหล่านี้ได้:
+  user: process.env.POSTGRESUSER || 'born',  
+  host: process.env.POSTGRESHOST || 'localhost',
+  database: process.env.POSTGRESDB || 'mekong_clinic',
+  password: process.env.POSTGRESPASSWORD,
+  port: parseInt(process.env.POSTGRESPORT || '5432'),
 });
 
 async function deleteUser(username) {

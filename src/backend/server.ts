@@ -1,8 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { Pool } from 'pg';
-// import UserModel from './models/User';
-// import jwt from 'jsonwebtoken';                                                                          
+import { testDatabaseConnection, checkDatabaseHealth } from './utils/databaseUtils';
 import dotenv from 'dotenv';
 import path from 'path';
 
@@ -28,26 +27,19 @@ const pool = new Pool({
   max: 20
 });
 
-// Test database connection
-async function testDatabaseConnection() {
-  try {
-    const client = await pool.connect();
-    try {
-      await client.query('SELECT NOW()');
-      console.log('Connected to PostgreSQL database');
-    } finally {
-      client.release();
-    }
-  } catch (err) {
-    console.error('Database connection error:', err);
-    throw new Error('Database connection failed');
-  }
-}
-
-testDatabaseConnection().catch(err => {
-  console.error('Failed to establish initial database connection:', err);
+// ทดสอบการเชื่อมต่อฐานข้อมูลเมื่อเริ่มต้นเซิร์ฟเวอร์
+testDatabaseConnection(pool).catch(err => {
+  console.error('ไม่สามารถเชื่อมต่อกับฐานข้อมูลในครั้งแรกได้:', err);
   process.exit(1);
 });
+
+// ตรวจสอบสถานะฐานข้อมูลทุก 5 นาที
+setInterval(async () => {
+  const health = await checkDatabaseHealth(pool);
+  if (!health.isConnected) {
+    console.error('การตรวจสอบสถานะฐานข้อมูลล้มเหลว:', health.message);
+  }
+}, 5 * 60 * 1000);
 
 // Initialize UserModel
 // const userModel = new UserModel(pool);

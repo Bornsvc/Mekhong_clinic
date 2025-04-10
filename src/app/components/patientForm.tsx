@@ -97,37 +97,15 @@ const CustomerForm: React.FC = () => {
         social_security_company: formData.socialSecurityCompany,
       });
   
-      if (response.status === 200) {
-        const token = localStorage.getItem('token');
-        const responseUser = await axios.get('/api/auth/verify', {
-          headers: { Authorization: `Bearer ${token}`}
-        });
-        if(responseUser.status === 200){
-          const auditData = {
-            userId: responseUser.data.userId,
-            action: 'CREATE',
-            resourceType: `${formData.firstName || ''} ${formData.lastName || ''}`,
-            resourceId: response.data.data.id,
-            details: JSON.stringify({
-              changes: formData
-            }),
-            oldDetails: null
-          };
-          
-          await axios.post('/api/audit', auditData);
-        }
         setToastMassage(true);
         setFormactive(false);
         setSearchQuery("");
         console.log("Patient added successfully:", response.data.data);
-      } else {
+        setToastMassage(true);
+      } catch (error) {
+        console.error('Error submitting form:', error);
         setToastMassage(false);
       }
-
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      setToastMassage(false);
-    }
   };
   
 

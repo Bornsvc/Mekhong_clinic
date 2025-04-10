@@ -38,7 +38,6 @@ export default function PatientDetails() {
   const [error, setError] = useState('');
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [patientName, setPatientName] = useState(``);
 
   const router = useRouter();
 
@@ -49,7 +48,6 @@ export default function PatientDetails() {
           console.log(">>>",params?.id)
           const response = await axios.get(`/api/patients/${params.id}`);
           setPatient(response.data);
-          setPatientName(`${response.data.first_name || ''} ${response.data.last_name || ''}`)
           console.log(response.data)
         } else {
           setError('Invalid patient ID');
@@ -103,28 +101,11 @@ export default function PatientDetails() {
   const handleConfirmDelete = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      const responseUser = await axios.get('/api/auth/verify', {
-        headers: { Authorization: `Bearer ${token}`}
-      });
       if(params !== null){
         const response = await axios.delete(`/api/patients/${params.id}`);
         if (response.status === 200) {
           setIsDeleteModalOpen(false);
           router.push('/'); 
-          if(responseUser.status === 200){
-            const auditData = {
-              userId: responseUser.data.userId,
-              action: 'DELETE',
-              resourceType: `${patientName}`,
-              resourceId: String(params.id),
-              details: null,
-              oldDetails: JSON.stringify({
-                changes: patient
-              }),
-            };
-            await axios.post('/api/audit', auditData);
-          }
           setToastMassage(true);
         } else {
           setToastMassage(false);
@@ -202,7 +183,7 @@ export default function PatientDetails() {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
-                  <span>ເເກ້ໄສ</span>
+                  <span>ເເກ້ໄຂ</span>
                 </button>
                 <button 
                   onClick={deletePatient}

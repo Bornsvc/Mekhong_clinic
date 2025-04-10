@@ -11,7 +11,7 @@ export interface AuthRequest extends Request {
   user?: UserPayload;
 }
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
+const JWTSECRET = process.env.JWTSECRET as string;
 
 export const authenticateToken = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
@@ -22,7 +22,7 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
       return res.status(401).json({ message: 'กรุณาเข้าสู่ระบบ' });
     }
 
-    jwt.verify(token, JWT_SECRET, (err: unknown, decoded: unknown) => {
+    jwt.verify(token, JWTSECRET, (err: unknown, decoded: unknown) => {
       if (err instanceof Error) { // ✅ ตรวจสอบ error อย่างถูกต้อง
         return res.status(403).json({ message: 'Token ไม่ถูกต้องหรือหมดอายุ' });
       }

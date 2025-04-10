@@ -4,7 +4,7 @@ import UserModel from '@/backend/models/User';
 import jwt from 'jsonwebtoken';
 
 const userModel = new UserModel(pool);
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWTSECRET = process.env.JWTSECRET || 'your-secret-key';
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     // ตรวจสอบและถอดรหัส token
     let decodedToken;
     try {
-      decodedToken = jwt.verify(token, JWT_SECRET) as { role: string };
+      decodedToken = jwt.verify(token, JWTSECRET) as { role: string };
     } catch (error) {
         console.log(error)
       return NextResponse.json(

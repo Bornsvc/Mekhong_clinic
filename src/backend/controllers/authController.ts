@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import UserModel from '@/backend/models/User.js';
 import pool from '../config/database';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWTSECRET = process.env.JWTSECRET || 'your-secret-key';
 const userModel = new UserModel(pool);
 
 export const login = async (req: Request, res: Response) => {
@@ -22,7 +22,7 @@ export const login = async (req: Request, res: Response) => {
 
     const token = jwt.sign(
       { id: user.id, username: user.username, role: user.role },
-      JWT_SECRET,
+      JWTSECRET,
       { expiresIn: '24h' }
     );
 

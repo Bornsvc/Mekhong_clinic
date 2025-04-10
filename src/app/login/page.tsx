@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, FormEvent, ChangeEvent, useContext } from 'react';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import ShowIcon from '@/icons/show.png'
 import hide from '@/icons/hide.png'
 import Image from 'next/image';
@@ -42,6 +42,7 @@ export default function LoginPage() {
           password: formData.password,
         }),
       });
+      console.log("response>>>>>>>>>>>>",response)
 
       const data = await response.json();
 
@@ -56,17 +57,16 @@ export default function LoginPage() {
         localStorage.removeItem('username');
       }
       
-      toast.success('Successful login!');
+      toast.success('ເຂົ້າລະບົບສຳເລັດ!');
       setToastMassage(true)
       setTimeout(() => {
         router.push('/');
         setIsLoading(false);
-      }, 1500); 
-      
-
+      }, 1000); 
     } catch (error) {
-      console.error(error);
-      toast.error('Login failed. Please check your credentials.');
+      setIsLoading(false);
+      console.error("Error>>>>>>",error);
+      toast.error('ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ.');
     } 
   };
 
@@ -76,6 +76,13 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen relative flex items-start justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+       
+        <ToastContainer 
+          position="top-right"
+          autoClose={3000}
+          theme="colored"
+        />
+  
       <div className="max-w-md w-full space-y-8 mt-[10%] z-10">
         <div>
           <h2 className="mt-6 text-center text-4xl font-extrabold text-gray-900">
@@ -87,7 +94,7 @@ export default function LoginPage() {
           <div className="space-y-6">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                Username
+                ຊື່ຜູ້ໃຊ້
               </label>
               <input
                 type="text"
@@ -99,13 +106,13 @@ export default function LoginPage() {
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400
                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
                          transition duration-150 ease-in-out"
-                placeholder="Enter your username"
+                placeholder="ໃສ່ຊື່ຜູ້ໃຊ້"
               />
             </div>
 
             <div className='relative'>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
+                ລະຫັດຜ່ານ
               </label>
               <input
                 type={textOrPasswprd}
@@ -117,7 +124,7 @@ export default function LoginPage() {
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400
                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
                          transition duration-150 ease-in-out"
-                placeholder="Enter your password"
+                placeholder="ໃສ່ລະຫັດຜ່ານ"
               />
               <Image 
               src={textOrPasswprd === 'password' ? hide : ShowIcon}

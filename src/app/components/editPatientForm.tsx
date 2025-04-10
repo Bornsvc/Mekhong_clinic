@@ -51,24 +51,6 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
     socialSecurityExpiration: "",
     socialSecurityCompany: "",
   });
-  const [oldDormData, setOldFormData] = useState({
-    firstName: "",
-    lastName: "",
-    middle_name:"",
-    birthDate: "",
-    age: 0,
-    address: "",
-    phoneNumber: "",
-    purpose: "",
-    medication: "",
-    gender: "",
-    balance: 0,
-    diagnosis: "",
-    nationality: "",
-    socialSecurityId: "",
-    socialSecurityExpiration: "",
-    socialSecurityCompany: "",
-  });
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -79,7 +61,6 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
       try {
         const response = await axios.get(`/api/patients/${patientId}`);
         const patient = response.data;
-        const olddata = response.data;
         setFormData({
           firstName: patient.first_name,
           lastName: patient.last_name,
@@ -99,24 +80,6 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
           socialSecurityCompany: patient.social_security_company || ''
         });
 
-        setOldFormData({
-          firstName: olddata.first_name,
-          lastName: olddata.last_name,
-          middle_name: olddata.middle_name,
-          birthDate: new Date(olddata.birth_date).toISOString().split('T')[0],
-          age: olddata.age,
-          address: olddata.address,
-          phoneNumber: olddata.phone_number,
-          purpose: olddata.purpose || '',
-          medication: olddata.medication || '',
-          gender: olddata.gender,
-          balance: olddata.balance,
-          diagnosis: olddata.diagnosis || '',
-          nationality: olddata.nationality,
-          socialSecurityId: olddata.socialSecurityId,
-          socialSecurityExpiration: olddata.socialSecurityExpiration,
-          socialSecurityCompany: olddata.socialSecurityCompany,
-        })
         setLoading(false);
       } catch (err) {
         console.error("Error fetching patient:", err);
@@ -168,47 +131,12 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
         social_security_company: formData.socialSecurityCompany || null
       };
 
-      const oldData = {
-        first_name: oldDormData.firstName,
-        last_name: oldDormData.lastName,
-        middle_name: oldDormData.middle_name,
-        birth_date: oldDormData.birthDate,
-        age: oldDormData.age,
-        phone_number: oldDormData.phoneNumber,
-        gender: oldDormData.gender,
-        medication: oldDormData.medication || null,
-        balance: Number(oldDormData.balance),
-        diagnosis: oldDormData.diagnosis || null,
-        address: oldDormData.address || null,
-      };
+     
 
       const response = await axios.put(`/api/patients/${patientId}`, updateData);
-
-      const token = localStorage.getItem('token');
-      const responseUser = await axios.get('/api/auth/verify', {
-        headers: { Authorization: `Bearer ${token}`}
-      });
-
-      if (response.status === 200) {
-        if(responseUser.status === 200){
-          const auditData = {
-            userId: responseUser.data.userId,
-            action: 'EDIT',
-            resourceType: `${updateData.first_name || ''} ${updateData.last_name || ''}`,
-            resourceId: patientId,
-            details: JSON.stringify({
-              changes: updateData
-            }),
-            oldDetails: JSON.stringify({
-              changes: oldData
-            })
-          };
-          
-          await axios.post('/api/audit', auditData);
-          window.location.reload();
-          onClose();
-        }
-      }
+      console.log(response)
+      window.location.reload();
+      onClose();
     } catch (error) {
       console.error('Error updating patient:', error);
       if (axios.isAxiosError(error)) {

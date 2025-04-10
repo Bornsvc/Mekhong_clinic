@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { PatientModel } from '@/backend/models/Patient';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/authOptions';
+// import { getServerSession } from 'next-auth';
+// import { authOptions } from '@/lib/authOptions';
 
 
 export async function GET(request: Request) {
@@ -43,11 +43,26 @@ export async function PUT(request: Request) {
     }
 
     // ตรวจสอบข้อมูลที่จำเป็น
+    if (!patient.first_name || !patient.last_name) {
+      return NextResponse.json(
+        { error: 'กรุณากรอกชื่อและนามสกุลให้ครบถ้วน' },
+        { status: 400 }
+      );
+    }
+
     if (patient.birth_date) {
       const birthDateRegex = /^\d{4}-\d{2}-\d{2}$/;
       if (!birthDateRegex.test(patient.birth_date)) {
         return NextResponse.json(
           { error: 'รูปแบบวันเกิดไม่ถูกต้อง (YYYY-MM-DD)' },
+          { status: 400 }
+        );
+      }
+      // ตรวจสอบว่าวันเกิดไม่เป็นวันในอนาคต
+      const birthDate = new Date(patient.birth_date);
+      if (birthDate > new Date()) {
+        return NextResponse.json(
+          { error: 'วันเกิดไม่สามารถเป็นวันในอนาคตได้' },
           { status: 400 }
         );
       }
@@ -76,28 +91,6 @@ export async function PUT(request: Request) {
 
     const updatedPatient = await PatientModel.updatePatient(id, patient);
     console.log('Updated Patient:', updatedPatient); // ตรวจสอบข้อมูลที่ได้รับจากการอัปเดต
-
-    // บันทึก audit log
-    try {
-      const session = await getServerSession(authOptions);
-      const userId = session?.user?.id;
-
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/audit`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          user_id: userId,
-          action: 'update',
-          resource_type: 'patient',
-          resource_id: id,
-          details: JSON.stringify(patient)
-        })
-      });
-    } catch (error) {
-      console.error('Error creating audit log:', error);
-    }
 
     return NextResponse.json({ data: updatedPatient });
   } catch (error) {
