@@ -1,5 +1,5 @@
 import { S3Client, DeleteObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
-import { Pool } from 'pg';
+import pool from '@/backend/config/database';
 import { RETENTION_POLICY } from './config';
 // import { error } from 'console';
 
@@ -19,16 +19,16 @@ const s3Client = new S3Client({
   }
 });
 
-const pool = new Pool({
-  user: process.env.POSTGRES_USER,
-  host: process.env.POSTGRES_HOST,
-  database: process.env.POSTGRES_DB,
-  password: process.env.POSTGRES_PASSWORD,
-  port: parseInt(process.env.POSTGRES_PORT || '5432'),
-  ssl: {
-    rejectUnauthorized: false // เปิดใช้งาน SSL และยอมรับการเชื่อมต่อที่ไม่ถูกต้อง
-  }
-});
+// const pool = new Pool({
+//   user: process.env.POSTGRES_USER,
+//   host: process.env.POSTGRES_HOST,
+//   database: process.env.POSTGRES_DB,
+//   password: process.env.POSTGRES_PASSWORD,
+//   port: parseInt(process.env.POSTGRES_PORT || '5432'),
+//   ssl: {
+//     rejectUnauthorized: false // เปิดใช้งาน SSL และยอมรับการเชื่อมต่อที่ไม่ถูกต้อง
+//   }
+// });
 
 // ฟังก์ชันสำหรับลบไฟล์สำรองข้อมูลที่เก่าเกินกำหนด
 export async function cleanupOldBackups(backups: { key: string, lastModified: Date }[]) {

@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { Pool } from 'pg';
+import pool from '@/backend/config/database';
 // import UserModel from './models/User';
 // import jwt from 'jsonwebtoken';                                                                          
 import dotenv from 'dotenv';
@@ -22,14 +22,14 @@ app.use(express.json());
 app.use(express.static(publicPath));
 
 
-const pool = new Pool({
-  connectionTimeoutMillis: 5000,
-  idleTimeoutMillis: 30000,
-  max: 20,
-  ssl: {
-    rejectUnauthorized: false, // ปรับการตั้งค่าการเชื่อมต่อ SSL
-  },
-});
+// const pool = new Pool({
+//   connectionTimeoutMillis: 5000,
+//   idleTimeoutMillis: 30000,
+//   max: 20,
+//   ssl: {
+//     rejectUnauthorized: false, // ปรับการตั้งค่าการเชื่อมต่อ SSL
+//   },
+// });
 
 // Test database connection
 async function testDatabaseConnection() {

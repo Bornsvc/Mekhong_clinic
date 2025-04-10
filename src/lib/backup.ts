@@ -1,4 +1,4 @@
-import { Pool } from 'pg';
+import pool from '@/backend/config/database';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'; // ListObjectsCommand
 import nodemailer from 'nodemailer';
 
@@ -7,16 +7,16 @@ interface Row {
 }
 
 // Database connection setup
-const pool = new Pool({
-  user: process.env.POSTGRES_USER,
-  host: process.env.POSTGRES_HOST,
-  database: process.env.POSTGRES_DB,
-  password: process.env.POSTGRES_PASSWORD,
-  port: parseInt(process.env.POSTGRES_PORT || '5432'),
-  ssl: {
-    rejectUnauthorized: false // เปิดใช้งาน SSL และยอมรับการเชื่อมต่อที่ไม่ถูกต้อง
-  }
-});
+// const pool = new Pool({
+//   user: process.env.POSTGRES_USER,
+//   host: process.env.POSTGRES_HOST,
+//   database: process.env.POSTGRES_DB,
+//   password: process.env.POSTGRES_PASSWORD,
+//   port: parseInt(process.env.POSTGRES_PORT || '5432'),
+//   ssl: {
+//     rejectUnauthorized: false // เปิดใช้งาน SSL และยอมรับการเชื่อมต่อที่ไม่ถูกต้อง
+//   }
+// });
 
 // S3 Client setup
 const s3Client = new S3Client({
