@@ -7,6 +7,9 @@ const pool = new Pool({
   database: process.env.POSTGRES_DB || 'default_db',
   password: process.env.POSTGRES_PASSWORD || 'default_password',
   port: Number(process.env.POSTGRES_PORT) || 5432,
+  ssl: {
+    rejectUnauthorized: false // เปิดใช้งาน SSL และยอมรับการเชื่อมต่อที่ไม่ถูกต้อง
+  }
 });
 
 process.on('exit', () => {
