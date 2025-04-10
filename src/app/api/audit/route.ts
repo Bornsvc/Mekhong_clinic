@@ -2,11 +2,11 @@ import { NextResponse } from 'next/server';
 import { Pool } from 'pg';
 
 const pool = new Pool({
-  user: process.env.POSTGRES_USER || 'default_user',
-  host: process.env.POSTGRES_HOST || 'localhost',
-  database: process.env.POSTGRES_DB || 'default_db',
-  password: process.env.POSTGRES_PASSWORD || 'default_password',
-  port: Number(process.env.POSTGRES_PORT) || 5432,
+  user: process.env.POSTGRESUSER || 'default_user',
+  host: process.env.POSTGRESHOST || 'localhost',
+  database: process.env.POSTGRESDB || 'default_db',
+  password: process.env.POSTGRESPASSWORD || 'default_password',
+  port: Number(process.env.POSTGRESPORT) || 5432,
   ssl: {
     rejectUnauthorized: false // เปิดใช้งาน SSL และยอมรับการเชื่อมต่อที่ไม่ถูกต้อง
   }
