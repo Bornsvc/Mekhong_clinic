@@ -12,9 +12,10 @@ const pool = new Pool({
   password: process.env.POSTGRES_PASSWORD,
   port: parseInt(process.env.POSTGRES_PORT || '5432'),
   connectionString: process.env.POSTGRESURL,
-  ssl: {
-    rejectUnauthorized: false // เปิดใช้งาน SSL และยอมรับการเชื่อมต่อที่ไม่ถูกต้อง
-  }
+  // ssl: {
+  //   ca: fs.readFileSync('/path/to/rds-combined-ca-bundle.pem'),
+  //   rejectUnauthorized: false // เปิดใช้งาน SSL และยอมรับการเชื่อมต่อที่ไม่ถูกต้อง
+  // }
 });
 
 async function deleteUser(username) {

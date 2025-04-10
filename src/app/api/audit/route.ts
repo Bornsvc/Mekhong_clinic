@@ -1,17 +1,18 @@
 import { NextResponse } from 'next/server';
-import { Pool } from 'pg';
+import pool from '@/backend/config/database';
 
-const pool = new Pool({
-  user: process.env.POSTGRESUSER || 'default_user',
-  host: process.env.POSTGRESHOST || 'localhost',
-  database: process.env.POSTGRESDB || 'default_db',
-  password: process.env.POSTGRESPASSWORD || 'default_password',
-  port: Number(process.env.POSTGRESPORT) || 5432,
-  connectionString: process.env.POSTGRESURL,
-  ssl: {
-    rejectUnauthorized: false // เปิดใช้งาน SSL และยอมรับการเชื่อมต่อที่ไม่ถูกต้อง
-  }
-});
+// const pool = new Pool({
+//   user: process.env.POSTGRESUSER || 'default_user',
+//   host: process.env.POSTGRESHOST || 'localhost',
+//   database: process.env.POSTGRESDB || 'default_db',
+//   password: process.env.POSTGRESPASSWORD || 'default_password',
+//   port: Number(process.env.POSTGRESPORT) || 5432,
+//   connectionString: process.env.POSTGRESURL,
+//   ssl: {
+//     ca: fs.readFileSync('/path/to/rds-combined-ca-bundle.pem'),
+//     rejectUnauthorized: false // เปิดใช้งาน SSL และยอมรับการเชื่อมต่อที่ไม่ถูกต้อง
+//   }
+// });
 
 process.on('exit', () => {
   console.log('Closing database connection...');

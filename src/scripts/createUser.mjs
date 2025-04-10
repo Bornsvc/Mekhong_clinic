@@ -8,23 +8,23 @@ dotenv.config({ path: new URL('../../.env', import.meta.url).pathname });
 const { Pool } = pg;
 
 const pool = new Pool({
-  user: process.env.POSTGRES_USER || 'born',
-  host: process.env.POSTGRES_HOST || 'localhost',
+  user: process.env.POSTGRESUSER || 'born',
+  host: process.env.POSTGRESHOST || 'localhost',
   database: process.env.POSTGRES_DB || 'mekong_clinic',
   password: process.env.POSTGRES_PASSWORD,
   port: parseInt(process.env.POSTGRES_PORT || '5432'),
   connectionString: process.env.POSTGRESURL,
-  ssl: {
-    rejectUnauthorized: false // เปิดใช้งาน SSL และยอมรับการเชื่อมต่อที่ไม่ถูกต้อง
-  }
+  // ssl: {
+  //   rejectUnauthorized: false // เปิดใช้งาน SSL และยอมรับการเชื่อมต่อที่ไม่ถูกต้อง
+  // }
 });
 
 async function createUser(username, password, role) {
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const email = `${username}@mekong-clinic.com`;
-    // const expiryDate = new Date();
-    // expiryDate.setFullYear(expiryDate.getFullYear() + 1); // Set expiry to 1 year from creation
+    const expiryDate = new Date();
+    expiryDate.setFullYear(expiryDate.getFullYear() + 1); // Set expiry to 1 year from creation
     
     const query = `
       INSERT INTO users (username, password, role, email, expires_at)
@@ -34,7 +34,7 @@ async function createUser(username, password, role) {
     
     const result = await pool.query(query, [username, hashedPassword, role, email, expiryDate]);
     console.log('complete create User:', result.rows[0]);
-    // console.log('Account expires on:', expiryDate.toLocaleDateString());
+    console.log('Account expires on:', expiryDate.toLocaleDateString());
   } catch (error) {
     console.error('Something went wrong:', error);
   } finally {
