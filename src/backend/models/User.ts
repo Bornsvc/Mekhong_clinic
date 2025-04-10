@@ -16,6 +16,8 @@ class UserModel {
     this.pool = pool;
   }
 
+  
+
   async updatePassword(username: string, newPassword: string): Promise<boolean> {
     try {
       const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -23,7 +25,7 @@ class UserModel {
       const result = await this.pool.query(query, [hashedPassword, username]);
       return result.rowCount !== null && result.rowCount > 0;
     } catch (error) {
-      console.error('Error updating password:', error);
+      console.error('Error updating password - -:', error);
       return false;
     }
   }
