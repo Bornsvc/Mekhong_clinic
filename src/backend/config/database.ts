@@ -2,10 +2,15 @@ import { Pool } from 'pg';
 import dotenv from 'dotenv';
 import path from 'path';
 
+
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
+const globalForPg = global as unknown as { pgPool: Pool };
+
 // Initialize Pool instance with enhanced error handling
-const pool = new Pool({
+export const pool = 
+globalForPg.pgPool ||
+new Pool({
   user: process.env.POSTGRESUSER,
   host: process.env.POSTGRESHOST,
   database: process.env.POSTGRESDB,
@@ -22,6 +27,7 @@ const pool = new Pool({
   max: 20,                        // จำนวน connection สูงสุดที่ Pool สามารถเปิดได้
   allowExitOnIdle: true           // เมื่อ pool ไม่มีการใช้งานอีกต่อไป, จะสามารถออกจากโปรแกรมได้
 });
+if (process.env.NODEENV !== 'production') globalForPg.pgPool = pool;
 
 // Test the connection and verify plpgsql extension
 pool.connect(async (err, client, release) => {
@@ -62,4 +68,4 @@ pool.connect(async (err, client, release) => {
 });
 
 
-export default pool;
+// export default pool;

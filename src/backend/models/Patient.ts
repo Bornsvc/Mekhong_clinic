@@ -1,4 +1,4 @@
-import pool from '../config/database';
+import {pool} from '../config/database';
 import { Patient } from '@/types/patient';
 
 interface QueryParams {
@@ -56,6 +56,19 @@ export const PatientModel = {
 
     const totalItems = parseInt(countResult.rows[0].count);
     const totalPages = Math.ceil(totalItems / limit);
+
+    if (dataResult.rows.length === 0) {
+      return {
+        message: 'ไม่พบข้อมูลผู้ป่วย',
+        data: [],
+        pagination: {
+          currentPage: page,
+          totalPages: 0,
+          totalItems: 0,
+          itemsPerPage: limit
+        }
+      };
+    }
 
     return {
       data: dataResult.rows,

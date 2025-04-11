@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import pool from '@/backend/config/database';
+import {pool} from '@/backend/config/database';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'; // ListObjectsCommand
 import { performBackup, sendNotification } from '@/lib/backup';
 
