@@ -3,17 +3,27 @@ import { PatientModel } from '@/backend/models/Patient';
 
 export async function GET(request: Request) {
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // timeout 5 วินาที
+
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
     const search = searchParams.get('search') || '';
 
-    const result = await PatientModel.getPaginatedPatients({ page, limit, search });
+    const result = await Promise.race([
+      PatientModel.getPaginatedPatients({ page, limit, search }),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Database timeout')), 5000)
+      )
+    ]);
+
+    clearTimeout(timeoutId);
     return NextResponse.json(result);
   } catch (error) {
     console.error('Error fetching patients:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch patients' },
+      { error: 'การเชื่อมต่อฐานข้อมูลล้มเหลว กรุณาลองใหม่อีกครั้ง' },
       { status: 500 }
     );
   }
