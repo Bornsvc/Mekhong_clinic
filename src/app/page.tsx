@@ -77,6 +77,15 @@ export default function Home() {
     setCurrentPage(newPage);
   };
 
+  // Add debounced search
+  useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+      fetchPatients();
+    }, 300);
+
+    return () => clearTimeout(debounceTimer);
+  }, [searchQuery, currentPage, itemsPerPage, fetchPatients]);
+
   useEffect(() => {
     setActive(true);
     const checkAuth = async () => {
@@ -91,34 +100,29 @@ export default function Home() {
         });
         if (response.data.authenticated) {
           setIsAuthenticated(true);
+          // Remove fetchPatients call here as it will be triggered by the debounced effect
         } else {
           router.push('/login');
         }
       } catch (error) {
-        console.error("Error from login", error)
+        console.error("Error from login", error);
         router.push('/login');
         localStorage.removeItem('token');
       }
     };
 
     checkAuth();
-    fetchPatients();
-  }, [fetchPatients, router]); 
+  }, [router]);
 
   useEffect(() => {
     if (toastMassage === true) {
       toast.success("ເພີ່ມຜູ້ຄົນໄຂ້ສຳເລັດແລ້ວ!");
       setToastMassage(null);
-      fetchPatients(); // เพิ่มบรรทัดนี้
     } else if (toastMassage === false) {
       toast.error("ເພີ່ມຜູ້ໄຂ້ບໍ່ສຳເລັດ!");
       setToastMassage(null);
     }
-  }, [toastMassage]); 
-
-  // useEffect(() => {
-  //   fetchPatients();
-  // }, [currentPage, itemsPerPage, searchQuery, fetchPatients]); 
+  }, [toastMassage]);
 
   const renderPagination = () => {
     return (

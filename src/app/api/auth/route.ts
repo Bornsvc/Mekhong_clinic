@@ -4,7 +4,6 @@ import UserModel from '@/backend/models/User';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
-console.log("JWTSECRET:", process.env.JWTSECRET);
 
 const userModel = new UserModel(pool);
 const JWTSECRET = process.env.JWTSECRET || 'your-secret-key';

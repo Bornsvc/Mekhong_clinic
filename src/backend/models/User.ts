@@ -37,10 +37,10 @@ class UserModel {
   }
 
   async validatePassword(inputPassword: string, hashedPassword: string): Promise<boolean> {
-    console.log("Input password:", inputPassword);
-    console.log("Hashed password:", hashedPassword);
+    // console.log("Input password:", inputPassword);
+    // console.log("Hashed password:", hashedPassword);
     const isMatch = await bcrypt.compare(inputPassword, hashedPassword);
-    console.log("Password match result:", isMatch);
+    // console.log("Password match result:", isMatch);
     return isMatch;
   }
   
