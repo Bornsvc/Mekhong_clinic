@@ -5,6 +5,7 @@ import axios from 'axios';
 import Link from 'next/link';
 import EditPatientForm from '@/app/components/editPatientForm';
 import { FormContext } from "@/context/FormContext";
+import Loding from "@/app/components/loding"
 
 interface Patient {
   id: string;
@@ -66,9 +67,7 @@ export default function PatientDetails() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
+      <Loding />
     );
   }
 

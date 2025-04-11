@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import ImportFile from './components/importPatientForm'
 import Pagination from './components/Pagination'
 
+
 import ExportIcon from '@/icons/export.png'
 import UploadIcon from '@/icons/import.png'
 import LOGO from '@/icons/LOGO.png'
@@ -53,6 +54,7 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [itemsPerPage] = useState<number>(11);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -60,12 +62,15 @@ export default function Home() {
 
   const fetchPatients = useCallback(async () => {
     try {
+      setIsLoading(true)
       const response = await axios.get(`/api/patients?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}`);
       setPatients(response.data.data);
       setTotalPages(response.data.pagination.totalPages);
     } catch(error) {
       console.log("Error from fetchPatients function>>>", error)
       toast.error("Failed to load patients");
+    }finally{
+      setIsLoading(false)
     }
   }, [currentPage, itemsPerPage, searchQuery]);
 
@@ -295,7 +300,7 @@ export default function Home() {
                           ລະຫັດ
                         </th>
                         <th scope="col" className="px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">
-                          ຊື່ / ນາມສະກຸນ
+                          ຊື່ / ນາມສກຸນ
                         </th>
                         <th scope="col" className="px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">
                           ວັນ / ເດືອນ / ປີເກີດ
@@ -314,7 +319,18 @@ export default function Home() {
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    {isLoading ? (
+                        <tbody className="relative">
+                          <tr>
+                            <td colSpan={7} className="h-[200px]">
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500" />
+                              </div> 
+                            </td>
+                          </tr>
+                        </tbody>
+                      ) : (
+                        <tbody className="bg-white divide-y divide-gray-200">
                       {patients.map((patient, index) => (
                         <tr key={index} className="hover:bg-blue-50 transition-colors duration-200">
                           <td className="px-6 py-4 whitespace-nowrap">
@@ -346,7 +362,9 @@ export default function Home() {
                           </td>
                         </tr>
                       ))}
-                    </tbody>
+                      </tbody>
+                      )
+                    }
                   </table>
                   {renderPagination()}
                 </div>
