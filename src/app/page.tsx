@@ -25,7 +25,7 @@ interface Patient {
   middle_name: string;
   last_name: string;
   birth_date: string;
-  age: number;
+  age: number;  
   address: string;
   phone_number: string;
   purpose: string;
@@ -68,7 +68,6 @@ export default function Home() {
       setTotalPages(response.data.pagination.totalPages);
     } catch(error) {
       console.log("Error from fetchPatients function>>>", error)
-      toast.error("Failed to load patients");
     }finally{
       setIsLoading(false)
     }
@@ -117,9 +116,9 @@ export default function Home() {
     }
   }, [toastMassage]); 
 
-  useEffect(() => {
-    fetchPatients();
-  }, [currentPage, itemsPerPage, searchQuery, fetchPatients]); 
+  // useEffect(() => {
+  //   fetchPatients();
+  // }, [currentPage, itemsPerPage, searchQuery, fetchPatients]); 
 
   const renderPagination = () => {
     return (

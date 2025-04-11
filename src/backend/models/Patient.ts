@@ -18,23 +18,23 @@ export const PatientModel = {
   async getPaginatedPatients(params: QueryParams) {
     const { page = 1, limit = 10, search } = params;
     const offset = (page - 1) * limit;
-    let countQuery = 'SELECT COUNT(*) FROM patients';
+    let countQuery = 'SELECT COUNT(*) FROM patients';  // Remove LIMIT 1 here
     let dataQuery = 'SELECT * FROM patients';
     const queryParams: (string | number)[] = [];
 
     if (search) {
       const searchCondition = `
-        first_name ILIKE $1 
-        OR last_name ILIKE $1 
-        OR middle_name ILIKE $1 
-        OR phone_number ILIKE $1 
-        OR CONCAT(first_name, ' ', last_name) ILIKE $1
-        OR CONCAT(first_name, ' ', middle_name, ' ', last_name) ILIKE $1
+        LOWER(first_name) LIKE LOWER($1)
+        OR LOWER(last_name) LIKE LOWER($1)
+        OR LOWER(middle_name) LIKE LOWER($1)
+        OR phone_number ILIKE $1
       `;
       countQuery += ` WHERE ${searchCondition}`;
       dataQuery += ` WHERE ${searchCondition}`;
       queryParams.push(`%${search}%`);
     }
+    
+    
     
 
     dataQuery += ' ORDER BY created_at DESC';
