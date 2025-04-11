@@ -1,7 +1,6 @@
 import pool from '../config/database';
 import { Patient } from '@/types/patient';
 
-
 interface QueryParams {
   page?: number;
   limit?: number;
@@ -10,6 +9,7 @@ interface QueryParams {
 
 export const PatientModel = {
   async getAllPatients() {
+    console.log('📦 getAllPatients: กำลังดึงข้อมูลผู้ป่วยทั้งหมด');
     const query = 'SELECT * FROM patients ORDER BY created_at DESC';
     const { rows } = await pool.query(query);
     return rows;
@@ -18,7 +18,9 @@ export const PatientModel = {
   async getPaginatedPatients(params: QueryParams) {
     const { page = 1, limit = 10, search } = params;
     const offset = (page - 1) * limit;
-    let countQuery = 'SELECT COUNT(*) FROM patients';  // Remove LIMIT 1 here
+    console.log('🔍 เรียกดูข้อมูลแบบมีหน้า:', { page, limit, search });
+
+    let countQuery = 'SELECT COUNT(*) FROM patients';
     let dataQuery = 'SELECT * FROM patients';
     const queryParams: (string | number)[] = [];
 
@@ -43,6 +45,10 @@ export const PatientModel = {
       queryParams.push(limit, offset);
     }
 
+    console.log('📝 SQL - Count Query:', countQuery);
+    console.log('📝 SQL - Data Query:', dataQuery);
+    console.log('📦 Params ที่ส่ง:', queryParams);
+
     const [countResult, dataResult] = await Promise.all([
       pool.query(countQuery, search ? [queryParams[0]] : []),
       pool.query(dataQuery, queryParams)
@@ -63,6 +69,7 @@ export const PatientModel = {
   },
 
   async getPatientById(id: string) {
+    console.log('🔍 getPatientById:', id);
     const query = 'SELECT * FROM patients WHERE id = $1';
     const { rows } = await pool.query(query, [id]);
     return rows[0];
@@ -70,6 +77,7 @@ export const PatientModel = {
 
   async createPatient(patient: Patient) {
     try {
+      console.log('🆕 createPatient:', patient);
       const query = `
         INSERT INTO patients (
           first_name, middle_name, last_name, birth_date, age, registered,
@@ -82,7 +90,7 @@ export const PatientModel = {
         )
         RETURNING *
       `;
-  
+
       const values = [
         patient.first_name,
         patient.middle_name,
@@ -100,27 +108,28 @@ export const PatientModel = {
         patient.social_security_expiration,
         patient.social_security_company
       ];
-  
+
+      console.log('📦 createPatient values:', values);
       const { rows } = await pool.query(query, values);
       return rows[0];
-  
+
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('❌ Failed to create patient:', errorMessage);
       throw new Error(`Failed to create patient: ${errorMessage}`);
     }
   },
-  
+
   async updatePatient(id: string, patient: Patient) {
     try {
-      // ตรวจสอบการเชื่อมต่อกับฐานข้อมูล
-      await pool.query('SELECT 1');
+      console.log('🛠️ updatePatient ID:', id);
+      await pool.query('SELECT 1'); // เช็กการเชื่อมต่อ DB
+      console.log('✅ DB connection OK');
 
-      // ตรวจสอบข้อมูลที่จำเป็น
       if (!patient.first_name?.trim() || !patient.last_name?.trim()) {
         throw new Error('กรุณากรอกชื่อและนามสกุลให้ครบถ้วน');
       }
 
-      // ตรวจสอบรูปแบบวันที่
       if (patient.birth_date) {
         const birthDate = new Date(patient.birth_date);
         if (isNaN(birthDate.getTime())) {
@@ -171,21 +180,21 @@ export const PatientModel = {
         id
       ];
 
+      console.log('📦 updatePatient values:', values);
+
       const { rows } = await pool.query(query, values);
-      if (!rows || rows.length === 0) {
+      if (!rows.length) {
         throw new Error('ไม่พบข้อมูลผู้ป่วยที่ต้องการอัพเดท');
       }
 
-      console.log('อัพเดทข้อมูลผู้ป่วยสำเร็จ:', rows[0]);
+      console.log('✅ อัพเดทสำเร็จ:', rows[0]);
       return rows[0];
     } catch (error: unknown) {
-      console.error('Error in updatePatient:', error);
+      console.error('❌ Error in updatePatient:', error);
       if (error instanceof Error) {
-        // ตรวจสอบข้อผิดพลาดเกี่ยวกับ plpgsql extension
         if (error.message.includes('plpgsql') || error.message.includes('$libdir/plpgsql')) {
-          throw new Error('ระบบฐานข้อมูลมีปัญหาเกี่ยวกับ plpgsql extension กรุณาติดต่อผู้ดูแลระบบเพื่อตรวจสอบการติดตั้ง');
+          throw new Error('ระบบฐานข้อมูลมีปัญหาเกี่ยวกับ plpgsql extension กรุณาติดต่อผู้ดูแลระบบ');
         }
-        // ตรวจสอบข้อผิดพลาดเกี่ยวกับการเชื่อมต่อฐานข้อมูล
         if (error.message.includes('connection') || error.message.includes('timeout')) {
           throw new Error('ไม่สามารถเชื่อมต่อกับฐานข้อมูลได้ กรุณาลองใหม่อีกครั้งหรือติดต่อผู้ดูแลระบบ');
         }
@@ -194,9 +203,11 @@ export const PatientModel = {
       throw new Error('เกิดข้อผิดพลาดที่ไม่คาดคิดในการอัปเดตข้อมูลผู้ป่วย');
     }
   },
+
   async deletePatient(id: string) {
+    console.log('🗑️ ลบผู้ป่วย ID:', id);
     const query = 'DELETE FROM patients WHERE id = $1 RETURNING *';
     const { rows } = await pool.query(query, [id]);
     return rows[0];
   }
-}
+};
