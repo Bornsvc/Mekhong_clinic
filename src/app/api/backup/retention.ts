@@ -1,5 +1,5 @@
 import { S3Client, DeleteObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
-import pool from '@/backend/config/database';
+import {pool} from '@/backend/config/database';
 import { RETENTION_POLICY } from './config';
 // import { error } from 'console';
 

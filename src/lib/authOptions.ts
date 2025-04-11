@@ -2,7 +2,7 @@
 // import CredentialsProvider from 'next-auth/providers/credentials';
 // import type { NextAuthOptions } from 'next-auth';
 // import bcrypt from 'bcryptjs';
-// import pool from '@/backend/config/database';
+// import {pool} from '@/backend/config/database';
 
 // // let pool: Pool;
 

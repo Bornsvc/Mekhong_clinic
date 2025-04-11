@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import pool from '@/backend/config/database';
+import {pool} from '@/backend/config/database';
 import UserModel from '@/backend/models/User';
 import jwt from 'jsonwebtoken';
 

@@ -1,4 +1,4 @@
-import pool from '@/backend/config/database';
+import {pool} from '@/backend/config/database';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'; // ListObjectsCommand
 import nodemailer from 'nodemailer';
 
