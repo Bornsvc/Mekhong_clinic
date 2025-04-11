@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import UserModel from '@/backend/models/User.js';
-import pool from '../config/database';
+import {pool} from '../config/database';
 
 const JWTSECRET = process.env.JWTSECRET || 'your-secret-key';
 const userModel = new UserModel(pool);
