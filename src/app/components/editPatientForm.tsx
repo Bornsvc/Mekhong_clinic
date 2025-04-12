@@ -383,7 +383,7 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
               />
             </div>
 
-            <div>
+            {/* <div>
               <label htmlFor="balance" className="block text-base font-medium text-gray-700 mb-1">ຍອດ</label>
               <input
                 id="balance"
@@ -393,7 +393,7 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
                 onChange={handleChange}
                 className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
               />
-            </div>
+            </div> */}
           </div>
 
           <div className="flex justify-end space-x-4 mt-5">

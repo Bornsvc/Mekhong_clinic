@@ -35,7 +35,7 @@ const ConfirmClose: React.FC<ConfirmCloseProps> = ({ comFirm, setComfirm }) => {
         ${isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
       >
         <h1 className="text-2xl font-bold text-gray-800 mb-4">
-          ເຈົ້າແນ່ໃຈບໍ່ວ່າຈະອອກ?
+          ເຈົ້າແນ່ໃຈບໍ່ວ່າຈະອອກຈາກໜ້ານີ້?
         </h1>
         <p className="text-gray-600 mb-8">
           ການປ່ຽນແປງທີ່ຍັງບໍ່ໄດ້ບັນທຶກຈະຖືກລຶບ.

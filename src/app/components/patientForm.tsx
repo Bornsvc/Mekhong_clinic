@@ -88,7 +88,7 @@ const CustomerForm: React.FC = () => {
         phone_number: formData.phoneNumber,
         gender: formData.gender,
         medication: formData.medication,
-        balance: formData.balance,
+        balance: formData.balance || 0,
         diagnosis: formData.diagnosis || '',
         address: formData.address,
         nationality: formData.nationality,
@@ -154,7 +154,7 @@ const CustomerForm: React.FC = () => {
                 />
               </div>
               <div>
-                <label htmlFor="middleName" className="block text-base font-medium text-gray-700 mb-1">ຊື່ເລ່ນ</label>
+                <label htmlFor="middleName" className="block text-base font-medium text-gray-700 mb-1">ຊື່ຫຼີ້ນ</label>
                 <input
                   id="middleName"
                   type="text"
@@ -165,7 +165,7 @@ const CustomerForm: React.FC = () => {
                 />
               </div>
               <div>
-                <label htmlFor="lastName" className="block text-base font-medium text-gray-700 mb-1">ນາມສກຸນ</label>
+                <label htmlFor="lastName" className="block text-base font-medium text-gray-700 mb-1">ນາມສະກຸນ</label>
                 <input
                   id="lastName"
                   type="text"
@@ -299,7 +299,7 @@ const CustomerForm: React.FC = () => {
           <div className="space-y-6 bg-gray-50 p-6 rounded-xl transition-all duration-200 hover:shadow-md">
             <h3 className="text-2xl font-semibold text-gray-800 border-b pb-2">ຂໍ້ມູນທາງການແພດ</h3>
             <div>
-              <label htmlFor="diagnosis" className="block text-base font-medium text-gray-700 mb-1">ການວິນິດໄຊ</label>
+              <label htmlFor="diagnosis" className="block text-base font-medium text-gray-700 mb-1">ບົ່ງມະຕິພະຍາດ</label>
               <textarea
                 id="diagnosis"
                 name="diagnosis"
@@ -311,7 +311,7 @@ const CustomerForm: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="medication" className="block text-base font-medium text-gray-700 mb-1">ຢາທີ່ໃຊ້</label>
+              <label htmlFor="medication" className="block text-base font-medium text-gray-700 mb-1">ວິທີປິ່ນປົວ</label>
               <input
                 id="medication"
                 type="text"
@@ -324,7 +324,7 @@ const CustomerForm: React.FC = () => {
           </div>
 
           {/* Registration Information Section */}
-          <div className="space-y-6 bg-gray-50 p-6 rounded-xl transition-all duration-200 hover:shadow-md">
+          {/* <div className="space-y-6 bg-gray-50 p-6 rounded-xl transition-all duration-200 hover:shadow-md">
             <h3 className="text-2xl font-semibold text-gray-800 border-b pb-2">ລາຍລະອຽດການລົງທະບຽນ</h3>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div>
@@ -350,7 +350,7 @@ const CustomerForm: React.FC = () => {
                 />
               </div>
             </div>
-          </div>
+          </div> */}
 
           <button
             type="submit"

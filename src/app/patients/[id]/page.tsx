@@ -211,12 +211,12 @@ export default function PatientDetails() {
                   </p>
                 </div>
               </div>
-              <div className="text-right">
+              {/* <div className="text-right">
                 <p className="text-base text-gray-500">ຍອດເງິນຄົງເຫຼືອ</p>
                 <p className={`text-xl font-semibold ${patient.balance > 0 ? 'text-red-600' : 'text-green-600'}`}>
                   ₭ {patient.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
-              </div>
+              </div> */}
             </div>
   
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
