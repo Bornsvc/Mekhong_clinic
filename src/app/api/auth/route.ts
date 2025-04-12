@@ -21,10 +21,6 @@ export async function POST(request: NextRequest) {
 
 
     const user = await userModel.findByUsername(username);
-    if(user){
-      console.log("Found user:", user);
-    }
-    
     if (!user) {
       return NextResponse.json(
         { message: 'ชื่อผู้ใช้ไม่ถูกต้อง' },

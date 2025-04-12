@@ -102,6 +102,8 @@ const CustomerForm: React.FC = () => {
         setSearchQuery("");
         console.log("Patient added successfully:", response.data.data);
         setToastMassage(true);
+
+        window.location.reload();
       } catch (error) {
         console.error('Error submitting form:', error);
         setToastMassage(false);

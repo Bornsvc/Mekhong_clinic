@@ -11,13 +11,14 @@ export async function GET(request: Request) {
     const limit = parseInt(searchParams.get('limit') || '10');
     const search = searchParams.get('search') || '';
 
+    console.log("----------------------------------------");
     console.log("START getPaginatedPatients");
 
     const result = await PatientModel.getPaginatedPatients({ page, limit, search });
 
 
     console.log("END getPaginatedPatients");
-
+    console.log("----------------------------------------");
     clearTimeout(timeoutId);
     return NextResponse.json(result);
   } catch (error) {

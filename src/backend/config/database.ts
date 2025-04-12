@@ -58,7 +58,7 @@ pool.connect(async (err, client, release) => {
     if (extensionResult.rows.length === 0) {
       throw new Error('plpgsql extension installation failed');
     }
-
+    console.log("--------------------------------------------------------");
     console.log('Database Connection Status:');
     console.log('- Connected at:', connectionTest.rows[0].now);
     console.log('- PostgreSQL version:', versionResult.rows[0].version);
@@ -67,7 +67,7 @@ pool.connect(async (err, client, release) => {
       idleCount: pool.idleCount,
       waitingCount: pool.waitingCount
     });
-
+    console.log("--------------------------------------------------------");
   } catch (error: unknown) {
     console.error('Database initialization error:', error);
     if (error instanceof Error) {
