@@ -30,7 +30,7 @@ export const PatientModel = {
         OR LOWER(last_name) LIKE LOWER($1)
         OR LOWER(middle_name) LIKE LOWER($1)
         OR phone_number ILIKE $1
-        OR LOWER(first_name || ' ' || last_name) LIKE LOWER($1)
+        OR LOWER(first_name || last_name) LIKE LOWER($1)
         OR LOWER(first_name || ' ' || middle_name || ' ' || last_name) LIKE LOWER($1)
       `;
       countQuery += ` WHERE ${searchCondition}`;
