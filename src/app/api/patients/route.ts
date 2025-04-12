@@ -13,12 +13,8 @@ export async function GET(request: Request) {
 
     console.log("START getPaginatedPatients");
 
-    const result = await Promise.race([
-      PatientModel.getPaginatedPatients({ page, limit, search }),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Database timeout')), 5000)
-      )
-    ]);
+    const result = await PatientModel.getPaginatedPatients({ page, limit, search });
+
 
     console.log("END getPaginatedPatients");
 
