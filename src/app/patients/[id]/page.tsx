@@ -46,10 +46,10 @@ export default function PatientDetails() {
     const fetchPatient = async () => {
       try {
         if (params?.id) {  
-          console.log(">>>",params?.id)
+          // console.log(">>>",params?.id)
           const response = await axios.get(`/api/patients/${params.id}`);
           setPatient(response.data);
-          console.log(response.data)
+          // console.log(response.data)
         } else {
           setError('Invalid patient ID');
         }

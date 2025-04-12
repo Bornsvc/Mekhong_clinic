@@ -64,12 +64,12 @@ const CustomerForm: React.FC = () => {
       const currentYear = new Date().getFullYear();
       updatedData.age = currentYear - birthYear;
 
-      console.log('updatedData.birthDate>>>>>',updatedData.birthDate)
+      // console.log('updatedData.birthDate>>>>>',updatedData.birthDate)
     }
 
     if(name === 'socialSecurityExpiration'){
       updatedData.socialSecurityExpiration = formattedDate;
-      console.log('updatedData.socialSecurityExpiration>>>>>',updatedData.socialSecurityExpiration)
+      // console.log('updatedData.socialSecurityExpiration>>>>>',updatedData.socialSecurityExpiration)
     }
 
     setFormData((prevData) => ({ ...prevData, ...updatedData }));

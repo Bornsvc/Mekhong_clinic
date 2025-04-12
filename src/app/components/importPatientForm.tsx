@@ -61,7 +61,7 @@ function ImportPatientForm() {
           errors: response.data.data.errors || []    // Changed to data.errors
         };
         console.log('Import result:', result);
-        console.log(response.data)
+        // console.log(response.data)
         setImportResult(result); 
       } else {
         console.error('Import failed:', response.data);
