@@ -4,19 +4,23 @@ import { PatientModel } from '@/backend/models/Patient';
 export async function GET(request: Request) {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000); // timeout 5 วินาที
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
 
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
     const search = searchParams.get('search') || '';
 
+    console.log("START getPaginatedPatients");
+
     const result = await Promise.race([
       PatientModel.getPaginatedPatients({ page, limit, search }),
-      new Promise((_, reject) => 
+      new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Database timeout')), 5000)
       )
     ]);
+
+    console.log("END getPaginatedPatients");
 
     clearTimeout(timeoutId);
     return NextResponse.json(result);
@@ -28,6 +32,7 @@ export async function GET(request: Request) {
     );
   }
 }
+
 
 export async function POST(request: Request) {
     try {
