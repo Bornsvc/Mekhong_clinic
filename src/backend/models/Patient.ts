@@ -93,18 +93,19 @@ export const PatientModel = {
       console.log('🆕 createPatient:', patient);
       const query = `
         INSERT INTO patients (
-          first_name, middle_name, last_name, birth_date, age, registered,
+          id, first_name, middle_name, last_name, birth_date, age, registered,
           phone_number, gender, medication, balance, diagnosis, address,
           nationality, social_security_id, social_security_expiration, social_security_company
         ) VALUES (
-          $1, $2, $3, $4, $5, CURRENT_TIMESTAMP,
-          $6, $7, $8, $9, $10, $11,
-          $12, $13, $14, $15
+          $1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP,
+          $7, $8, $9, $10, $11, $12,
+          $13, $14, $15, $16
         )
         RETURNING *
       `;
 
       const values = [
+        patient.id, // เพิ่ม id เข้าไปในค่าที่จะ insert
         patient.first_name,
         patient.middle_name,
         patient.last_name,
@@ -125,7 +126,6 @@ export const PatientModel = {
       console.log('📦 createPatient values:', values);
       const { rows } = await pool.query(query, values);
       return rows[0];
-
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       console.error('❌ Failed to create patient:', errorMessage);
@@ -217,10 +217,38 @@ export const PatientModel = {
     }
   },
 
+  async getLastPatient() {
+    try {
+      const query = 'SELECT id FROM patients ORDER BY CAST(id AS INTEGER) DESC LIMIT 1';
+      const { rows } = await pool.query(query);
+      return rows[0];
+    } catch (error) {
+      console.error('Error getting last patient:', error);
+      throw error;
+    }
+  },
+
   async deletePatient(id: string) {
-    console.log('🗑️ ลบผู้ป่วย ID:', id);
-    const query = 'DELETE FROM patients WHERE id = $1 RETURNING *';
-    const { rows } = await pool.query(query, [id]);
-    return rows[0];
-  }
+    try {
+      console.log('🗑️ Deleting patient with ID:', id);
+      
+      // Check if patient exists
+      const checkQuery = 'SELECT id FROM patients WHERE id = $1';
+      const { rows: checkRows } = await pool.query(checkQuery, [id]);
+      
+      if (checkRows.length === 0) {
+        throw new Error(`Patient with ID ${id} not found`);
+      }
+  
+      // Delete the patient
+      const query = 'DELETE FROM patients WHERE id = $1 RETURNING *';
+      const { rows } = await pool.query(query, [id]);
+      
+      console.log('✅ Patient deleted successfully');
+      return rows[0];
+    } catch (error) {
+      console.error('❌ Error deleting patient:', error);
+      throw error;
+    }
+  },
 };

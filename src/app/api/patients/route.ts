@@ -30,15 +30,19 @@ export async function GET(request: Request) {
   }
 }
 
-
 export async function POST(request: Request) {
     try {
       const patient = await request.json();
       
+      // Generate 6-digit UHID
+      const lastPatient = await PatientModel.getLastPatient();
+      const lastId = lastPatient ? parseInt(lastPatient.id) : 0;
+      const newId = (lastId + 1).toString().padStart(6, '0');
+      
       // เพิ่มการตรวจสอบข้อมูลที่จำเป็น
       if (!patient.first_name || !patient.last_name || !patient.birth_date) {
         return NextResponse.json(
-          { error: 'Plaese complete all input.' },
+          { error: 'Please complete all input.' },
           { status: 400 }
         );
       }
@@ -52,7 +56,11 @@ export async function POST(request: Request) {
         );
       }
   
-      const newPatient = await PatientModel.createPatient(patient);
+      const newPatient = await PatientModel.createPatient({
+        ...patient,
+        id: newId
+      });
+      
       return NextResponse.json({ data: newPatient });
     } catch (error) {
       console.error('Error creating patient:', error);
@@ -61,5 +69,39 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Patient ID is required' },
+        { status: 400 }
+      );
+    }
+
+    const deletedPatient = await PatientModel.deletePatient(id);
+    
+    if (!deletedPatient) {
+      return NextResponse.json(
+        { error: 'Patient not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      message: 'Patient deleted successfully',
+      data: deletedPatient
+    });
+  } catch (error) {
+    console.error('Error deleting patient:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete patient' },
+      { status: 500 }
+    );
   }
+}
 

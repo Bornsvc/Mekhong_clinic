@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { FormContext } from "@/context/FormContext"; // Import the context
 import Image from "next/image";
 import ClodeIcon from "@/icons/close.png";
@@ -6,6 +6,7 @@ import axios from "axios";
 import ConfirmClose from './confirmClose'
 
 interface FormData {
+  id?: string;  // Add this line
   firstName: string;
   middleName: string;
   lastName: string;
@@ -28,6 +29,7 @@ interface FormData {
 const CustomerForm: React.FC = () => {
 
   const [formData, setFormData] = useState<FormData>({
+    id: '',  // Add this line
     firstName: "",
     middleName: "",
     lastName: "",
@@ -79,6 +81,7 @@ const CustomerForm: React.FC = () => {
     e.preventDefault();
     try {
       const response = await axios.post('/api/patients', {
+        id: formData.id, // Add this line if you have an i
         first_name: formData.firstName,
         middle_name: formData.middleName,
         last_name: formData.lastName,
@@ -114,6 +117,20 @@ const CustomerForm: React.FC = () => {
   const handleClose = () => {
     setComfirm(true);
   };
+
+  useEffect(() => {
+    const fetchNextId = async () => {
+      try {
+        const response = await axios.get('/api/patients');
+        const totalPatients = response.data.pagination.totalItems;
+        const nextId = (totalPatients + 1).toString().padStart(6, '0');
+        setFormData(prev => ({ ...prev, id: nextId }));
+      } catch (error) {
+        console.error('Error fetching next ID:', error);
+      }
+    };
+    fetchNextId();
+  }, []);
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 transition-all duration-300">
@@ -142,6 +159,17 @@ const CustomerForm: React.FC = () => {
           <div className="space-y-6 bg-gray-50 p-6 rounded-xl transition-all duration-200 hover:shadow-md">
             <h3 className="text-2xl font-semibold text-gray-800 border-b pb-2">ຂໍ້ມູນສ່ວນຕົວ</h3>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div>
+                <label htmlFor="id" className="block text-base font-medium text-gray-700 mb-1">ລະຫັດຄົນເຈັບ</label>
+                <input
+                  id="id"
+                  type="text"
+                  name="id"
+                  value={formData.id}
+                  readOnly
+                  className="appearance-none relative block w-full px-3 py-3 border border-gray-300 text-gray-900 rounded-lg bg-gray-50 cursor-not-allowed sm:text-sm"
+                />
+              </div>
               <div>
                 <label htmlFor="firstName" className="block text-base font-medium text-gray-700 mb-1">ຊື່</label>
                 <input
