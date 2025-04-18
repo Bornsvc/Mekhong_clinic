@@ -219,7 +219,17 @@ export const PatientModel = {
 
   async getLastPatient() {
     try {
-      const query = 'SELECT id FROM patients ORDER BY CAST(id AS INTEGER) DESC LIMIT 1';
+      const query = `
+        SELECT id 
+        FROM patients 
+        ORDER BY 
+          CASE 
+            WHEN id ~ '^[0-9]+$' THEN CAST(id AS INTEGER)
+            ELSE 0
+          END DESC,
+          id DESC 
+        LIMIT 1
+      `;
       const { rows } = await pool.query(query);
       return rows[0];
     } catch (error) {

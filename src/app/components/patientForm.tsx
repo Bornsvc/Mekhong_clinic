@@ -123,7 +123,7 @@ const CustomerForm: React.FC = () => {
       try {
         const response = await axios.get('/api/patients');
         const totalPatients = response.data.pagination.totalItems;
-        const nextId = (totalPatients + 1).toString().padStart(6, '0');
+        const nextId = (totalPatients + 1).toString().padStart(7, '0');
         setFormData(prev => ({ ...prev, id: nextId }));
       } catch (error) {
         console.error('Error fetching next ID:', error);

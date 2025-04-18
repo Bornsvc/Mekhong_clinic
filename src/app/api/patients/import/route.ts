@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
     if (!file) {
       return NextResponse.json(
-        { error: 'No file uploaded' },
+        { error: 'ບໍ່ມີໄຟລອັບໂຫຼດ' },
         { status: 400 }
       );
     }
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     // Check file type
     if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
       return NextResponse.json(
-        { error: 'Invalid file type. Please upload an Excel file (.xlsx or .xls)' },
+        { error: 'ປະເພດໄຟລບໍ່ຖືກຕ້ອງ. ກະລຸນາອັບໂຫລດໄຟລ໌ Excel (.xlsx ຫຼື .xls)' },
         { status: 400 }
       );
     }
@@ -68,7 +68,14 @@ export async function POST(request: Request) {
         // Extract and validate required fields
         const uhid = row.UHID;
         if (!uhid) {
-          throw new Error('UHID is required');
+          throw new Error('ຕ້ອງການ UHID');
+        }
+
+        // Convert to string and clean UHID
+        const uhidString = String(uhid);
+        const cleanedUhid = uhidString.replace(/^MK-/, '').slice(-7);
+        if (!cleanedUhid || cleanedUhid.length > 7) {
+          throw new Error('ຮູບແບບ UHID ບໍ່ຖືກຕ້ອງ - ຕ້ອງມີ 7 ຕົວເລກ ຫຼືໜ້ອຍກວ່າ');
         }
 
         const fullName = row.FullName;
@@ -111,12 +118,12 @@ export async function POST(request: Request) {
 
           // Validate the parsed date
           if (!dob || isNaN(dob.getTime())) {
-            throw new Error(`Invalid date format for DOB: ${dobStr}`);
+            throw new Error(`ຮູບແບບວັນທີບໍ່ຖືກຕ້ອງສໍາລັບ DOB: ${dobStr}`);
           }
 
           // Validate DOB is not in future
           if (dob > new Date()) {
-            throw new Error('Date of birth cannot be in the future');
+            throw new Error('ວັນເດືອນປີເກີດບໍ່ສາມາດເປັນໃນອະນາຄົດ');
           }
         } else {
           // Skip validation for empty dates
@@ -125,7 +132,7 @@ export async function POST(request: Request) {
 
         // Validate DOB is not in future
         if (dob !== null && dob > new Date()) {
-          throw new Error('Date of birth cannot be in the future');
+          throw new Error('ວັນເດືອນປີເກີດບໍ່ສາມາດເປັນໃນອະນາຄົດ');
         }
 
         // Calculate age from DOB and validate against provided age
@@ -142,7 +149,7 @@ export async function POST(request: Request) {
 
         // Allow 1 year difference due to potential data entry timing differences
         if (Math.abs(calculatedAge - providedAge) > 1) {
-          throw new Error(`Age mismatch: calculated age (${calculatedAge}) differs significantly from provided age (${providedAge})`);
+          throw new Error(`ອາຍຸບໍ່ກົງກັນ: ອາຍຸທີ່ຄິດໄລ່ (${calculatedAge}) ແຕກຕ່າງກັນຢ່າງຫຼວງຫຼາຍຈາກອາຍຸທີ່ສະຫນອງໃຫ້ (${providedAge})`);
         }
 
         const registeredStr = row.Registered;
@@ -163,7 +170,7 @@ export async function POST(request: Request) {
           }
 
           if (!registered || isNaN(registered.getTime())) {
-            throw new Error(`Invalid date format for Registration date: ${registeredStr}`);
+            throw new Error(`ຮູບແບບວັນທີບໍ່ຖືກຕ້ອງສໍາລັບວັນທີລົງທະບຽນ: ${registeredStr}`);
           }
         }
 
@@ -171,7 +178,7 @@ export async function POST(request: Request) {
         const ageStr = row.Age;
         const age = typeof ageStr === 'string' ? parseInt(ageStr.trim()) : typeof ageStr === 'number' ? ageStr : 0;
         if (isNaN(age)) {
-          throw new Error('Invalid age format');
+          throw new Error('ຮູບແບບອາຍຸບໍ່ຖືກຕ້ອງ');
         }
 
         // Validate and convert balance to number with 2 decimal places
@@ -183,7 +190,7 @@ export async function POST(request: Request) {
             : 0;
 
         if (isNaN(balance)) {
-          throw new Error('Invalid balance format');
+          throw new Error('ຮູບແບບຍອດເງິນບໍ່ຖືກຕ້ອງ');
         }
 
         // Use toFixed() on the numeric value
@@ -205,7 +212,7 @@ export async function POST(request: Request) {
         const socialSecurityCompany = row['Social Security Company'] !== undefined ? String(row['Social Security Company']).trim() : '';
 
         const patient = {
-          id: String(uhid),
+          id: cleanedUhid,  // Use the cleaned UHID
           first_name: firstName,
           last_name: lastName || '',
           middle_name: middle_name || '',
@@ -255,7 +262,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Error importing patients:', error);
     return NextResponse.json(
-      { error: 'Failed to import patients' },
+      { error: 'ລົ້ມເຫລວໃນການນໍາເຂົ້າຄົນເຈັບ' },
       { status: 500 }
     );
   }
