@@ -34,38 +34,33 @@ export async function POST(request: Request) {
     try {
       const patient = await request.json();
       
-      // Generate 6-digit UHID
-      const lastPatient = await PatientModel.getLastPatient();
-      const lastId = lastPatient ? parseInt(lastPatient.id) : 0;
-      const newId = (lastId + 1).toString().padStart(6, '0');
+      let patientId = patient.id;
       
-      // เพิ่มการตรวจสอบข้อมูลที่จำเป็น
+      // ถ้าไม่มี ID ให้สร้างอัตโนมัติ
+      if (!patientId) {
+        const lastPatient = await PatientModel.getLastPatient();
+        const lastId = lastPatient ? parseInt(lastPatient.id) : 0;
+        patientId = (lastId + 1).toString().padStart(6, '0');
+      }
+      
+      // ตรวจสอบข้อมูลที่จำเป็น
       if (!patient.first_name || !patient.last_name || !patient.birth_date) {
         return NextResponse.json(
-          { error: 'Please complete all input.' },
-          { status: 400 }
-        );
-      }
-  
-      // ตรวจสอบรูปแบบวันที่เกิด
-      const birthDateRegex = /^\d{4}-\d{2}-\d{2}$/;
-      if (!birthDateRegex.test(patient.birth_date)) {
-        return NextResponse.json(
-          { error: 'Date format is incorrect (YYYY-MM-DD)' },
+          { error: 'กรุณากรอกข้อมูลให้ครบถ้วน' },
           { status: 400 }
         );
       }
   
       const newPatient = await PatientModel.createPatient({
         ...patient,
-        id: newId
+        id: patientId
       });
       
       return NextResponse.json({ data: newPatient });
     } catch (error) {
       console.error('Error creating patient:', error);
       return NextResponse.json(
-        { error: 'Cannot create patient' },
+        { error: 'ไม่สามารถสร้างข้อมูลผู้ป่วยได้' },
         { status: 500 }
       );
     }

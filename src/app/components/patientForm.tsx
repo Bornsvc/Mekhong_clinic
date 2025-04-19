@@ -62,9 +62,9 @@ const CustomerForm: React.FC = () => {
       updatedData.birthDate = formattedDate;
       updatedData.socialSecurityExpiration = formattedDate;
 
-      const birthYear = new Date(formattedDate).getFullYear();
-      const currentYear = new Date().getFullYear();
-      updatedData.age = currentYear - birthYear;
+      // const birthYear = new Date(formattedDate).getFullYear();
+      // const currentYear = new Date().getFullYear();
+      // updatedData.age = currentYear - birthYear;
 
       // console.log('updatedData.birthDate>>>>>',updatedData.birthDate)
     }
@@ -166,8 +166,8 @@ const CustomerForm: React.FC = () => {
                   type="text"
                   name="id"
                   value={formData.id}
-                  readOnly
-                  className="appearance-none relative block w-full px-3 py-3 border border-gray-300 text-gray-900 rounded-lg bg-gray-50 cursor-not-allowed sm:text-sm"
+                  onChange={handleChange} // เพิ่ม onChange
+                  className="appearance-none relative block w-full px-3 py-3 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
                 />
               </div>
               <div>
@@ -224,8 +224,8 @@ const CustomerForm: React.FC = () => {
                   type="number"
                   name="age"
                   value={formData.age}
-                  readOnly
-                  className="appearance-none relative block w-full px-3 py-3 border border-gray-300 text-gray-900 rounded-lg bg-gray-50 cursor-not-allowed sm:text-sm"
+                  onChange={handleChange} // เพิ่ม onChange
+                  className="appearance-none relative block w-full px-3 py-3 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
                 />
               </div>
             </div>
