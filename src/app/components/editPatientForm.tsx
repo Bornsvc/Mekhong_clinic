@@ -254,7 +254,7 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
                   type="number"
                   name="age"
                   value={formData.age}
-                  readOnly
+                  onChange={handleChange}
                   className="appearance-none relative block w-full px-3 py-3 border border-gray-300 text-gray-900 rounded-lg bg-gray-50 cursor-not-allowed sm:text-sm"
                 />
               </div>
