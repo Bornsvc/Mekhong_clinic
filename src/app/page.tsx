@@ -299,78 +299,83 @@ export default function Home() {
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th scope="col" className="FG px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">
-                          ລະຫັດ
-                        </th>
-                        <th scope="col" className="px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">
-                          ຊື່ / ນາມສກຸນ
-                        </th>
-                        <th scope="col" className="px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">
-                          ວັນ / ເດືອນ / ປີເກີດ
-                        </th>
-                        <th scope="col" className="px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">
-                          ອາຍຸ
-                        </th>
-                        <th scope="col" className="px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">
-                          ລົງທະບຽນ
-                        </th>
-                        <th scope="col" className="px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">
-                          ເພດ
-                        </th>
-                        <th scope="col" className="px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">
-                          ເບີໂທລະສັບ
-                        </th>
+                        <th className="px-6 py-4 text-center text-lg font-medium text-gray-500 uppercase tracking-wider">ລະຫັດ</th>
+                        <th className="px-6 py-4 text-center text-lg font-medium text-gray-500 uppercase tracking-wider">ຊື່ ເເລະ ນາມສະກຸນ</th>
+                        <th className="px-6 py-4 text-center text-lg font-medium text-gray-500 uppercase tracking-wider">ຊື່ຫຼິ້ນ</th>
+                        <th className="px-6 py-4 text-center text-lg font-medium text-gray-500 uppercase tracking-wider">ທີຢູ່</th>
+                        <th className="px-6 py-4 text-center text-lg font-medium text-gray-500 uppercase tracking-wider">ອາຍຸ</th>
+                        <th className="px-6 py-4 text-center text-lg font-medium text-gray-500 uppercase tracking-wider">ລົງທະບຽນ</th>
+                        <th className="px-6 py-4 text-center text-lg font-medium text-gray-500 uppercase tracking-wider">ເພດ</th>
+                        <th className="px-6 py-4 text-center text-lg font-medium text-gray-500 uppercase tracking-wider">ເບີໂທລະສັບ</th>
                       </tr>
                     </thead>
+
                     {isLoading ? (
-                        <tbody className="relative">
-                          <tr>
-                            <td colSpan={7} className="h-[200px]">
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500" />
-                              </div> 
-                            </td>
-                          </tr>
-                        </tbody>
-                      ) : (
-                        <tbody className="bg-white divide-y divide-gray-200">
-                      {patients.map((patient, index) => (
-                        <tr key={index} className="hover:bg-blue-50 transition-colors duration-200">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-base text-gray-900">{patient.id}</div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-base font-medium text-blue-600 hover:text-blue-800">
-                              <Link href={`/patients/${patient.id}`}>{`${patient.first_name} ${patient.last_name} (${patient.middle_name || 'ຊື່ເລ່ນ' })`}</Link>
+                      <tbody className="relative">
+                        <tr>
+                          <td colSpan={8} className="h-[200px]">
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500" />
                             </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-base text-gray-900">
-                              {formatDate(patient.birth_date)}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-base text-gray-900">{patient.age}</div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-base text-gray-900">
-                              {formatDate(patient.created_at)}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-base text-gray-900 capitalize">{patient.gender}</div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-base text-gray-900">{patient.phone_number}</div>
                           </td>
                         </tr>
-                      ))}
                       </tbody>
-                      )
-                    }
+                    ) : (
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {patients.map((patient, index) => (
+                          <tr key={index} className="hover:bg-blue-50 transition-colors duration-200">
+                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                              <div className="text-base text-gray-900">{patient.id}</div>
+                            </td>
+
+                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                              <div className="text-base font-medium text-blue-600 hover:text-blue-800">
+                                <Link href={`/patients/${patient.id}`}>
+                                  {`${patient.first_name} ${patient.last_name}` || '-'}
+                                </Link>
+                              </div>
+                            </td>
+
+                            <td className="px-6 py-4 whitespace-nowraptext-center text-center">
+                              <div className="text-base font-medium text-blue-600 hover:text-blue-800">
+                                {patient.middle_name || '-'}
+                              </div>
+                            </td>
+
+                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                              <div className="text-base text-gray-900">
+                                {patient.address || '-'}
+                              </div>
+                            </td>
+
+                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                              <div className="text-base text-gray-900">{patient.age || '-'}</div>
+                            </td>
+
+                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                              <div className="text-base text-gray-900">
+                                {formatDate(patient.created_at) || '-'}
+                              </div>
+                            </td>
+
+                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                              <div className="text-base text-gray-900 capitalize">
+                                {patient.gender || '-'}
+                              </div>
+                            </td>
+
+                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                              <div className="text-base text-gray-900">{patient.phone_number || '-'}</div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    )}
                   </table>
+
                   {renderPagination()}
                 </div>
+
               </div>
             </div>
           </div>
