@@ -13,6 +13,7 @@ interface EditPatientFormProps {
 }
 
 interface FormData {
+  id: string,
   firstName: string;
   lastName: string;
   birthDate: string;
@@ -34,6 +35,7 @@ interface FormData {
 const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose }) => {
   
   const [formData, setFormData] = useState<FormData>({
+    id: "",
     firstName: "",
     lastName: "",
     middle_name:"",
@@ -62,6 +64,7 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
         const response = await axios.get(`/api/patients/${patientId}`);
         const patient = response.data;
         setFormData({
+          id: patient.id,
           firstName: patient.first_name,
           lastName: patient.last_name,
           middle_name: patient.middle_name,
@@ -114,6 +117,7 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
       }
 
       const updateData = {
+        id: formData.id,
         first_name: formData.firstName,
         last_name: formData.lastName,
         middle_name: formData.middle_name,
@@ -200,6 +204,17 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
           <div className="space-y-4">
             <h3 className="text-xl font-semibold text-gray-700">ຂໍ້ມູນສ່ວນໂຕ</h3>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div>
+                <label htmlFor="id" className="block text-base font-medium text-gray-700 mb-1">ລະຫັດ</label>
+                <input
+                  id="id"
+                  type="text"
+                  name="id"
+                  value={formData.id}
+                  onChange={handleChange}
+                  className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
+                />
+              </div>
               <div>
                 <label htmlFor="firstName" className="block text-base font-medium text-gray-700 mb-1">ຊື່</label>
                 <input

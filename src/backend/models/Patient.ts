@@ -141,21 +141,27 @@ export const PatientModel = {
   async updatePatient(id: string, patient: Patient) {
     try {
       console.log('🛠️ updatePatient ID:', id);
-      await pool.query('SELECT 1'); // เช็กการเชื่อมต่อ DB
-      console.log('✅ DB connection OK');
-
+  
+      // Step 1: Check if the patient exists by ID
+      const existingPatient = await this.getPatientById(id);
+      if (!existingPatient) {
+        throw new Error('ไม่พบข้อมูลผู้ป่วยที่ต้องการอัพเดท');
+      }
+  
+      // Step 2: Validate required fields
       if (!patient.first_name?.trim() || !patient.last_name?.trim()) {
         throw new Error('กรุณากรอกชื่อและนามสกุลให้ครบถ้วน');
       }
-
+  
       if (patient.birth_date) {
         const birthDate = new Date(patient.birth_date);
         if (isNaN(birthDate.getTime())) {
           throw new Error('รูปแบบวันเกิดไม่ถูกต้อง');
         }
-        patient.birth_date = birthDate.toISOString().split('T')[0];
+        patient.birth_date = birthDate.toISOString().split('T')[0]; // Format the date
       }
-
+  
+      // Step 3: Update patient details in the database
       const query = `
         UPDATE patients
         SET
@@ -178,7 +184,7 @@ export const PatientModel = {
         WHERE id = $16
         RETURNING *
       `;
-
+  
       const values = [
         patient.first_name,
         patient.middle_name,
@@ -195,16 +201,17 @@ export const PatientModel = {
         patient.social_security_id,
         patient.social_security_expiration,
         patient.social_security_company,
-        id
+        id,
       ];
-
+  
       console.log('📦 updatePatient values:', values);
-
+  
+      // Step 4: Execute the query
       const { rows } = await pool.query(query, values);
       if (!rows.length) {
         throw new Error('ไม่พบข้อมูลผู้ป่วยที่ต้องการอัพเดท');
       }
-
+  
       console.log('✅ อัพเดทสำเร็จ:', rows[0]);
       return rows[0];
     } catch (error: unknown) {
