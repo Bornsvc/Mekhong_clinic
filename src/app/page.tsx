@@ -225,17 +225,21 @@ export default function Home() {
               <div className="flex-1 flex flex-col h-full overflow-hidden px-4 md:px-0">
                 <div className="p-4 mr-3 md:p-6 bg-gray-50 rounded-lg shadow-md border border-gray-200 mt-3 mb-3">
                   <div className="flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
-                    <div className="relative w-full md:w-96">
-                      <input
-                        type="text"
-                        placeholder="ຄົ້ນຫາຜູ້ປ່ວຍ..."
-                        onChange={(e) => {
-                          setSearchQuery((e.target.value));
-                          setCurrentPage(1);
-                        }}
-                        className="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
-                      />
-                    </div>
+                  <div className="relative w-full md:w-96">
+  <input
+    type="text"
+    placeholder="ຄົ້ນຫາຜູ້ປ່ວຍ..."
+    onChange={(e) => {
+      // Remove spaces from the search term
+      const normalizedSearch = e.target.value.replace(/\s+/g, '');
+      setSearchQuery(normalizedSearch);
+      setCurrentPage(1);
+    }}
+    className="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
+  />
+</div>
+
+
                     <div className="flex items-center gap-6 mr-10">
                     <div className="flex justify-center items-center gap-5">
                         {/* Import Button with Tooltip */}

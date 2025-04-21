@@ -19,44 +19,47 @@ export const PatientModel = {
     const { page = 1, limit = 10, search } = params;
     const offset = (page - 1) * limit;
     console.log('🔍 เรียกดูข้อมูลแบบมีหน้า:', { page, limit, search });
-
+  
+    // Normalize the search term by removing spaces
+    const normalizedSearch = search ? search.replace(/\s+/g, '') : '';
+  
     let countQuery = 'SELECT COUNT(*) FROM patients';
     let dataQuery = 'SELECT * FROM patients';
     const queryParams: (string | number)[] = [];
-
-    if (search) {
+  
+    if (normalizedSearch) {
       const searchCondition = `
-        LOWER(first_name) LIKE LOWER($1)
-        OR LOWER(last_name) LIKE LOWER($1)
-        OR LOWER(middle_name) LIKE LOWER($1)
-        OR phone_number ILIKE $1
-        OR LOWER(first_name || last_name) LIKE LOWER($1)
-        OR LOWER(first_name || ' ' || middle_name || ' ' || last_name) LIKE LOWER($1)
+        LOWER(REPLACE(first_name, ' ', '')) LIKE LOWER($1)
+        OR LOWER(REPLACE(last_name, ' ', '')) LIKE LOWER($1)
+        OR LOWER(REPLACE(middle_name, ' ', '')) LIKE LOWER($1)
+        OR REPLACE(phone_number, ' ', '') ILIKE $1
+        OR LOWER(REPLACE(first_name, ' ', '') || REPLACE(last_name, ' ', '')) LIKE LOWER($1)
+        OR LOWER(REPLACE(first_name, ' ', '') || ' ' || REPLACE(middle_name, ' ', '') || ' ' || REPLACE(last_name, ' ', '')) LIKE LOWER($1)
       `;
       countQuery += ` WHERE ${searchCondition}`;
       dataQuery += ` WHERE ${searchCondition}`;
-      queryParams.push(`%${search}%`);
+      queryParams.push(`%${normalizedSearch}%`);
     }
-
+  
     dataQuery += ' ORDER BY created_at DESC';
-
+  
     if (limit > 0) {
       dataQuery += ' LIMIT $' + (queryParams.length + 1) + ' OFFSET $' + (queryParams.length + 2);
       queryParams.push(limit, offset);
     }
-
+  
     console.log('📝 SQL - Count Query:', countQuery);
     console.log('📝 SQL - Data Query:', dataQuery);
     console.log('📦 Params ที่ส่ง:', queryParams);
-
+  
     const [countResult, dataResult] = await Promise.all([
       pool.query(countQuery, search ? [queryParams[0]] : []),
       pool.query(dataQuery, queryParams)
     ]);
-
+  
     const totalItems = parseInt(countResult.rows[0].count);
     const totalPages = Math.ceil(totalItems / limit);
-
+  
     if (dataResult.rows.length === 0) {
       return {
         message: 'ไม่พบข้อมูลผู้ป่วย',
@@ -69,7 +72,7 @@ export const PatientModel = {
         }
       };
     }
-
+  
     return {
       data: dataResult.rows,
       pagination: {
@@ -80,6 +83,8 @@ export const PatientModel = {
       }
     };
   },
+  
+  
 
   async getPatientById(id: string) {
     console.log('🔍 getPatientById:', id);

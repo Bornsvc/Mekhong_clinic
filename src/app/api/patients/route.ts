@@ -11,11 +11,14 @@ export async function GET(request: Request) {
     const limit = parseInt(searchParams.get('limit') || '10');
     const search = searchParams.get('search') || '';
 
+    // ลบช่องว่างออกจากคำค้นหาก่อน
+    const normalizedSearch = search.replace(/\s+/g, '');
+
     console.log("----------------------------------------");
     console.log("START getPaginatedPatients");
 
-    const result = await PatientModel.getPaginatedPatients({ page, limit, search });
-
+    // ส่งคำค้นหาที่ลบช่องว่างแล้วไปยังคิวรี
+    const result = await PatientModel.getPaginatedPatients({ page, limit, search: normalizedSearch });
 
     console.log("END getPaginatedPatients");
     console.log("----------------------------------------");
@@ -29,6 +32,7 @@ export async function GET(request: Request) {
     );
   }
 }
+
 
 export async function POST(request: Request) {
     try {
