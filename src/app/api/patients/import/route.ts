@@ -84,9 +84,14 @@ export async function POST(request: Request) {
           continue;
         }
 
-        // Split full name into first and last name
-        const [firstName, ...lastNameParts] = fullName.trim().split(' ');
-        const lastName = lastNameParts.join(' ');
+        // Split the full name into parts
+        const nameParts = fullName.trim().split(' ');
+
+        // Get the first name by joining the first two parts
+        const firstName = nameParts.slice(0, 2).join(' ');
+
+        // Get the last name by taking the remaining part
+        const lastName = nameParts.slice(2).join(' ');
 
         const middleName = 'MiddleName' in row ? row.MiddleName || '' : '';
         const middle_name = middleName ? middleName.trim() : '';
