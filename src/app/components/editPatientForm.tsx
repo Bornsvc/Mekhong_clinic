@@ -216,6 +216,17 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
                 />
               </div>
               <div>
+                <label htmlFor="middle_name" className="block text-base font-medium text-gray-700 mb-1">ຊື່ເລ່ນ</label>
+                <input
+                  id="middle_name"
+                  type="text"
+                  name="middle_name"
+                  value={formData.middle_name}
+                  onChange={handleChange}
+                  className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
+                />
+              </div>
+              <div>
                 <label htmlFor="firstName" className="block text-base font-medium text-gray-700 mb-1">ຊື່</label>
                 <input
                   id="firstName"
@@ -237,17 +248,7 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
                   className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
                 />
               </div>
-              <div>
-                <label htmlFor="middle_name" className="block text-base font-medium text-gray-700 mb-1">ຊື່ເລ່ນ</label>
-                <input
-                  id="middle_name"
-                  type="text"
-                  name="middle_name"
-                  value={formData.middle_name}
-                  onChange={handleChange}
-                  className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
-                />
-              </div>
+             
             </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
