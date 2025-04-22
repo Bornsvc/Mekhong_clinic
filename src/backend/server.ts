@@ -10,7 +10,7 @@ import path from 'path';
 const publicPath = path.join(__dirname, '../../public');
 
 
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -22,6 +22,8 @@ app.use(express.static(publicPath));
 
 
 const pool = new Pool({
+  connectionString: process.env.POSTGRESURL,
+  ssl: { rejectUnauthorized: false },
   connectionTimeoutMillis: 5000,
   idleTimeoutMillis: 30000,
   max: 20

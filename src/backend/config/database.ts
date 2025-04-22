@@ -6,6 +6,9 @@ dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
 const globalForPg = global as unknown as { pgPool: Pool };
 
+if (!process.env.POSTGRESURL) {
+  throw new Error('❌ POSTGRESURL is not defined in .env file');
+}
 // ปรับปรุงการตั้งค่า Pool configuration
 export const pool = 
 globalForPg.pgPool ||
@@ -33,27 +36,22 @@ pool.on('error', (err) => {
 });
 
 // ปรับปรุงการทดสอบการเชื่อมต่อ
-pool.connect(async (err, client, release) => {
-  if (err || !client) {
-    console.error('Error acquiring client:', err?.stack);
-    process.exit(-1);
-    return;
-  }
-
+(async () => {
   try {
-    await client.query('CREATE EXTENSION IF NOT EXISTS plpgsql');
-    
+    await pool.query('CREATE EXTENSION IF NOT EXISTS plpgsql');
+
     const [extensionResult, versionResult, connectionTest] = await Promise.all([
-      client.query('SELECT * FROM pg_extension WHERE extname = \'plpgsql\''),
-      client.query('SELECT version()'),
-      client.query('SELECT NOW()')
+      pool.query(`SELECT * FROM pg_extension WHERE extname = 'plpgsql'`),
+      pool.query('SELECT version()'),
+      pool.query('SELECT NOW()')
     ]);
 
     if (extensionResult.rows.length === 0) {
       throw new Error('plpgsql extension installation failed');
     }
+
     console.log("--------------------------------------------------------");
-    console.log('Database Connection Status:');
+    console.log('✅ Database Connected!');
     console.log('- Connected at:', connectionTest.rows[0].now);
     console.log('- PostgreSQL version:', versionResult.rows[0].version);
     console.log('- Pool configuration:', {
@@ -62,15 +60,14 @@ pool.connect(async (err, client, release) => {
       waitingCount: pool.waitingCount
     });
     console.log("--------------------------------------------------------");
+
   } catch (error: unknown) {
-    console.error('Database initialization error:', error);
+    console.error('❌ Database initialization error:', error);
     if (error instanceof Error) {
       console.error('Detailed error:', error.message);
     }
     process.exit(-1);
-  } finally {
-    release();
   }
-});
+})();
 
 export default pool;
