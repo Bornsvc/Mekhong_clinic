@@ -58,7 +58,7 @@ export async function POST(request: Request) {
       // ตรวจสอบข้อมูลที่จำเป็น
       if (!patient.first_name || !patient.last_name || !patient.birth_date) {
         return NextResponse.json(
-          { error: 'กรุณากรอกข้อมูลให้ครบถ้วน' },
+          { error: 'ກະລຸນາກອກຂໍ້ມູນໃຫ້ຄົບຖ້ວນ' },
           { status: 400 }
         );
       }
@@ -72,7 +72,7 @@ export async function POST(request: Request) {
     } catch (error) {
       console.error('Error creating patient:', error);
       return NextResponse.json(
-        { error: 'ไม่สามารถสร้างข้อมูลผู้ป่วยได้' },
+        { error: 'ບໍ່ສາມາດສ້າງຂໍ້ມູນຜູ້ເຈັບໄດ້' },
         { status: 500 }
       );
     }
