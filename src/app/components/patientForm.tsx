@@ -51,6 +51,7 @@ const CustomerForm: React.FC = () => {
 
   const { setFormactive, setToastMassage, setSearchQuery } = useContext(FormContext); 
   const [comFirm, setComfirm] = useState<boolean>(false);
+  const [errorMessageId, setErrorMessageNewId] = useState('')
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -109,6 +110,15 @@ const CustomerForm: React.FC = () => {
         window.location.reload();
       } catch (error) {
         console.error('Error submitting form:', error);
+        if(axios.isAxiosError(error) && error.response){
+          const mse = 
+          (error.response.data).error ||
+          (error.response.data).message ||
+          'ເກີດຂໍພິດພາດໃນການ ADD ຄົນເຈັບ';
+          setErrorMessageNewId(mse)
+        } else {
+          setErrorMessageNewId('ເກີດຜິດພາດທີບໍ່ຮູ້ຈັກ ກະລຸນາລອງໃໝ່ອີກຄັ້ງ');
+        }
         setToastMassage(false);
       }
   };
@@ -146,7 +156,7 @@ const CustomerForm: React.FC = () => {
         {comFirm ? <ConfirmClose comFirm={comFirm} setComfirm={setComfirm} /> : null}
         
         <div className="transform hover:scale-[1.01] transition-all duration-200">
-          <h2 className="text-center text-5xl h-15 font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-800 tracking-tight">
+          <h2 className="text-center text-5xl p-5 font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-800 tracking-tight">
             ຂໍ້ມູນສ່ວນຕົວ
           </h2>
           <p className="mt-2 text-center text-base text-gray-600 animate-fade-in">
@@ -169,6 +179,11 @@ const CustomerForm: React.FC = () => {
                   onChange={handleChange} // เพิ่ม onChange
                   className="appearance-none relative block w-full px-3 py-3 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
                 />
+               {errorMessageId && (
+                    <div style={{ color: 'red', marginTop: '0.5rem' }}>
+                      {errorMessageId}
+                    </div>
+                )}
               </div>
               <div>
                 <label htmlFor="firstName" className="block text-base font-medium text-gray-700 mb-1">ຊື່</label>

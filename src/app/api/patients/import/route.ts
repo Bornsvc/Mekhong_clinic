@@ -119,6 +119,7 @@ export async function POST(request: Request) {
           social_security_company: row['Social Security Company']?.trim(),
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
+          new_id: cleanedUhid
         };
 
         // หลังจากได้ cleanedUhid แล้ว

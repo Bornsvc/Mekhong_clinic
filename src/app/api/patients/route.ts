@@ -45,6 +45,14 @@ export async function POST(request: Request) {
         const lastPatient = await PatientModel.getLastPatient();
         const lastId = lastPatient ? parseInt(lastPatient.id) : 0;
         patientId = (lastId + 1).toString().padStart(6, '0');
+      } else {
+        const existingPatient = await PatientModel.getPatientById(patientId);
+        if(existingPatient){
+          return NextResponse.json(
+            { error: 'ລະຫັດນີ້ມີຢູ່ແລ້ວ' },
+            { status: 400 }
+          )
+        }
       }
       
       // ตรวจสอบข้อมูลที่จำเป็น

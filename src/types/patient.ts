@@ -19,4 +19,5 @@ export interface Patient {
   purpose?: string;
   created_at?: string;
   updated_at?: string; // เพิ่ม
+  new_id: string
 }

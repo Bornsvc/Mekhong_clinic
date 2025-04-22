@@ -84,11 +84,19 @@ export const PatientModel = {
     };
   },
   
-  
-
   async getPatientById(id: string) {
     console.log('🔍 getPatientById:', id);
     const query = 'SELECT * FROM patients WHERE id = $1';
+    const { rows } = await pool.query(query, [id]);
+    return rows[0];
+  },
+  async getPatientByIdOrNewId(id: string) {
+    console.log('🔍 getPatientByIdOrNewId:', id);
+    const query = `
+      SELECT * FROM patients 
+      WHERE id = $1 OR new_id = $1
+      LIMIT 1
+    `;
     const { rows } = await pool.query(query, [id]);
     return rows[0];
   },
@@ -158,10 +166,20 @@ export const PatientModel = {
         if (isNaN(birthDate.getTime())) {
           throw new Error('รูปแบบวันเกิดไม่ถูกต้อง');
         }
-        patient.birth_date = birthDate.toISOString().split('T')[0]; // Format the date
+        patient.birth_date = birthDate.toISOString().split('T')[0];
       }
   
-      // Step 3: Update patient details in the database
+      // Step 3: ตรวจสอบ new_id ซ้ำ (ถ้ามีการแก้ไข)
+      if (patient.new_id && patient.new_id !== id) {
+        const checkQuery = `SELECT id FROM patients WHERE (new_id = $1 OR id = $1) AND id != $2`;
+        const checkResult = await pool.query(checkQuery, [patient.new_id, id]);
+  
+        if (checkResult.rowCount !== null && checkResult.rowCount > 0) {
+          throw new Error('ລະຫັດໃໝ່ມີຢູ່ແລ້ວ');
+        }
+      }
+  
+      // Step 4: Update patient details in the database
       const query = `
         UPDATE patients
         SET
@@ -180,8 +198,9 @@ export const PatientModel = {
           social_security_id = $13,
           social_security_expiration = $14,
           social_security_company = $15,
+          new_id = $16,
           updated_at = CURRENT_TIMESTAMP
-        WHERE id = $16
+        WHERE id = $17
         RETURNING *
       `;
   
@@ -201,12 +220,12 @@ export const PatientModel = {
         patient.social_security_id,
         patient.social_security_expiration,
         patient.social_security_company,
+        patient.new_id || null, // อาจเป็น null ได้
         id,
       ];
   
       console.log('📦 updatePatient values:', values);
   
-      // Step 4: Execute the query
       const { rows } = await pool.query(query, values);
       if (!rows.length) {
         throw new Error('ไม่พบข้อมูลผู้ป่วยที่ต้องการอัพเดท');
@@ -228,7 +247,90 @@ export const PatientModel = {
       throw new Error('เกิดข้อผิดพลาดที่ไม่คาดคิดในการอัปเดตข้อมูลผู้ป่วย');
     }
   },
+  
 
+  // async updatePatientId(oldId: string, newId: string) {
+  //   const client = await pool.connect();
+  //   try {
+  //     console.log(`🔁 เริ่มอัปเดต ID จาก ${oldId} เป็น ${newId}`);
+  
+  //     // 1. ตรวจสอบว่ามีผู้ป่วยที่ใช้ oldId อยู่หรือไม่
+  //     const existingPatient = await this.getPatientById(oldId);
+  //     if (!existingPatient) {
+  //       throw new Error(`ไม่พบผู้ป่วยที่ใช้ ID เดิม (${oldId})`);
+  //     }
+  
+  //     // 2. ตรวจสอบว่า newId ซ้ำกับของคนอื่นหรือเปล่า
+  //     const isDuplicate = await this.getPatientById(newId);
+  //     if (isDuplicate) {
+  //       throw new Error(`ไม่สามารถเปลี่ยน ID ได้ เพราะ ID ใหม่ (${newId}) ถูกใช้แล้ว`);
+  //     }
+  
+  //     // 3. เริ่ม transaction เพื่อให้แน่ใจว่าการเปลี่ยน ID ปลอดภัย
+  //     await pool.query('BEGIN');
+  
+  //     // 4. อัปเดต ID
+  //     const updateQuery = `
+  //       UPDATE patients
+  //       SET id = $1, updated_at = CURRENT_TIMESTAMP
+  //       WHERE id = $2
+  //       RETURNING *
+  //     `;
+  //     const { rows } = await pool.query(updateQuery, [newId, oldId]);
+  
+  //     // 5. Commit การเปลี่ยนแปลง
+  //     await pool.query('COMMIT');
+  //     console.log('✅ เปลี่ยน ID สำเร็จ:', rows[0]);
+  
+  //     return rows[0];
+  
+  //   } catch (error: unknown) {
+  //     // Rollback ถ้ามีข้อผิดพลาด
+  //     await pool.query('ROLLBACK');
+    
+  //     if (error instanceof Error) {
+  //       console.error('❌ เปลี่ยน ID ไม่สำเร็จ:', error.message);
+  //       throw new Error('เกิดข้อผิดพลาดในการเปลี่ยน ID: ' + error.message);
+  //     }
+    
+  //     // กรณี error ไม่ใช่ Error object
+  //     console.error('❌ เปลี่ยน ID ไม่สำเร็จ:', error);
+  //     throw new Error('เกิดข้อผิดพลาดที่ไม่รู้จักในการเปลี่ยน ID');
+  //   } finally{
+  //     client.release();
+  //   }
+    
+  // },
+
+  async changePatientIdSafe(oldId: string, newId: string) {
+    const client = await pool.connect();
+  
+    try {
+      await client.query('BEGIN');
+  
+      const { rowCount: oldCount } = await client.query('SELECT 1 FROM patients WHERE id = $1', [oldId]);
+      if (oldCount === 0) throw new Error(`ไม่พบ ID เก่า ${oldId} ในระบบ`);
+  
+      const { rowCount: newCount } = await client.query('SELECT 1 FROM patients WHERE id = $1', [newId]);
+      if (newCount !== null &&newCount > 0 ) throw new Error(`ID ใหม่ ${newId} มีอยู่ในระบบแล้ว`);
+  
+      const result = await client.query('UPDATE patients SET id = $1 WHERE id = $2', [newId, oldId]);
+      console.log(`📦 เปลี่ยน ID สำเร็จ: ${oldId} -> ${newId}, affectedRows: ${result.rowCount}`);
+  
+      await client.query('COMMIT');
+      return true;
+    } catch (error: unknown) {
+      await client.query('ROLLBACK');
+      if (error instanceof Error) {
+        console.error('❌ เปลี่ยน ID ไม่สำเร็จ:', error.message);
+        throw new Error('เกิดข้อผิดพลาดในการเปลี่ยน ID: ' + error.message);
+      }
+      throw new Error('เกิดข้อผิดพลาดที่ไม่รู้จักในการเปลี่ยน ID');
+    } finally {
+      client.release();
+    }
+  },
+  
   async getLastPatient() {
     try {
       const query = `

@@ -1,5 +1,6 @@
 'use client'
 import React, { useState, useEffect } from "react";
+import { useRouter } from 'next/navigation';
 import Image from "next/image";
 import ClodeIcon from "@/icons/close.png";
 import axios from "axios";
@@ -30,6 +31,7 @@ interface FormData {
   socialSecurityId?: string; // เพิ่ม
   socialSecurityExpiration?: string; // เพิ่ม
   socialSecurityCompany?: string; // เพิ่ม
+  new_id: string
 }
 
 const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose }) => {
@@ -52,10 +54,13 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
     socialSecurityId: "",
     socialSecurityExpiration: "",
     socialSecurityCompany: "",
+    new_id: ''
   });
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [errorMessage, setErrorMessage] = useState('')
+  const [errorMessageNew_id, setErrorMessageNew_id] = useState('')
   // const router = useRouter();
 
   useEffect(() => {
@@ -80,7 +85,8 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
           nationality: patient.nationality || '',
           socialSecurityId: patient.social_security_id || '',
           socialSecurityExpiration: patient.social_security_expiration ? new Date(patient.social_security_expiration).toISOString().split('T')[0] : '',
-          socialSecurityCompany: patient.social_security_company || ''
+          socialSecurityCompany: patient.social_security_company || '',
+          new_id: '',
         });
 
         setLoading(false);
@@ -103,21 +109,23 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
       const currentYear = new Date().getFullYear();
       updatedData.age = currentYear - birthYear;
     }
-
     setFormData((prevData) => ({ ...prevData, ...updatedData }));
   };
 
+  const router = useRouter();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setErrorMessage('')
     try {
       if (!formData.birthDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        alert('Please input date of birth follow this format YYYY-MM-DD');
+        setErrorMessage('ກະລຸນາໃນວັນເດືອນປີເກິດ')
         return;
       }
 
       const updateData = {
         id: formData.id,
+        new_id: formData.new_id || undefined, // 👈 เพิ่มตรงนี้
         first_name: formData.firstName,
         last_name: formData.lastName,
         middle_name: formData.middle_name,
@@ -139,15 +147,27 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
 
       const response = await axios.put(`/api/patients/${patientId}`, updateData);
       console.log(response)
+       // ✅ ถ้า new_id มี และไม่เท่ากับ id เดิม → push ไปยังหน้าใหม่
+    if (formData.new_id && formData.new_id !== patientId) {
+      router.push(`/patients/${formData.new_id}`);
+    } else {
+      // ถ้าไม่ได้เปลี่ยน ID ก็แค่ reload หรือ refresh ข้อมูลในหน้า
       window.location.reload();
+    }
       onClose();
-    } catch (error) {
-      console.error('Error updating patient:', error);
-      if (axios.isAxiosError(error)) {
-        const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Cannot update patient data';
-        alert(errorMessage);
+    } catch (err: unknown) {
+      console.error('Error updating patient:', err);
+  
+      // แปลง err ให้เป็น AxiosError
+      if (axios.isAxiosError(err) && err.response) {
+        // ดึงข้อความจาก response.data.error หรือ data.message
+        const msg =
+          (err.response.data).error ||
+          (err.response.data).message ||
+          'ເກີດຂໍພິດພາດໃນການອັບເດດຂໍ້ມູນ';
+          setErrorMessageNew_id(msg);
       } else {
-        alert('Something went wrong. Please try again.');
+        setErrorMessageNew_id('ເກີດຜິດພາດທີບໍ່ຮູ້ຈັກ ກະລຸນາລອງໃໝ່ອີກຄັ້ງ');
       }
     }
   };
@@ -212,19 +232,25 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
                   name="id"
                   value={formData.id}
                   onChange={handleChange}
+                  readOnly
                   className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
                 />
               </div>
               <div>
-                <label htmlFor="middle_name" className="block text-base font-medium text-gray-700 mb-1">ຊື່ເລ່ນ</label>
+                <label htmlFor="new_id" className="block text-base font-medium text-gray-700 mb-1">ລະຫັດໃໝ່</label>
                 <input
-                  id="middle_name"
+                  id="new_id"
                   type="text"
-                  name="middle_name"
-                  value={formData.middle_name}
+                  name="new_id"
+                  value={formData.new_id}
                   onChange={handleChange}
                   className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
                 />
+                 {errorMessageNew_id && (
+                    <div style={{ color: 'red', marginTop: '0.5rem' }}>
+                      {errorMessageNew_id}
+                    </div>
+                  )}
               </div>
               <div>
                 <label htmlFor="firstName" className="block text-base font-medium text-gray-700 mb-1">ຊື່</label>
@@ -248,6 +274,17 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
                   className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
                 />
               </div>
+              <div>
+                <label htmlFor="middle_name" className="block text-base font-medium text-gray-700 mb-1">ຊື່ເລ່ນ</label>
+                <input
+                  id="middle_name"
+                  type="text"
+                  name="middle_name"
+                  value={formData.middle_name}
+                  onChange={handleChange}
+                  className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
+                />
+              </div>
              
             </div>
 
@@ -262,6 +299,9 @@ const EditPatientForm: React.FC<EditPatientFormProps> = ({ patientId, onClose })
                   onChange={handleChange}
                   className="appearance-none relative block w-full px-3 py-3 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
                 />
+                <span className="text-red-500">
+                  {errorMessage}
+                </span>
               </div>
               <div>
                 <label htmlFor="age" className="block text-base font-medium text-gray-700 mb-1">ອາຍຸ</label>

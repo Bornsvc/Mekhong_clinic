@@ -9,6 +9,7 @@ import Loding from "@/app/components/loding"
 
 interface Patient {
   id: string;
+  New_id: string;
   first_name: string;
   middle_name?: string; // เพิ่ม
   last_name: string;
@@ -51,11 +52,11 @@ export default function PatientDetails() {
           setPatient(response.data);
           // console.log(response.data)
         } else {
-          setError('Invalid patient ID');
+          setError('ID ຄົນເຈັບບໍ່ຖືກຕ້ອງ');
         }
       } catch (err) {
         console.log("Error>>>>>", err);
-        setError('Failed to load patient data');
+        setError('ໂຫລດຂໍມູນຄົນເຈັບບໍ່ສຳເລັດ');
       } finally {
         setLoading(false);
       }
@@ -76,7 +77,7 @@ export default function PatientDetails() {
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-4">
         <p className="text-red-500">{error}</p>
         <Link href="/" className="text-blue-600 hover:text-blue-800">
-          Back to Home
+          ກັບໄປໜ້າຫຼັກ
         </Link>
       </div>
     );
@@ -85,9 +86,9 @@ export default function PatientDetails() {
   if (!patient) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-4">
-        <p>Patient not found</p>
+        <p>ບໍ່ພົບຄົນເຈັບ</p>
         <Link href="/" className="text-blue-600 hover:text-blue-800">
-          Back to Home
+          ກັບໄປໜ້າຫຼັກ
         </Link>
       </div>
     );

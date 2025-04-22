@@ -10,27 +10,21 @@ const globalForPg = global as unknown as { pgPool: Pool };
 export const pool = 
 globalForPg.pgPool ||
 new Pool({
-  user: process.env.POSTGRESUSER,
-  host: process.env.POSTGRESHOST,
-  database: process.env.POSTGRESDB,
-  password: process.env.POSTGRESPASSWORD,
-  port: parseInt(process.env.POSTGRESPORT || '5432'),
   connectionString: process.env.POSTGRESURL,
-  ssl: process.env.NODE_ENV === 'production' 
-    ? { rejectUnauthorized: true }
-    : { rejectUnauthorized: false },
-  
-  // เพิ่มและปรับแต่งค่า timeout และ connection limits
-  connectionTimeoutMillis: 10000,    // เพิ่มเวลารอการเชื่อมต่อเป็น 10 วินาที
-  idleTimeoutMillis: 60000,          // เพิ่มเวลา idle timeout เป็น 1 นาที
-  max: 30,                           // เพิ่มจำนวน connection สูงสุด
-  min: 5,                            // กำหนดจำนวน connection ขั้นต่ำ
+  ssl: { rejectUnauthorized: false }, // 🔒 ต้องเปิด SSL ตลอดสำหรับ Neon
+
+  // 👇 เพิ่มการตั้งค่าเสถียร
+  connectionTimeoutMillis: 10000,
+  idleTimeoutMillis: 60000,
+  max: 30,
+  min: 5,
   allowExitOnIdle: true,
-  statement_timeout: 15000,          // timeout สำหรับ query (15 วินาที)
-  query_timeout: 15000               // timeout สำหรับ query execution
+  statement_timeout: 15000,
+  query_timeout: 15000,
 });
 
-if (process.env.NODEENV !== 'production') globalForPg.pgPool = pool;
+if (process.env.NODE_ENV !== 'production') globalForPg.pgPool = pool;
+
 
 // เพิ่มการจัดการ error events
 pool.on('error', (err) => {
