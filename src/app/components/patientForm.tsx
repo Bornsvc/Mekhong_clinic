@@ -186,23 +186,23 @@ const CustomerForm: React.FC = () => {
                 )}
               </div>
               <div>
-                <label htmlFor="firstName" className="block text-base font-medium text-gray-700 mb-1">ຊື່</label>
-                <input
-                  id="firstName"
-                  type="text"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
-                />
-              </div>
-              <div>
                 <label htmlFor="middleName" className="block text-base font-medium text-gray-700 mb-1">ຊື່ຫຼີ້ນ</label>
                 <input
                   id="middleName"
                   type="text"
                   name="middleName"
                   value={formData.middleName}
+                  onChange={handleChange}
+                  className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
+                />
+              </div>
+              <div>
+                <label htmlFor="firstName" className="block text-base font-medium text-gray-700 mb-1">ຊື່</label>
+                <input
+                  id="firstName"
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
                   onChange={handleChange}
                   className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition duration-200"
                 />
