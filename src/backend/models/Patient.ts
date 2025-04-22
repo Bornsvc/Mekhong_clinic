@@ -7,6 +7,10 @@ interface QueryParams {
   search?: string;
 }
 
+function cleanValue(value: Patient[keyof Patient]) {
+  return value === '' ? null : value;
+}
+
 export const PatientModel = {
   async getAllPatients() {
     console.log('📦 getAllPatients: กำลังดึงข้อมูลผู้ป่วยทั้งหมด');
@@ -118,22 +122,22 @@ export const PatientModel = {
       `;
 
       const values = [
-        patient.id, // เพิ่ม id เข้าไปในค่าที่จะ insert
-        patient.first_name,
-        patient.middle_name,
-        patient.last_name,
-        patient.birth_date,
-        patient.age,
-        patient.phone_number,
-        patient.gender,
-        patient.medication,
-        patient.balance,
-        patient.diagnosis,
-        patient.address,
-        patient.nationality,
-        patient.social_security_id,
-        patient.social_security_expiration,
-        patient.social_security_company
+        patient.id,
+        cleanValue(patient.first_name),
+        cleanValue(patient.middle_name),
+        cleanValue(patient.last_name),
+        cleanValue(patient.birth_date),
+        cleanValue(patient.age),
+        cleanValue(patient.phone_number),
+        cleanValue(patient.gender),
+        cleanValue(patient.medication),
+        cleanValue(patient.balance),
+        cleanValue(patient.diagnosis),
+        cleanValue(patient.address),
+        cleanValue(patient.nationality),
+        cleanValue(patient.social_security_id),
+        cleanValue(patient.social_security_expiration),
+        cleanValue(patient.social_security_company)
       ];
 
       console.log('📦 createPatient values:', values);

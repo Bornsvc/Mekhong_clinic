@@ -33,7 +33,6 @@ export async function GET(request: Request) {
   }
 }
 
-
 export async function POST(request: Request) {
     try {
       const patient = await request.json();
@@ -56,16 +55,17 @@ export async function POST(request: Request) {
       }
       
       // ตรวจสอบข้อมูลที่จำเป็น
-      if (!patient.first_name || !patient.last_name || !patient.birth_date) {
+      if (!patient.first_name || !patient.last_name) {
         return NextResponse.json(
-          { error: 'ກະລຸນາກອກຂໍ້ມູນໃຫ້ຄົບຖ້ວນ' },
+          { error: 'ກະລຸນາກອກຂໍ້ມູນ ຊື່ເເທ້ ເເລະ ນາມສະກຸນ' },
           { status: 400 }
         );
       }
   
       const newPatient = await PatientModel.createPatient({
         ...patient,
-        id: patientId
+        id: patientId,
+        birth_date: patient.birth_date === "" ? null : patient.birth_date
       });
       
       return NextResponse.json({ data: newPatient });

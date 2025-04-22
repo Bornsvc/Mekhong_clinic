@@ -226,18 +226,18 @@ export default function Home() {
                 <div className="p-4 mr-3 md:p-6 bg-gray-50 rounded-lg shadow-md border border-gray-200 mt-3 mb-3">
                   <div className="flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
                   <div className="relative w-full md:w-96">
-  <input
-    type="text"
-    placeholder="ຄົ້ນຫາຜູ້ປ່ວຍ..."
-    onChange={(e) => {
-      // Remove spaces from the search term
-      const normalizedSearch = e.target.value.replace(/\s+/g, '');
-      setSearchQuery(normalizedSearch);
-      setCurrentPage(1);
-    }}
-    className="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
-  />
-</div>
+                    <input
+                      type="text"
+                      placeholder="ຄົ້ນຫາຜູ້ປ່ວຍ..."
+                      onChange={(e) => {
+                        // Remove spaces from the search term
+                        const normalizedSearch = e.target.value.replace(/\s+/g, '');
+                        setSearchQuery(normalizedSearch);
+                        setCurrentPage(1);
+                      }}
+                      className="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
+                    />
+                  </div>
 
 
                     <div className="flex items-center gap-6 mr-10">
@@ -303,14 +303,14 @@ export default function Home() {
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-6 py-4 text-center text-lg font-medium text-gray-500 uppercase tracking-wider">ລະຫັດ</th>
-                        <th className="px-6 py-4 text-center text-lg font-medium text-gray-500 uppercase tracking-wider">ຊື່ ເເລະ ນາມສະກຸນ</th>
-                        <th className="px-6 py-4 text-center text-lg font-medium text-gray-500 uppercase tracking-wider">ຊື່ຫຼິ້ນ</th>
-                        <th className="px-6 py-4 text-center text-lg font-medium text-gray-500 uppercase tracking-wider">ທີຢູ່</th>
-                        <th className="px-6 py-4 text-center text-lg font-medium text-gray-500 uppercase tracking-wider">ອາຍຸ</th>
-                        <th className="px-6 py-4 text-center text-lg font-medium text-gray-500 uppercase tracking-wider">ລົງທະບຽນ</th>
-                        <th className="px-6 py-4 text-center text-lg font-medium text-gray-500 uppercase tracking-wider">ເພດ</th>
-                        <th className="px-6 py-4 text-center text-lg font-medium text-gray-500 uppercase tracking-wider">ເບີໂທລະສັບ</th>
+                        <th className="px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">ລະຫັດ</th>
+                        <th className="px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">ຊື່ ເເລະ ນາມສະກຸນ</th>
+                        <th className="px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">ຊື່ຫຼິ້ນ</th>
+                        <th className="px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">ທີຢູ່</th>
+                        <th className="px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">ອາຍຸ</th>
+                        <th className="px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">ລົງທະບຽນ</th>
+                        <th className="px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">ເພດ</th>
+                        <th className="px-6 py-4 text-left text-lg font-medium text-gray-500 uppercase tracking-wider">ເບີໂທລະສັບ</th>
                       </tr>
                     </thead>
 
@@ -328,11 +328,11 @@ export default function Home() {
                       <tbody className="bg-white divide-y divide-gray-200">
                         {patients.map((patient, index) => (
                           <tr key={index} className="hover:bg-blue-50 transition-colors duration-200">
-                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                            <td className="px-6 py-4 whitespace-nowrap text-left">
                               <div className="text-base text-gray-900">{patient.id}</div>
                             </td>
 
-                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                            <td className="px-6 py-4 whitespace-nowrap text-left">
                               <div className="text-base font-medium text-blue-600 hover:text-blue-800">
                                 <Link href={`/patients/${patient.id}`}>
                                   {`${patient.first_name} ${patient.last_name}` || '-'}
@@ -340,35 +340,35 @@ export default function Home() {
                               </div>
                             </td>
 
-                            <td className="px-6 py-4 whitespace-nowraptext-center text-center">
+                            <td className="px-6 py-4 whitespace-nowraptext-center text-left">
                               <div className="text-base font-medium text-blue-600 hover:text-blue-800">
                                 {patient.middle_name || '-'}
                               </div>
                             </td>
 
-                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                            <td className="px-6 py-4 whitespace-nowrap text-left">
                               <div className="text-base text-gray-900">
                                 {patient.address || '-'}
                               </div>
                             </td>
 
-                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                            <td className="px-6 py-4 whitespace-nowrap text-left">
                               <div className="text-base text-gray-900">{patient.age || '-'}</div>
                             </td>
 
-                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                            <td className="px-6 py-4 whitespace-nowrap text-left">
                               <div className="text-base text-gray-900">
                                 {formatDate(patient.created_at) || '-'}
                               </div>
                             </td>
 
-                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                            <td className="px-6 py-4 whitespace-nowrap text-left">
                               <div className="text-base text-gray-900 capitalize">
                                 {patient.gender || '-'}
                               </div>
                             </td>
 
-                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                            <td className="px-6 py-4 whitespace-nowrap text-left">
                               <div className="text-base text-gray-900">{patient.phone_number || '-'}</div>
                             </td>
                           </tr>
